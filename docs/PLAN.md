@@ -1,6 +1,6 @@
 # PLAN — research-first, minimal-first
 
-**Tiến độ:** R01 và R02 hoàn thành về mặt nghiên cứu; **R03 là lượt tiếp theo**. Đang ở pha CHỈ NGHIÊN CỨU, không được tạo code cho đến R01–R07 + FINAL và owner giao bắt đầu.
+**Tiến độ:** R01–R03 hoàn thành về mặt nghiên cứu; **R04 là lượt tiếp theo**. Đang ở pha CHỈ NGHIÊN CỨU, không được tạo code cho đến R01–R07 + FINAL và owner giao bắt đầu.
 
 ## A. 7 research sessions + 1 final review
 
@@ -8,8 +8,8 @@
 |---|---|---|
 | R01 | Đối chiếu form thầy, requirement IDs F01–F06, gates, điểm tự đánh giá → docs/REQUIREMENTS.md | DONE |
 | R02 | Khóa **MVP design baseline và dataset chính 12→10**, sơ đồ use case, so sánh công nghệ → PROJECT_SPEC.md | DONE |
-| R03 | Thiết kế hàm/API, số file code tối thiểu, giao diện Streamlit 1 trang, cơ chế không cần state phức tạp | NEXT |
-| R04 | Kiểm tra công thức, thống kê, thao tác cleaning và 3 chart; NaN/std (ddof), tránh kết luận nhân quả | NOT STARTED |
+| R03 | Thiết kế **3 file Python**, hợp đồng 5 hàm analysis + 3 chart, một trang Streamlit rerun không custom state, kiến trúc một chiều | DONE |
+| R04 | Kiểm tra công thức, thống kê, thao tác cleaning và 3 chart; NaN/std (ddof), tránh kết luận nhân quả | NEXT |
 | R05 | Soạn test cases, kỹ thuật chạy offline, Python/package versions, lỗi file và QA checklist | NOT STARTED |
 | R06 | Outline PDF 15–20 trang, storyboard video YouTube, evidence và mẫu tự chấm 5 tiêu chí | NOT STARTED |
 | R07 | Hoàn thiện rules/handoff, coding tasks & prompt cho AI sau này; tránh trùng tài liệu | NOT STARTED |
@@ -29,7 +29,7 @@ Không cần 7 file research riêng: kết quả mỗi lượt được hòa và
 
 **Ngoài phạm vi:** Excel, biểu đồ nâng cao/custom theme, phân trang, login, database, machine learning, Data-Forge gốc, Undo history, PDF generator **trong app**. Báo cáo **PDF bên ngoài app** vẫn bắt buộc khi nộp.
 
-**Không quyết trước R03:** số lượng file Python chính xác, chữ ký hàm, cách tổ chức st.session_state và cách render figure. Chọn hướng một trang nhưng R03 mới chốt contract.
+**R03 đã quyết:** app.py / analysis.py / charts.py (3 files); 5 analysis functions + 3 Matplotlib Figure functions; không dùng st.session_state custom; `st.pyplot(fig)` với Figure tạo trực tiếp. Chi tiết hợp đồng ở PROJECT_SPEC §10. **R04/R05 còn kiểm định** ddof, exceptions, version/runtime.
 
 ## C. Dataset (đặc tả duy nhất; chưa tạo file)
 
@@ -72,3 +72,13 @@ Dữ liệu CSV giả lập 12 hàng / 4 cột nằm nguyên văn tại **PROJEC
 - [x] Ghi R03 là nhiệm vụ kế tiếp duy nhất.
 
 **Gate để thông báo project đã xong sẽ hoàn toàn khác với gate nghiên cứu.** Không đánh dấu checklist implementation là pass ở lượt R02.
+
+
+## F. Kết quả R03 / checklist kiểm định trước khi bàn giao R04
+- [x] So sánh một file, ba file, nhiều lớp; chọn đúng ba file Python.
+- [x] Xác định một chiều import, 5 hàm analysis, 3 hàm chart có input/output cụ thể.
+- [x] Thiết kế 1 file CSV, ưu tiên upload có sẵn nếu có, checkbox làm sạch từ raw và không cần session state tự viết.
+- [x] Mô tả 3 selectbox tối đa để histogram, bar, scatter chia sẻ cột thay vì 6+ tùy chọn.
+- [x] Chọn Matplotlib Figure tường minh thay global pyplot; phân loại các lựa chọn chưa xác minh.
+- [x] Dẫn tài liệu chính thức, **không có implementation/tests**.
+- [x] Ghi bước kế tiếp duy nhất: R04 – toán, NaN, statistics, correctness.

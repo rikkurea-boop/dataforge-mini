@@ -4,10 +4,10 @@
 
 Project độc lập phục vụ bài tập **Chương 5.5 – NumPy, Pandas, Matplotlib**. Tiêu chí cao nhất: **tối giản, đúng trọng tâm, chạy được, và người học giải thích được toàn bộ cấu trúc cùng code**.
 
-**Trạng thái:** mới có kế hoạch/tài liệu; **chưa triển khai ứng dụng**.
+**Trạng thái:** R01–R03 đã hoàn thành nghiên cứu trên branch PR #1; R04 là bước tiếp theo. **Chưa triển khai ứng dụng**. Mọi file code trong cây dưới đây chỉ là kế hoạch.
 
 ## Hướng dẫn cho AI mới
-Đọc theo thứ tự: [AGENTS.md](AGENTS.md) → [RULEBOOK.md](RULEBOOK.md) → [PROJECT_SPEC.md](PROJECT_SPEC.md) → [docs/PLAN.md](docs/PLAN.md) → [docs/STATUS_HANDOFF.md](docs/STATUS_HANDOFF.md). Sau đó đọc code/test thực tế (nếu có) và tiếp tục task đầu tiên chưa hoàn thành. Không được nhận định tính năng đã xong chỉ vì có trong tài liệu.
+Đọc theo thứ tự: [AGENTS.md](AGENTS.md) → [RULEBOOK.md](RULEBOOK.md) → [PROJECT_SPEC.md](PROJECT_SPEC.md) → [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) → [docs/PLAN.md](docs/PLAN.md) → [docs/STATUS_HANDOFF.md](docs/STATUS_HANDOFF.md). Sau đó đọc code/test thực tế (nếu có) và tiếp tục task đầu tiên chưa hoàn thành. Không được nhận định tính năng đã xong chỉ vì có trong tài liệu.
 
 ## Cấu trúc code dự kiến (không phải file đã có)
 ```text

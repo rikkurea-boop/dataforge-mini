@@ -115,3 +115,20 @@ Chưa có kết quả thực thi, do đó **chưa thể điền điểm tự ch�
 | Cần đúng 3 biểu đồ, đúng cột sinh viên | DESIGN PROPOSED | Được chọn để demo đơn giản, không nằm trong form của thầy |
 
 **Lưu ý R03–R05:** khóa interfaces và test tương thích theo version thực tế; không lấy API docs của phiên bản mới làm bằng chứng mọi version đều có tham số tương ứng.
+
+
+---
+
+## 10. Research 03 — Đối chiếu chứng cứ thiết kế từ docs chính thức (2026-10-25)
+
+| Vấn đề | Căn cứ chính thức | Quyết định của project |
+|---|---|---|
+| Streamlit rerun theo thao tác widget, Session State không bắt buộc cho xử lý thuần | https://docs.streamlit.io/develop/concepts/architecture/session-state ; https://docs.streamlit.io/develop/concepts/architecture/widget-behavior | Dùng lại raw input mỗi lần; 1 checkbox bật/tắt cleaning; **không tự viết state** |
+| UploadedFile là subclass BytesIO, có thể dùng với pd.read_csv; `read()` làm di chuyển pointer | https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader | Đọc file-like; `seek(0)` nếu đã đọc, không dùng `.name` làm file path |
+| st.pyplot chấp nhận Figure tường minh; lối global pyplot deprecated | https://docs.streamlit.io/develop/api-reference/charts/st.pyplot | 3 chart functions trả Figure |
+| Matplotlib cho phép tạo Figure trực tiếp ngoài pyplot; pyplot có registry figure | https://matplotlib.org/stable/api/figure_api.html ; https://matplotlib.org/stable/users/interactive.html | Tạo `Figure(...)` + `fig.subplots()`, không cần pyplot registry / close |
+| pandas.select_dtypes dùng `include="number"` để lọc cột số | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.select_dtypes.html | Chỉ hiển thị numeric selector khi có cột hợp lệ |
+| pandas DataFrame.to_csv mặc định kèm index nếu không cấu hình | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html | Xuất `index=False` để roundtrip đúng cột |
+| Streamlit download truyền data bằng bộ nhớ, widget có thể rerun | https://docs.streamlit.io/develop/api-reference/widgets/st.download_button | CSV nhỏ, xuất từ active_df của lần render đang hiển thị |
+
+**Các mốc R03 chỉ là quyết định kiến trúc của người nghiên cứu**, không phải nội dung thầy giao cụ thể. Báo cáo chỉ được nêu "đã phát triển" sau khi P0–P4 triển khai/kiểm tra.

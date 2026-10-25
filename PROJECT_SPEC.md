@@ -1,6 +1,6 @@
 # PROJECT SPEC — DataForge Mini, MVP research baseline (R02)
 
-**Trạng thái:** Research 02/07 hoàn thành; **MVP DESIGN BASELINE**, chưa phải code/final approval. R03 thiết kế code; R04 kiểm định toán; R05 test; R06 đồ án nộp bài; R07 handoff; FINAL mới có thể đạt READY FOR IMPLEMENTATION.
+**Trạng thái:** Research 03/07 hoàn thành; **MVP + ARCHITECTURE DESIGN BASELINE**, chưa phải code/final approval. R03 đã khóa sơ đồ module/hợp đồng hàm; R04 kiểm định toán; R05 test; R06 đồ án nộp bài; R07 handoff; FINAL mới có thể đạt READY FOR IMPLEMENTATION.
 
 ## 1. Thông tin khóa từ chủ dự án và giảng viên
 
@@ -130,3 +130,132 @@ Phụ thuộc ứng dụng dự kiến: **pandas, numpy, matplotlib, streamlit**
 - Streamlit download: https://docs.streamlit.io/develop/api-reference/widgets/st.download_button
 
 **Không coi docs API là chỉ thị của giảng viên.** Đã đọc docs để kiểm chứng khả năng kỹ thuật, không xác nhận app đang chạy.
+
+---
+
+## 10. Research 03 — Architecture / Function Contracts (2026-10-25)
+
+**Trạng thái: DESIGN BASELINE R03**; đã nghiên cứu tài liệu API chính thức và kiểm tra source tree, **chưa viết/chạy app**. R04 xác thực toán và edge cases, R05 khóa môi trường và test.
+
+### 10.1. Vì sao ba file Python?
+
+| Phương án | Đánh giá |
+|---|---|
+| `app.py` duy nhất | Ít file nhất nhưng UI, phép tính và chart lẫn nhau; khó test giải thích |
+| **`app.py`, `analysis.py`, `charts.py`** | **CHỌN:** ba trách nhiệm rõ, không tầng trung gian; nhóm test được logic độc lập |
+| 5–10 module, class/service/repository/pipeline | Lệch yêu cầu đơn giản; bỏ |
+| Web frontend + REST backend | Không cần, bỏ |
+
+**Ứng dụng một trang**, một tiến trình Streamlit, dữ liệu nhỏ trong bộ nhớ; không có model class, dataclass, dependency injection, database, cache, network/API, callbacks, global mutable state, class-based service, hệ thống config đa tầng.
+
+**Cây file ứng dụng dự kiến sau khi được giao code (không phải file đang có):**
+
+```text
+app.py                  # giao diện Streamlit và điều phối
+analysis.py             # 5 hàm đọc / đo / clean / thống kê / group mean
+charts.py               # 3 hàm dựng Matplotlib Figure
+sample_data.csv         # DUY NHẤT, tạo từ §5 (dữ liệu giả lập)
+requirements.txt        # pandas, numpy, matplotlib, streamlit
+tests/test_analysis.py  # test chức năng số & cleaning, được lập kế hoạch ở R05
+```
+
+### 10.2. Quy tắc phụ thuộc một chiều
+
+```text
+                   sample_data.csv       [UploadedFile CSV]
+                          \                    /
+                           \                  /
+                            v                v
+                           app.py (Streamlit)
+                            |       |      |
+                    selects v       |      v  st.pyplot(Figure)
+                       analysis.py   |    charts.py
+                         DataFrame --+-------^
+                         Series -------------^
+```
+
+- `analysis.py` chỉ import **pandas, numpy** và chuẩn thư viện nếu cần. **Không import Streamlit/Matplotlib**.
+- `charts.py` chỉ import **pandas, matplotlib.figure.Figure** (và các module thật sự cần); **không import Streamlit**, không đọc CSV.
+- `app.py` chỉ điều phối widgets, gọi hàm, bắt lỗi đầu vào, hiển thị dữ liệu/Figure, xuất CSV; **không viết lại phép tính median/mean/groupby ở UI**.
+- Không cyclic import. Chỉ các hàm public nêu ở 10.3/10.4; thêm helper chỉ nếu loại bỏ lặp mã thật hoặc cần test độc lập.
+
+### 10.3. Hợp đồng 5 hàm trong `analysis.py`
+
+Các chữ ký sau là **spec code cho implementation về sau**, không phải code đã tạo.
+
+| API dự kiến | Nhận | Trả | Ràng buộc / hành vi |
+|---|---|---|---|
+| `load_csv(source: str | Path | BinaryIO) -> pd.DataFrame` | Đường dẫn file mẫu hoặc file upload nhị phân | DataFrame mới | Dùng `pd.read_csv`, đọc đúng **một file**; chặn header/data rỗng bằng lỗi thân thiện ở UI. Upload cần `seek(0)` trước khi đọc nếu stream đã bị tiêu thụ. Không tự sửa tên/dtype/missing hoặc ghi file; không âm thầm bỏ dòng |
+| `inspect_data(df: pd.DataFrame) -> dict[str,int]` | Bảng bất kỳ | `rows, columns, missing_cells, duplicate_rows` | Dùng `shape, isna, duplicated`; không mutate; loại trùng là exact whole-row, không theo tên |
+| `clean_data(df: pd.DataFrame) -> pd.DataFrame` | Raw dataframe | Bảng mới | `copy()` → `drop_duplicates(keep="first")` → median điền NaN ở cột số từng cột; **KHÔNG** điền cột text, không tự lọc/drop cột, không mutate đầu vào. Nếu cột số toàn NaN thì giữ nguyên và thông báo phía UI (R04/R05 chốt phương thức cảnh báo). Không hứa clean xong luôn không còn duplicate cho mọi CSV nếu fill tạo ra giá trị trùng mới |
+| `numeric_stats(df: pd.DataFrame, column: str) -> dict[str, float | int | None]` | DataFrame + tên cột số | `count, min, max, mean, median, std` | Kiểm tra cột và kiểu; **NumPy thực hiện tính toán số thật**, Pandas chọn cột, loại NA; scalar JSON/Python numbers, không trả `np.generic`; cột thiếu toàn bộ cho `count=0`, số liệu khác `None`/thông báo. **ddof cho std quyết ở R04** |
+| `mean_by_group(df: pd.DataFrame, group_column: str, value_column: str) -> pd.Series` | Cột nhóm + cột số | Series điểm TB theo nhóm | Pandas `groupby(...)[value].mean()`, không sửa đầu vào, nhóm không có số hợp lệ xử lý có thông báo. Nhóm kiểu text/category, không dùng số định danh làm group tự động |
+
+**Quy tắc tường minh:** NumPy đảm nhận mean/median/std (sau lọc NaN); Pandas đảm nhận `read_csv`, `drop_duplicates`, `fillna`, `groupby` và tạo cột số. Không thêm một hàm `service` để chỉ gọi lại các hàm khác.
+
+### 10.4. Hợp đồng 3 hàm `charts.py`
+
+| API dự kiến | Nhận | Trả | Nội dung |
+|---|---|---|---|
+| `histogram(df: pd.DataFrame, column: str) -> Figure` | Cột numeric còn giá trị hợp lệ | `matplotlib.figure.Figure` | Histogram điểm; title + x/y label; `dropna()`; không vẽ biểu đồ rỗng gây hiểu sai |
+| `group_bar(means: pd.Series) -> Figure` | Series nhóm và mean từ `mean_by_group` | Figure | Các nhóm và trung bình, nhãn/trục rõ; không tính lại group mean |
+| `scatter(df: pd.DataFrame, x_column: str, y_column: str) -> Figure` | Hai cột numeric khác nhau, có ít nhất một cặp quan sát hoàn chỉnh | Figure | Tạo cặp `df[[x,y]].dropna()` **cùng nhau** để giữ đúng hàng; không loại NA từng trục độc lập |
+
+**Chọn Matplotlib object-oriented Figure:** `Figure(figsize=(...))` → `ax = fig.subplots()` → `ax.hist/bar/scatter(...)` → return `fig`. Trong app gọi `st.pyplot(fig)` với đối tượng rõ ràng. Tránh `plt.gcf()`, `st.pyplot()` không có tham số, `plt.show()`, global pyplot state. Đối với Figure không tạo bởi pyplot, không cần registry/close của `pyplot`. Nếu implementation dùng `plt.subplots()` thay thế thì **phải đóng figure** sau render; không tạo thread/lock/backend custom cho demo single-user.
+
+Kiểm tra hợp lệ được làm **một lần theo nhiệm vụ**: UI chọn cột tương thích; hàm xử lý và hàm chart báo lỗi đầu vào sai bằng `ValueError` rõ ràng. Không thêm framework validator nhiều lớp.
+
+### 10.5. Giao diện và tính toán lại không sử dụng session state tự viết
+
+```text
+START/RERUN
+  1. uploader = st.file_uploader(..., type="csv"), luôn xuất hiện
+  2. source = uploader nếu có, ngược lại sample_data.csv theo __file__
+  3. raw_df = load_csv(source)               (giữ nguyên trong lần chạy)
+  4. raw_profile = inspect_data(raw_df); hiển thị preview + metrics
+  5. use_clean = st.checkbox("Làm sạch dữ liệu")
+  6. active_df = clean_data(raw_df) if use_clean else raw_df
+  7. active_profile = inspect_data(active_df); hiển thị so sánh trước/sau
+  8. numeric_cols = list(active_df.select_dtypes(include="number").columns)
+  9. selected_value_col = selectbox numeric, ưu tiên "diem" nếu tồn tại
+ 10. selected_group_col = selectbox cột text/category, ưu tiên "lop"
+ 11. selected_x_col = selectbox numeric khác selected_value_col, ưu tiên "gio_hoc"
+ 12. numeric_stats + mean_by_group -> hiển thị
+ 13. 3 Figure từ charts.py -> st.pyplot(fig); biểu đồ không hợp lệ thì ẩn + giải thích
+ 14. st.download_button(data=active_df.to_csv(index=False).encode("utf-8-sig"), mime="text/csv")
+END; khi upload/checkbox/selectbox thay đổi, Streamlit rerun từ đầu
+```
+
+**Không dùng `st.session_state` do ứng dụng không có thao tác cần lưu lịch sử**. Widget tự giữ giá trị trong session; không cần `st.cache_data` cho 12 bản ghi; không tạo reset button, callback hay nhiều trạng thái `raw/cleaned/undo`. Giá trị toggle chỉ quyết định có gọi `clean_data(raw_df)` tại lần chạy đó không.
+
+**Không có upload:** tự lấy file mẫu theo `Path(__file__).with_name("sample_data.csv")`, không dựa vào thư mục shell hiện hành. **Có upload:** ưu tiên uploaded file. Chỉ 1 file, đọc một lần mỗi rerun (vì `UploadedFile` là `BytesIO`, rewind nếu cần). Uploaded file không được dùng làm đường dẫn file trên máy.
+
+**Nếu file không hợp lệ:** thông báo `st.error(...)` và `st.stop()` cho riêng lần chạy đó; bắt lỗi I/O/parsing có phân loại, không dùng `except Exception: pass`. Chỉ hứa **UTF-8 CSV phân cách bằng dấu phẩy, dữ liệu nhỏ**; generic CSV có ít cột/numeric/category chỉ hiện những phần đủ điều kiện.
+
+**Lựa chọn cột:** mặc định bộ demo là `diem`/ `lop`/ `gio_hoc`; khi CSV khác, chọn từ danh sách thực tế. Chỉ cần tối đa 3 selectbox (giá trị numeric, nhóm, numeric trục X). Histogram và stats cùng cột số; bar dùng cột nhóm; scatter dùng X và cột số đã chọn làm Y. Nếu không có category thì bỏ bar; <2 numeric khác nhau thì bỏ scatter; không tự bịa nhóm/cột; không auto convert text thành số.
+
+**Chi tiết demo:** preview ưu tiên 12 hàng dữ liệu mẫu để thấy duplicate cuối file; với upload tùy ý có thể giới hạn `head(20)`. Dù upload mới, checkbox clean xử lý từ raw CSV được đọc lại; không nối/lưu dữ liệu giữa các nguồn. **CSV download luôn lấy `active_df`, không nhầm raw/cleaned.**
+
+### 10.6. Ranh giới các lỗi & nghiên cứu sau
+- R04: chọn chính xác `ddof`; all-NaN, categorical NaN, duplicate sau median fill, cách làm tròn; định nghĩa bins, percent? (không thêm nếu không cần).
+- R05: version Streamlit/Python, file size limit hợp lý, decode/ParserError, CSV vô cột, dtypes lạ, kiểm thử chart, smoke UI.
+- Không hỗ trợ general data cleaning pipeline, dữ liệu lớn, inference/AI, frontend phức tạp, sinh PDF từ app.
+- Không thêm `st.data_editor` cho sửa bảng bằng tay: sẽ phát sinh state, điều kiện kiểm tra và code vượt phạm vi.
+
+### 10.7. Evidence mapping theo chức năng
+- `load_csv` / `inspect_data` → M01/M02; `clean_data` → M03; `numeric_stats`, `mean_by_group` → M04; `histogram`, `group_bar`, `scatter` → M05; `app.py` orchestration → M06/M07.
+- Test unit (R05 thiết kế) gọi trực tiếp `analysis.py`, không cần khởi chạy Streamlit; chart tests gọi Figure constructors và kiểm tra type/labels.
+- Đầu ra nộp bài F03–F06 vẫn nằm trong **giai đoạn sau**, **không** xây code xuất PDF/YouTube trong ứng dụng.
+
+### 10.8. Nguồn chính thức
+- https://docs.streamlit.io/develop/concepts/architecture/session-state — Streamlit rerun và session.
+- https://docs.streamlit.io/develop/concepts/architecture/widget-behavior — widget value, identity, rerun.
+- https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader — UploadedFile là BytesIO, cần rewind nếu đã đọc.
+- https://docs.streamlit.io/develop/api-reference/charts/st.pyplot — yêu cầu truyền Figure rõ ràng.
+- https://docs.streamlit.io/develop/api-reference/widgets/st.download_button — truyền dữ liệu download, có thể gây rerun.
+- https://matplotlib.org/stable/api/figure_api.html — Figure trực tiếp và Figure.subplots.
+- https://matplotlib.org/stable/users/interactive.html — pyplot giữ tham chiếu figure và cần close.
+- https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.select_dtypes.html — cột số.
+- https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html — bỏ index khi export.
+
+**Các link xác minh được khả năng kỹ thuật, không xác minh code đang chạy.**

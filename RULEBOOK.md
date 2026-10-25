@@ -19,3 +19,11 @@
 15. **Definition of Done:** khi được phép coding mới yêu cầu code chạy được, test logic đạt, demo được, giải thích được từng hàm/thư viện; không coi kế hoạch là sản phẩm.
 16. **Research-only gate:** 7 lượt nghiên cứu và 1 lượt QA cuối được làm tuần tự. **Cấm khởi tạo source code, dependencies, dataset thực tế hoặc nộp sản phẩm trước khi owner giao lập trình.**
 17. **Bảo mật & nộp bài:** repo đang private; kiểm tra quyền truy cập người chấm trước khi gửi, không tự chuyển public. YouTube link phải xem được bởi người chấm; thử qua phiên không đăng nhập.
+
+
+## Quy tắc kiến trúc bổ sung từ Research 03 (ưu tiên kỹ thuật; chưa code)
+- Với MVP, **giới hạn 3 file Python ứng dụng**: `app.py` (UI), `analysis.py` (Pandas/NumPy), `charts.py` (Matplotlib). Test được tách riêng. Muốn thêm file ứng dụng phải giải thích được phần phức tạp bị loại bỏ và được owner đồng ý.
+- `analysis.py` không import Streamlit/Matplotlib; `charts.py` không import Streamlit hoặc đọc file; `app.py` không nhân đôi logic cleaning/stats.
+- **Không cần `st.session_state` tùy biến, cache, callback, class, Undo/Redo** cho phiên bản mẫu 12 dòng. Các lựa chọn được tính lại từ raw khi widget đổi.
+- Chart tạo **Figure tường minh** và trả về; Streamlit nhận Figure; không sử dụng global `plt.show()`, `plt.gcf()` hay charting library khác.
+- Đặc tả hợp đồng hàm tại `PROJECT_SPEC.md §10`. **R04–R05 được quyền sửa chi tiết toán/test để đảm bảo đúng**, không tự mở rộng tính năng.
