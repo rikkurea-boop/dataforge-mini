@@ -1,6 +1,6 @@
 # PROJECT_SPEC — DataForge Mini (Active implementation specification)
 
-**Trạng thái:** SPEC ĐÃ TỔNG HỢP R01–R07; **FINAL cross-QA chưa chạy**, **chưa có mã nguồn ứng dụng**. Chỉ mô tả hành vi mà một ứng dụng tối giản phải thực hiện **sau khi được phép bắt đầu**. Lịch sử các research R01–R06 nằm trong git commits của PR #1; không cần sao chép nhật ký nghiên cứu vào spec hiện hành.
+**Trạng thái:** SPEC R01–R07 đã qua **FINAL CROSS-QA — READY FOR IMPLEMENTATION (chỉ tài liệu)**, **chưa có mã nguồn ứng dụng**. Chỉ mô tả hành vi mà một ứng dụng tối giản phải thực hiện **sau khi được phép bắt đầu**. Lịch sử các research R01–R06 nằm trong git commits của PR #1; không cần sao chép nhật ký nghiên cứu vào spec hiện hành.
 
 **Tên đề tài:** Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python.  
 **Môn/chủ đề:** Chương 5.5, NumPy – Pandas – Matplotlib.  

@@ -4,7 +4,7 @@
 **Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
 **Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
 
-**Trạng thái:** R01–R07 đã hoàn thành **nghiên cứu/tài liệu**; **FINAL CROSS-QA CHƯA THỰC HIỆN**. Chưa có ứng dụng Python, file CSV mẫu, test thực thi, PDF hay video. **Không bắt đầu viết code** cho đến khi FINAL cho phép READY FOR IMPLEMENTATION **và** chủ dự án giao lệnh triển khai.
+**Trạng thái:** **R01–R07 + FINAL đã PASS — READY FOR IMPLEMENTATION (chỉ kế hoạch)**. **Chưa có ứng dụng Python, CSV mẫu thực, test thực thi, PDF hay video**. **Chưa được phép viết code** khi chưa có lệnh triển khai riêng từ chủ dự án. PR #1 đang chờ chủ dự án quyết định merge vào `main` hoặc tiếp tục dùng nhánh docs.
 
 ## Bắt đầu / AI tiếp quản
 

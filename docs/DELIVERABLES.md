@@ -1,6 +1,6 @@
 # DELIVERABLES — Kế hoạch nộp bài DataForge Mini (Research 06)
 
-**Trạng thái tài liệu:** được chuẩn bị ở R06 và tích hợp vào bộ tài liệu R07. **FINAL CROSS-QA là bước tiếp theo** theo `docs/STATUS_HANDOFF.md`. **Chưa có ứng dụng, PDF, video YouTube hoặc bằng chứng chạy thực tế**. Chỉ sản xuất sau FINAL và lệnh triển khai của chủ dự án.
+**Trạng thái tài liệu:** R06/R07 đã qua **FINAL CROSS-QA — PLAN READY**. **Chưa có ứng dụng, PDF, video YouTube hoặc bằng chứng chạy thực tế.** Chỉ sản xuất khi chủ dự án có lệnh triển khai mới.
 
 **Tên đề tài:** Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python.  
 **Học phần:** Chương 5.5 — NumPy, Pandas, Matplotlib.  

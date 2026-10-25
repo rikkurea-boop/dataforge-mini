@@ -10,7 +10,7 @@
 
 ## 1. CỔNG QUYỀN — quan trọng hơn mọi đề xuất
 
-**CURRENT: R07 nghiên cứu đã xong; FINAL CROSS-QA là task kế tiếp.** Trong FINAL chỉ đọc, rà soát, sửa docs và đối chiếu; **không tạo `app.py`, `analysis.py`, `charts.py`, dataset thật, dependencies, source test, PDF hoặc YouTube**.
+**CURRENT: FINAL CROSS-QA đã PASS — READY FOR IMPLEMENTATION (chỉ kế hoạch).** Đây **không phải lệnh lập trình**. Đợi chủ dự án chủ động giao bắt đầu T01 hoặc triển khai ứng dụng; không tự merge PR #1. Hiện chưa có app, CSV thực, dependencies, source test, PDF hay video.
 
 **Chỉ được bắt đầu P0 khi BOTH:**
 - FINAL hoàn tất, ghi `READY FOR IMPLEMENTATION` trong STATUS_HANDOFF kèm checklist/commit có căn cứ; **và**
