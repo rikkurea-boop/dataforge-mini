@@ -4,7 +4,7 @@
 **Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
 **Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
 
-**Trạng thái:** **R01–R07 + FINAL đã PASS — READY FOR IMPLEMENTATION (chỉ kế hoạch)**. **Chưa có ứng dụng Python, CSV mẫu thực, test thực thi, PDF hay video**. **Chưa được phép viết code** khi chưa có lệnh triển khai riêng từ chủ dự án. PR #1 đang chờ chủ dự án quyết định merge vào `main` hoặc tiếp tục dùng nhánh docs.
+**Trạng thái:** **R01–R07 + FINAL đã PASS — READY FOR IMPLEMENTATION (chỉ kế hoạch)**. Bộ tài liệu đã được hợp nhất vào **`main` qua PR #1**. **Chưa có ứng dụng Python, CSV mẫu thực, test thực thi, PDF hay video**. Chỉ bắt đầu viết code khi chủ dự án có lệnh triển khai mới.
 
 ## Bắt đầu / AI tiếp quản
 
@@ -16,7 +16,7 @@
 6. [docs/PLAN.md](docs/PLAN.md) — roadmap và các task giao lập trình sau khi được phép.
 7. [docs/DELIVERABLES.md](docs/DELIVERABLES.md) — báo cáo PDF, video, tự chấm, minh chứng.
 
-**Nguồn sự thật:** đọc đúng nhánh/PR hiện hành, không lấy `main` đang chưa merge làm bản đầy đủ. Lịch sử các phiên R01–R06 có trong git commits của PR #1. Không được báo code/test đã xong khi mới chỉ có tài liệu.
+**Nguồn sự thật hiện tại:** nhánh mặc định **`main`**. Đọc `AGENTS.md`, `docs/STATUS_HANDOFF.md` và các tài liệu tại đây; PR #1 đã merge và lưu lịch sử R01–R07/FINAL. Khi có nhánh triển khai mới, đọc trạng thái và các thay đổi mới nhất trước khi thao tác. Không coi thiết kế/test case là ứng dụng đã chạy.
 
 ## Cấu trúc code tối thiểu được lên kế hoạch — CHƯA TẠO
 
@@ -34,3 +34,7 @@ Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm 
 ## DataForge gốc
 
 [Data-Forge](https://github.com/rikkurea-boop/Data-Forge) là dự án xử lý dữ liệu huấn luyện AI độc lập. **Không import, sửa hoặc phụ thuộc vào Data-Forge gốc** để hoàn thành bài tập này.
+
+## Bắt đầu triển khai trong tương lai
+
+Khi chủ dự án **chủ động giao việc**, AI đầu tiên thực hiện **T01** trong [docs/PLAN.md](docs/PLAN.md), tiếp tục từng task T02–T10 với kiểm thử/commit/handoff đầy đủ. Không tự tạo framework bổ sung, không cần hỏi thiết kế lại từ đầu. **Hiện trạng: T01 chưa bắt đầu.**

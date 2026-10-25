@@ -174,4 +174,4 @@ Nguồn: https://support.google.com/youtube/answer/157177 ; https://support.goog
 - [x] Năm tiêu chí tổng 10 điểm, **không bịa điểm tự chấm**.
 - [x] Bảo mật GitHub private/YouTube Unlisted, link QA, PDF layout render QA.
 - [x] Không có ứng dụng, PDF, video hay EV thực được tạo trong research.
-- [x] Tại thời điểm kết thúc R06, R07 là bước kế tiếp; **R07 nay đã hoàn thành, FINAL là bước kế tiếp theo `docs/STATUS_HANDOFF.md`**. P0–P4 vẫn BLOCKED.
+- [x] Đây là checklist lịch sử R06. **R07 và FINAL đã hoàn thành, PR #1 đã merge vào `main`**. P0–P4 vẫn chưa bắt đầu, chỉ được triển khai khi chủ dự án giao lệnh mới.

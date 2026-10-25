@@ -16,7 +16,7 @@
 | **FINAL** | **Kiểm định chéo độc lập**, sửa mâu thuẫn cuối và quyết định READY/BLOCKED | **PASS — READY (PLAN ONLY)** | `docs/STATUS_HANDOFF.md` |
 
 ### FINAL independent QA gate — PASS, 2026-10-25
-- [x] Đọc 9 file, xác minh HEAD/PR, không có source app; **ghi rõ tài liệu vẫn chưa ở nhánh `main`**.
+- [x] Tại FINAL, đọc 9 file và ghi nhận tài liệu **chưa nằm trên `main`**. **Sau FINAL đã merge PR #1 vào `main`**; đây là bước phân phối tài liệu, không phải coding.
 - [x] FORM-CONFIRMED F02–F06 đối chiếu với PDF/video/GitHub/tự chấm.
 - [x] Cấu trúc 3 file và 8 hợp đồng hàm nhất quán, không có logic test khống.
 - [x] Oracle sample 12→10, median 4/8, mean 7.8, ddof0 std≈1.249, group means A8/B7.6, histogram đúng.
@@ -24,7 +24,7 @@
 - [x] Chuỗi task P0–P4 có thứ tự, outputs, cổng bằng chứng, chỉ một next task.
 - [x] Hướng dẫn mở PR, cập nhật status, cấm code trong FINAL đúng rõ ràng.
 - [x] Link tài liệu và Markdown được kiểm tra, không có file/claim giả.
-- [x] Quyết định cách đưa tài liệu từ PR #1 lên **default branch** để AI mới mở repo thấy được. **Chỉ merge khi chủ dự án đồng ý**; nếu chưa merge, bàn giao link thẳng tới nhánh/PR và ghi rõ hạn chế.
+- [x] Đã xem xét cách đưa tài liệu lên nhánh mặc định. Sau khi chủ dự án đồng ý, **PR #1 đã được merge vào `main`**, nên AI mới đọc trực tiếp nhánh mặc định.
 - [x] Lưu bản kiểm định FINAL trong STATUS_HANDOFF/commit, đặt **READY FOR IMPLEMENTATION** chỉ nếu thực sự đạt. **Chưa được phép code dù READY** cho tới khi owner ra lệnh.
 
 ## 2. Future implementation: 5 giai đoạn, 10 task nhỏ
@@ -72,5 +72,10 @@ Machine learning, clone/nhúng Data-Forge gốc, dashboard đa trang, Excel, dat
 - Đã đọc 9 file; đối chiếu yêu cầu F01–F06; 7 M, 8 hàm, 15 OR/10 IO/6 UI, 10 T, 16 EV và PDF dự kiến 18 trang. Nguồn ảnh form là bản trích xuất R01, chưa có bản gốc trong repo.
 - Kiểm lại độc lập dataset 12→10, median4/8, mean7.8, variance1.56, std≈1.249, A8/B7.6, hist [2,2,3,2,1], và edge case fill tạo duplicate bằng pandas/NumPy tạm (KHÔNG phải app runtime).
 - Đã sửa tham chiếu PROJECT_SPEC trong DELIVERABLES, T02/T03 acceptance dependency, dtype pandas, header trùng, tách SHA baseline code+dataset khỏi update docs.
-- Cả 9 file/Markdown/links đã kiểm. PR #1 vẫn chưa merge: chỉ được tiếp quản từ nhánh/PR này tới khi owner duyệt merge.
-- **Next: chủ dự án cân nhắc merge PR #1; coding T01 chỉ khi có lệnh riêng sau FINAL.**
+- Cả 9 file/Markdown/links đã kiểm. **Cập nhật sau FINAL:** PR #1 đã merge vào `main`, tiếp quản từ nhánh mặc định thay vì PR cũ.
+- **Next: chờ chủ dự án giao lệnh coding T01.** Việc merge PR #1 chỉ công bố bộ tài liệu, không tự mở khóa triển khai.
+
+## 7. Handoff sau merge (chỉ tài liệu)
+- PR #1 đã merge; commit merge: `c3d979c20a8a49493139d195130713097ae77b83`.
+- Các hướng dẫn hiện hành có trên `main`; AI tiếp quản đọc `AGENTS.md`, `RULEBOOK.md`, `docs/STATUS_HANDOFF.md` trước khi đọc spec và tasks.
+- **T01–T10 chưa thực hiện**. Mỗi task yêu cầu bằng chứng chạy thực tế theo bảng tại §2; không tạo app trong pha chuẩn bị.

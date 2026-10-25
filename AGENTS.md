@@ -3,14 +3,14 @@
 ## 0. START HERE — trước mọi thay đổi
 
 1. Đọc `README.md` → `RULEBOOK.md` → `docs/STATUS_HANDOFF.md` → `docs/REQUIREMENTS.md` → `PROJECT_SPEC.md` → `docs/PLAN.md` → `docs/DELIVERABLES.md`. **Đọc file thật từ GitHub**, không suy luận chỉ từ tên file hoặc thông tin chat.
-2. Xác minh repo, visibility, nhánh, HEAD SHA, trạng thái PR, tree và tình trạng các file/test đang **thực sự tồn tại**.
+2. Xác minh repo, visibility, **nhánh mặc định `main` và nhánh làm việc hiện hành**, HEAD SHA, PR liên quan, tree và tình trạng các file/test **thực sự tồn tại**. PR #1 là lịch sử đã merge, không phải nhánh cần đọc để lấy đặc tả mới nhất.
 3. Xác định phase **R01–R07 / FINAL / P0–P4** trong STATUS_HANDOFF; không tự nhảy phase.
 4. Thông báo ngắn: trạng thái có chứng cứ, nhiệm vụ tiếp theo duy nhất, điều còn bất định, và loại thay đổi được phép làm.
 5. Nếu gặp mâu thuẫn: **yêu cầu thầy có bằng chứng > yêu cầu mới nhất của chủ dự án > RULEBOOK > REQUIREMENTS/PROJECT_SPEC/DELIVERABLES theo đúng phạm vi > PLAN > gợi ý AI cũ**. Ghi vấn đề tại STATUS_HANDOFF, không âm thầm bỏ qua.
 
 ## 1. CỔNG QUYỀN — quan trọng hơn mọi đề xuất
 
-**CURRENT: FINAL CROSS-QA đã PASS — READY FOR IMPLEMENTATION (chỉ kế hoạch).** Đây **không phải lệnh lập trình**. Đợi chủ dự án chủ động giao bắt đầu T01 hoặc triển khai ứng dụng; không tự merge PR #1. Hiện chưa có app, CSV thực, dependencies, source test, PDF hay video.
+**CURRENT: R01–R07 + FINAL PASS, bộ tài liệu đã được merge vào `main` qua PR #1 — READY FOR IMPLEMENTATION (chỉ kế hoạch).** Đây **không phải lệnh lập trình**. Chờ chủ dự án chủ động giao bắt đầu T01 hoặc triển khai ứng dụng. Hiện chưa có app, CSV thực, dependencies, source test, PDF hay video.
 
 **Chỉ được bắt đầu P0 khi BOTH:**
 - FINAL hoàn tất, ghi `READY FOR IMPLEMENTATION` trong STATUS_HANDOFF kèm checklist/commit có căn cứ; **và**
