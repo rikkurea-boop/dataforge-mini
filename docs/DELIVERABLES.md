@@ -90,7 +90,7 @@ Nguồn: https://support.google.com/youtube/answer/157177 ; https://support.goog
 
 ## 4. Evidence Ledger — 16 bằng chứng có ID, thu ở P0–P4
 
-**Chưa tồn tại bất kỳ EV nào ở R06.** Sẽ lưu lại **có chọn lọc**, không tạo 16 thư mục hoặc 16 file ảnh placeholder. Những hình chỉ để chèn báo cáo có thể lưu trong workspace tạo báo cáo ngoài repo; không đưa dữ liệu riêng tư/screenshot account lên GitHub.
+**Chưa có EV thực tế trong giai đoạn research.** Sẽ lưu lại **có chọn lọc**, không tạo 16 thư mục hoặc 16 file ảnh placeholder. Những hình chỉ để chèn báo cáo có thể lưu trong workspace tạo báo cáo ngoài repo; không đưa dữ liệu riêng tư/screenshot account lên GitHub.
 
 | ID | Thời điểm | Bằng chứng phải thu sau khi app có thật | Dùng ở |
 |---|---|---|---|
@@ -111,7 +111,7 @@ Nguồn: https://support.google.com/youtube/answer/157177 ; https://support.goog
 | EV-15 | P4 | YouTube URL xem được, chữ rõ, đúng commit và tiêu đề | Form F04 |
 | EV-16 | P4 | Link repo đọc được với **quyền người chấm** | Form F03 |
 
-**Release baseline**: Mọi EV-03..EV-12 và báo cáo/video phải nói về **cùng một Git SHA**, sample_data.csv cuối và bộ version đã thực chạy. Nếu logic/số liệu đổi sau khi quay phải cập nhật ảnh/video/PDF bị ảnh hưởng. R04 oracle không tự biến thành EV của app.
+**Release baseline:** mọi EV-03..EV-12 và báo cáo/video phải trỏ tới **cùng một code+dataset baseline SHA** và package versions đã chạy thật. Nếu cập nhật riêng README/STATUS/đường dẫn nộp tạo commit mới nhưng **không sửa code/dataset**, vẫn giữ và ghi rõ baseline SHA; nếu sửa logic/dataset sau quay thì phải rà, quay/chụp lại ảnh/video/PDF có ảnh hưởng. R04 oracle không tự biến thành EV của app.
 
 ### 4.1. Quyền truy cập và riêng tư
 - Repo hiện **private**: gửi URL thường không đủ cho người chấm. Owner chọn public **sau rà secret/PII** hoặc phương án cấp quyền phù hợp; không tự đổi visibility. Trên personal private repo, quyền collaborator có khả năng sửa code, nên không mặc định là chỉ đọc.
@@ -139,8 +139,8 @@ Nguồn: https://support.google.com/youtube/answer/157177 ; https://support.goog
 
 | Claim | Oracle & Test | PDF | Video |
 |---|---|---|---|
-| Raw 12/2 duplicates/2 missing | PROJECT_SPEC §5; OR-01 | 05–06 | 01:05–01:45 |
-| Clean 10, median4/8, raw không mutate | PROJECT_SPEC §11; OR-02/03/12/15 | 07–08 | 01:45–02:35 |
+| Raw 12/2 duplicates/2 missing | PROJECT_SPEC §2; OR-01 | 05–06 | 01:05–01:45 |
+| Clean 10, median4/8, raw không mutate | PROJECT_SPEC §§2–4; OR-02/03/12/15 | 07–08 | 01:45–02:35 |
 | Mean7.8, population std≈1.249 | OR-04/05 | 09–10 | 02:35–03:25 |
 | Groups A8/B7.6 | OR-06/11 | 10/12 | 02:35–04:35 |
 | Histogram counts, scatter pairs | OR-07/08 | 11/13 | 03:25–04:35 |

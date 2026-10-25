@@ -90,7 +90,7 @@ sample_data.csv hoặc UploadedFile → app.py (Streamlit)
 
 **Một trách nhiệm quan trọng:** bên xử lý dữ liệu phải xác định chặn numeric ±∞ trước khi tính median/stats/group, kể cả khi người dùng đưa DataFrame trực tiếp vào hàm chứ không qua upload. R05 đã đặt input guard nhưng **chưa có code**. Việc nào guard ở loader và việc nào ở hàm sẽ quyết ở lúc cài đặt sao cho không lặp quá nhiều.
 
-**Pandas 3.x:** text có thể mang dtype `str` thay vì `object`; bộ chọn nhóm phải nhận cả string/object/category hợp lệ, không chỉ `include="object"`. Với CSV tùy ý có tên header bị thay đổi/không hợp lệ phải báo lỗi, không giả định có `lop`.
+**Pandas 3.x:** text có thể mang dtype `str` thay vì `object`; bộ chọn nhóm phải nhận cả string/object/category hợp lệ, không chỉ `include="object"`. **Cách tương thích pandas 2.x/3.x được tài liệu Pandas khuyến nghị:** `df.select_dtypes(include=["object", "string", "category"])` (sau đó chỉ giữ cột nhóm hợp lệ). Không dùng `include=["str"]` trên pandas 2.x. Với CSV tùy ý có tên header bị thay đổi/không hợp lệ phải báo lỗi, không giả định có `lop`.
 
 ### 3.2. Hợp đồng 3 hàm charts.py
 
@@ -123,7 +123,7 @@ Dùng `Figure(figsize=...)` → `ax=fig.subplots()` rồi `st.pyplot(fig)`. Trá
 - **Group NA:** `groupby(...,dropna=True)` bỏ row có nhãn nhóm NA. Nhóm không có giá trị numeric hợp lệ phải bị loại khỏi bar chứ không vẽ mean0. Nếu không còn nhóm hợp lệ, ẩn bar.
 - **CSV text-like numeric:** không tự ép "8a" thành số, không tạo cột giả. Các cột không hợp lệ bị loại khỏi selector, hiện thông báo.
 - **Histogram khác bar:** histogram là tần suất trong khoảng liên tục, bar là mean từng nhóm. Không gọi histogram là "điểm trung bình" và không kết luận nhân quả từ scatter.
-- **Parsing:** Pandas có thể xử lý hàng ngắn bằng NaN; không hứa mọi CSV sai cấu trúc đều bị reject. Không đặt `on_bad_lines="skip"` để âm thầm bỏ dữ liệu.
+- **Parsing:** Pandas có thể xử lý hàng ngắn bằng NaN và có thể tự đổi tên header trùng; không hứa mọi CSV sai cấu trúc đều bị reject. Không đặt `on_bad_lines="skip"` để âm thầm bỏ dữ liệu. Với header trùng, cần xác minh trực tiếp trước khi Pandas đổi tên nếu cam kết thông báo lỗi.
 - **Scope:** CSV UTF-8 phân cách dấu phẩy, nhỏ; không cam kết dữ liệu rất lớn, encoding bất kỳ, JSON/Excel hoặc chart có datetime.
 
 ## 5. Oracle tests — đặc tả cho R05/P1–P4, CHƯA CHẠY
@@ -160,7 +160,7 @@ Các ID là **test behaviors**, không bắt buộc 31 hàm test riêng biệt. 
 | IO-04 | UTF-8 BOM | Đọc đúng header, không xuất hiện BOM trong tên cột |
 | IO-05 | Bytes UTF-8 lỗi | UnicodeDecodeError thành thông báo rõ |
 | IO-06 | Dấu phân cách `;` thay dấu phẩy | Báo format unsupported nếu tạo một cột không hợp lý, không tự guess engine |
-| IO-07 | Header trống/trùng/không rõ | Không âm thầm đổi ý nghĩa cột, báo nhập sai schema nếu cần |
+| IO-07 | Header trống/trùng/không rõ | Pandas có thể tự đổi tên cột trùng khi parse; loader phải phát hiện/từ chối header nhập nhằng **trước khi tự đổi tên**, hoặc không tuyên bố đã phát hiện. Có thể dùng `csv.reader` của Python cho một dòng header, không thêm package |
 | IO-08 | Uploaded size > **2 MiB** | Chặn có thông báo (khác PDF 100MB thầy) |
 | IO-09 | Numeric-like text không parsed là numeric | Không tự ép; ẩn feature phù hợp và giải thích |
 | IO-10 | Download CSV raw/clean | Roundtrip đúng `active_df`, index=False, UTF-8-SIG |
