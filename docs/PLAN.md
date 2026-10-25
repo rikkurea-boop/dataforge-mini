@@ -16,7 +16,7 @@
 | **FINAL** | **Kiểm định chéo độc lập**, sửa mâu thuẫn cuối và quyết định READY/BLOCKED | **NEXT, NOT STARTED** | `docs/STATUS_HANDOFF.md` |
 
 ### FINAL independent QA gate
-- [ ] Đọc 9 file, xác minh HEAD/PR, không có source app.
+- [ ] Đọc 9 file, xác minh HEAD/PR, không có source app; **ghi rõ tài liệu vẫn chưa ở nhánh `main`**.
 - [ ] FORM-CONFIRMED F02–F06 đối chiếu với PDF/video/GitHub/tự chấm.
 - [ ] Cấu trúc 3 file và 8 hợp đồng hàm nhất quán, không có logic test khống.
 - [ ] Oracle sample 12→10, median 4/8, mean 7.8, ddof0 std≈1.249, group means A8/B7.6, histogram đúng.
@@ -24,6 +24,7 @@
 - [ ] Chuỗi task P0–P4 có thứ tự, outputs, cổng bằng chứng, chỉ một next task.
 - [ ] Hướng dẫn mở PR, cập nhật status, cấm code trong FINAL đúng rõ ràng.
 - [ ] Link tài liệu và Markdown được kiểm tra, không có file/claim giả.
+- [ ] Quyết định cách đưa tài liệu từ PR #1 lên **default branch** để AI mới mở repo thấy được. **Chỉ merge khi chủ dự án đồng ý**; nếu chưa merge, bàn giao link thẳng tới nhánh/PR và ghi rõ hạn chế.
 - [ ] Lưu bản kiểm định FINAL trong STATUS_HANDOFF/commit, đặt **READY FOR IMPLEMENTATION** chỉ nếu thực sự đạt. **Chưa được phép code dù READY** cho tới khi owner ra lệnh.
 
 ## 2. Future implementation: 5 giai đoạn, 10 task nhỏ
