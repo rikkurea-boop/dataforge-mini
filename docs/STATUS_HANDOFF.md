@@ -1,34 +1,48 @@
-# STATUS_HANDOFF — DataForge Mini Research R06 (2026-10-25)
+# STATUS_HANDOFF — DataForge Mini · 2026-10-25 · End of R07
 
-## Repository & boundary
-- Private repo: https://github.com/rikkurea-boop/dataforge-mini
-- Branch: `docs/project-charter-ai-handoff`; PR #1: https://github.com/rikkurea-boop/dataforge-mini/pull/1 — OPEN, unmerged; `main` still initial README at R06 start.
-- R06 only updated Markdown documentation. **No application/test source, CSV file, requirements, final PDF or YouTube video created. No actual software tests.**
-- Original Data-Forge repo untouched, visibility unchanged.
+**Trạng thái:** **RESEARCH 7/7 DONE — FINAL CROSS-QA NEXT. NOT READY FOR IMPLEMENTATION.** Không có source app/test/CSV thật, không có PDF/video/EV thật; test app chưa chạy.
 
-## Session status
-| Session | Status | Result |
+## Repo và bằng chứng hiện tại
+- Repo: https://github.com/rikkurea-boop/dataforge-mini (**private**).
+- Nguồn tài liệu: branch `docs/project-charter-ai-handoff`, PR #1 https://github.com/rikkurea-boop/dataforge-mini/pull/1 (**open, chưa merge** tại thời điểm R07).
+- `main` lúc bắt đầu R07 vẫn chỉ có README ban đầu. PR là nơi chứa toàn bộ tài liệu.
+- R07: chuẩn hóa `README.md`, `AGENTS.md`, `RULEBOOK.md`, `PROJECT_SPEC.md`, `docs/REQUIREMENTS.md`, `docs/PLAN.md`, `docs/STATUS_HANDOFF.md`; giữ `docs/DELIVERABLES.md` làm nguồn kế hoạch nộp. Không đổi Data-Forge gốc.
+- HEAD SHA chính xác: kiểm tra trực tiếp PR trước khi làm, không tái sử dụng SHA ghi trong chat.
+
+## Trạng thái giai đoạn
+| Phase | Status | Evidence |
 |---|---|---|
-| R01 | DONE | Verified teacher form F01–F06, source link, YouTube demo, PDF 15–20 pages ≤100MB, 3+2+2+1+2 self-eval |
-| R02 | DONE | Minimal one-page Streamlit, CSV→Pandas→NumPy→Matplotlib MVP, one 12→10-row dataset spec |
-| R03 | DONE | 3 Python app files planned, 5 analysis + 3 Figure function contracts |
-| R04 | DONE | Canonical arithmetic/statistics and OR-01..15 |
-| R05 | DONE | Python 3.13 proposal, QA OR-01..15/IO-01..10/UI-01..06, candidate environment, not tested |
-| R06 | **DONE — DELIVERY PLAN ONLY** | New `docs/DELIVERABLES.md`: PDF target 18 physical pages, ~7-min video storyboard, EV-01..16, 5-criterion self-eval, link/PDF checks |
-| R07 | **NEXT** | AI bootstrap rules, implementation prompts/tasks, stale-doc reconciliation |
-| FINAL | NOT STARTED | Cross-document QA, possible READY FOR IMPLEMENTATION |
-| P0–P4 | **BLOCKED** | Explicit owner go-ahead required after R07+FINAL |
+| R01 | DONE (docs) | Đề/biểu mẫu và tiêu chí tự đánh giá |
+| R02 | DONE (docs) | MVP scope + một dataset 12→10 |
+| R03 | DONE (docs) | 3 file Python được đề xuất + 8 hợp đồng hàm |
+| R04 | DONE (docs) | Oracle toán, std ddof0, NaN/inf/duplicates |
+| R05 | DONE (docs) | 31 test cases dạng **đặc tả**, env chỉ là đề xuất |
+| R06 | DONE (docs) | PDF/video/EV evidence plan, **không sản xuất** |
+| R07 | **DONE (docs)** | Rulebook, AI handoff, task packets và các quyết định hợp nhất |
+| FINAL | **NEXT, NOT STARTED** | Kiểm định độc lập trước khi cho phép coding |
+| P0–P4 | **BLOCKED** | Chỉ bắt đầu nếu FINAL đạt READY và owner có lệnh mới |
 
-## Findings and source of truth
-- **Only `docs/DELIVERABLES.md`** contains the detailed R06 page plan, storyboard, EV evidence ledger and self-evaluation framework. Don't duplicate these tables.
-- The **PDF 15–20 pages ≤100MB**, YouTube link, code link and self-assessment are **FORM-CONFIRMED**. Target 18 pages including cover/TOC, video ~7 minutes, 1080p, EV IDs are **PROJECT PROPOSALS**.
-- Evidence EV-01..16 is **future capture work**, NOT evidence files that exist. Keep a single final Git SHA/dataset/package version for app screenshots, YouTube and PDF.
-- GitHub private requires grader access; YouTube Unlisted can be reshared by anyone with link. No permission changes/upload without owner decision.
-- Deadline, fixed video length, required PPT and official PDF template remain UNKNOWN.
-- R06 references university technical-report guides, YouTube official Help and GitHub access documentation in DELIVERABLES.
+## R07 audit, sửa đổi
+- Giảm nội dung trùng giữa tài liệu. Mỗi nhóm thông tin có một file chủ: requirement / spec / plan / deliverable / status.
+- Bảo toàn sample 12 records và oracle, 5+3 hợp đồng hàm, 31 test IDs, yêu cầu PDF/YouTube/self-eval và EV IDs.
+- Giữ **9 file tổng** (8 Markdown + .gitignore), không sinh docs mới/đường dẫn phức tạp; lịch sử nghiên cứu cũ có thể truy ở commit của PR.
+- Làm rõ các điểm dễ hiểu nhầm: plan kiểm thử không phải test pass; thư viện mới chỉ ứng viên; PDF bắt buộc nhưng PDF generator không bắt buộc; R07 DONE không phải READY.
+- Không có runtime/pytest outputs; không hứa đã chạy code hoặc nộp form.
 
-## Sole next task
-**R07 only:** inspect all existing files including DELIVERABLES, PR and branch status; consolidate AI handoff/rulebook, break authorized future implementation into small tasks, find/fix stale or inconsistent instructions. **Do not write app, tests, PDF or video during R07**. FINAL independent QA comes after.
+## Việc tiếp theo DUY NHẤT: FINAL CROSS-QA
+1. Đọc toàn bộ 9 file, kiểm tra GitHub PR/head, crossrefs, Markdown và không có source app.
+2. Đối chiếu yêu cầu giảng viên F02–F06 với spec/task/deliverables; kiểm oracle/tính đúng và thuật ngữ.
+3. Kiểm không có phát biểu chưa xác minh được diễn đạt thành yêu cầu thầy hoặc "đã chạy".
+4. Kiểm tính khả thi của P0–P4 và hướng dẫn resume cho AI mới, không mở rộng scope.
+5. Sửa có chọn lọc lỗi thật, ghi kết quả PASS/BLOCKED vào STATUS; chỉ khi đủ điều kiện có thể đặt `READY FOR IMPLEMENTATION` về **tài liệu**, không phải code.
+6. **Vẫn chưa code trong FINAL.** Sau FINAL, chờ owner chủ động giao việc mới.
 
-## Handoff metadata
-Date 2026-10-25; docs branch and open PR #1; confirm latest SHA directly from PR when taking over. R06 modified README, PROJECT_SPEC, PLAN, REQUIREMENTS, RULEBOOK, STATUS_HANDOFF and added DELIVERABLES.
+## Những điều còn UNKNOWN
+Deadline, độ dài video bắt buộc, PPT, template PDF, tên/chi tiết các trường form ngoài vùng ảnh; hệ điều hành máy sẽ chạy app; tổ hợp phiên bản packages cuối sau cài đặt. Không suy đoán.
+
+## Mẫu cập nhật bàn giao
+- Date / task-phase / branch / PR / before→after SHA:
+- Files changed & justification:
+- Evidence commands/tests run and exact outcomes (hoặc "not run"):
+- DONE/PARTIAL/BLOCKED + unresolved/UNKNOWN:
+- Next single task and permission gate:

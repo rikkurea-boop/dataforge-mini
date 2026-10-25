@@ -1,27 +1,42 @@
-# AGENTS.md – Quy trình tiếp quản cho mọi AI
+# AGENTS.md — Giao thức tiếp quản bắt buộc
 
-## Bắt buộc trước khi sửa
-1. Đọc `README.md`, `RULEBOOK.md`, `PROJECT_SPEC.md`, `docs/REQUIREMENTS.md`, `docs/PLAN.md`, `docs/STATUS_HANDOFF.md`.
-2. Kiểm tra branch, tree, commit/PR, code và các test **thực sự tồn tại**.
-3. Nêu ngắn gọn: đã xác minh gì, việc ưu tiên kế tiếp là gì, rủi ro nào chưa rõ.
-4. Đọc **cổng giai đoạn** trong `docs/STATUS_HANDOFF.md`. Khi đang R01–R07/FINAL, chỉ nghiên cứu, sửa tài liệu và kiểm chứng nguồn; **không tạo code ứng dụng, dependency, dataset hay slide/video/PDF**.
-5. Khi owner cho phép triển khai P0–P4, mới làm từng lát cắt chức năng nhỏ, chạy thử và ghi kết quả. Không tự mở rộng phạm vi.
+## 0. START HERE — trước mọi thay đổi
 
-## Nguyên tắc thuyết trình
-User phải hiểu và giải thích **toàn bộ** code, nên số lượng file, thư viện, hàm, trừu tượng phải có lý do trực tiếp. Chỉ dùng NumPy, Pandas, Matplotlib và Streamlit (UI); pytest phục vụ test. Không thêm công nghệ khác nếu không thiết yếu. Tránh module nhiều tầng và code máy sinh khó giải thích.
+1. Đọc `README.md` → `RULEBOOK.md` → `docs/STATUS_HANDOFF.md` → `docs/REQUIREMENTS.md` → `PROJECT_SPEC.md` → `docs/PLAN.md` → `docs/DELIVERABLES.md`. **Đọc file thật từ GitHub**, không suy luận chỉ từ tên file hoặc thông tin chat.
+2. Xác minh repo, visibility, nhánh, HEAD SHA, trạng thái PR, tree và tình trạng các file/test đang **thực sự tồn tại**.
+3. Xác định phase **R01–R07 / FINAL / P0–P4** trong STATUS_HANDOFF; không tự nhảy phase.
+4. Thông báo ngắn: trạng thái có chứng cứ, nhiệm vụ tiếp theo duy nhất, điều còn bất định, và loại thay đổi được phép làm.
+5. Nếu gặp mâu thuẫn: **yêu cầu thầy có bằng chứng > yêu cầu mới nhất của chủ dự án > RULEBOOK > REQUIREMENTS/PROJECT_SPEC/DELIVERABLES theo đúng phạm vi > PLAN > gợi ý AI cũ**. Ghi vấn đề tại STATUS_HANDOFF, không âm thầm bỏ qua.
 
-## Workflow bắt buộc
-- Lấy **lượt hiện hành** từ `docs/STATUS_HANDOFF.md`, đối chiếu kế hoạch `docs/PLAN.md`. Không lấy P0/P1 nếu nghiên cứu chưa hoàn thành và chưa có lệnh từ user.
-- Làm trên branch; tạo PR; không ghi đè code của AI khác.
-- Ở giai đoạn nghiên cứu: viết **đặc tả test, expected values** nhưng không chạy hoặc tạo app. Sau khi được phép coding: viết test cho logic số, dùng dataset nhỏ có đáp án đúng.
-- Cập nhật `docs/STATUS_HANDOFF.md` với commit/PR, changed files, test command, kết quả thật và next step.
-- Những yêu cầu có bằng chứng nằm trong `docs/REQUIREMENTS.md`: link GitHub, link YouTube, báo cáo PDF **15–20 trang, <=100 MB**, tự đánh giá 5 tiêu chí. Deadline, thời lượng video, PPT và chi tiết khác không thấy trên ảnh thì ghi `UNKNOWN`.
+## 1. CỔNG QUYỀN — quan trọng hơn mọi đề xuất
 
-## Hệ ưu tiên
-Đề bài chính thức của thầy (đã kiểm chứng) > yêu cầu mới nhất của user > RULEBOOK > PROJECT_SPEC > PLAN > gợi ý từ AI trước đó.
+**CURRENT: R07 nghiên cứu đã xong; FINAL CROSS-QA là task kế tiếp.** Trong FINAL chỉ đọc, rà soát, sửa docs và đối chiếu; **không tạo `app.py`, `analysis.py`, `charts.py`, dataset thật, dependencies, source test, PDF hoặc YouTube**.
 
-## Không được
-Không sửa repo Data-Forge gốc; không xây AI/ML model hay architecture pipeline/cache; không dùng Altair/Plotly thay Matplotlib; không tự nhận ứng dụng/test/video đã hoàn tất; không thêm tính năng để gây ấn tượng nhưng không thuộc đề bài.
+**Chỉ được bắt đầu P0 khi BOTH:**
+- FINAL hoàn tất, ghi `READY FOR IMPLEMENTATION` trong STATUS_HANDOFF kèm checklist/commit có căn cứ; **và**
+- chủ dự án **chủ động giao lệnh bắt đầu viết ứng dụng** sau FINAL.
 
-## Cổng quyền bắt đầu code
-**KHÔNG CODE cho đến khi cả R01–R07 và FINAL kiểm định hoàn thành, kế hoạch được đánh dấu READY FOR IMPLEMENTATION, và user chủ động giao bắt đầu.** Một AI đến repo mà không thấy lệnh mới chỉ được tiếp tục lượt research hiện hành hoặc review chứng cứ. Không tự merge PR, đổi repo private thành public hay đánh dấu sản phẩm đã nộp.
+Nếu chưa thỏa cả hai: chỉ được làm research/QA/documentation, không tự giải thích việc "AI mới tiếp quản" là lệnh coding.
+
+## 2. Quy trình một nhiệm vụ sau khi được phép
+
+1. Lấy **một task nhỏ** từ `docs/PLAN.md`, kiểm các phụ thuộc đã đạt; chỉ sửa file trong phạm vi task, không tự mở scope.
+2. Thực hiện; chạy command/test thích hợp; ghi **lệnh, Python/packages thực tế, kết quả và SHA**. Không coi test *được mô tả* là test *đã chạy*.
+3. Đối chiếu `PROJECT_SPEC.md` (oracle OR/IO/UI) và `docs/DELIVERABLES.md` (EV evidence). Sửa đúng lỗi thay vì thêm tầng trừu tượng.
+4. Commit/PR thay đổi trên branch riêng; không force push, không tự merge, không xóa lịch sử, không sửa repo Data-Forge gốc.
+5. Cập nhật `docs/STATUS_HANDOFF.md`: task DONE/PARTIAL/BLOCKED, file đã sửa, command/test output, commit/PR, điều chưa đạt, **next single task**.
+6. Nếu code đổi sau khi thu minh chứng, rà lại EV/PDF/video có bị lệch phiên bản hay không.
+
+## 3. Giới hạn code và minh chứng
+
+- Ứng dụng **chỉ ba file Python chính**: `app.py` (UI), `analysis.py` (data/stats), `charts.py` (figures). Chỉ một dataset CSV tổng hợp. Không class/service/repository/cache/session-state tùy biến/ML/database.
+- NumPy, Pandas, Matplotlib phải **được thực thi thật**, Streamlit chỉ là giao diện. Test dùng pytest; không cần browser automation.
+- Tính toán: xem PROJECT_SPEC về `ddof=0`, NA/infinity, group, duplicate, histogram, scatter. Không bịa kết quả hoặc tuyên bố QA pass khi chưa chạy.
+- Sản phẩm nộp bắt buộc: mã nguồn người chấm truy cập được, video YouTube, PDF 15–20 trang ≤100 MB, đoạn tự chấm theo 3+2+2+1+2. Không sinh PDF từ chính ứng dụng.
+- Không lộ thông tin cá nhân/token trong GitHub, video hoặc screenshots. Chủ dự án quyết định public/private và nộp bài.
+
+## 4. Prompt kích hoạt coding sau FINAL (TEMPLATE — KHÔNG phải lệnh hiện tại)
+
+> Tiếp tục DataForge Mini từ repo trên. Xác minh FINAL = READY FOR IMPLEMENTATION và lệnh user cho phép coding đã được đưa ra. Đọc AGENTS, RULEBOOK, STATUS_HANDOFF, REQUIREMENTS, PROJECT_SPEC, PLAN, DELIVERABLES và source hiện có. Chỉ thực hiện task **[mã task trong PLAN]** theo đúng file scope, acceptance, unit tests và handoff. Không thêm tính năng hay framework ngoài phạm vi. Nếu thiếu gate, chỉ báo blocker, không code.
+
+**Cách kiểm tra tiến độ:** mở STATUS_HANDOFF và PR; task chưa có file/test/commit thì chưa thể nói "đã hoàn thành".

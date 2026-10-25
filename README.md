@@ -1,36 +1,36 @@
 # DataForge Mini
 
-**Tên đề tài:** Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python.
+**Đề tài:** Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python.  
+**Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
+**Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
 
-Project độc lập phục vụ bài tập **Chương 5.5 – NumPy, Pandas, Matplotlib**. Tiêu chí cao nhất: **tối giản, đúng trọng tâm, chạy được, và người học giải thích được toàn bộ cấu trúc cùng code**.
+**Trạng thái:** R01–R07 đã hoàn thành **nghiên cứu/tài liệu**; **FINAL CROSS-QA CHƯA THỰC HIỆN**. Chưa có ứng dụng Python, file CSV mẫu, test thực thi, PDF hay video. **Không bắt đầu viết code** cho đến khi FINAL cho phép READY FOR IMPLEMENTATION **và** chủ dự án giao lệnh triển khai.
 
-**Trạng thái:** R01–R06 đã hoàn thành nghiên cứu trên branch PR #1; R07 là bước tiếp theo. **Chưa triển khai ứng dụng**. Mọi file code trong cây dưới đây chỉ là kế hoạch.
+## Bắt đầu / AI tiếp quản
 
-## Hướng dẫn cho AI mới
-Đọc theo thứ tự: [AGENTS.md](AGENTS.md) → [RULEBOOK.md](RULEBOOK.md) → [PROJECT_SPEC.md](PROJECT_SPEC.md) → [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) → [docs/PLAN.md](docs/PLAN.md) → [docs/DELIVERABLES.md](docs/DELIVERABLES.md) → [docs/STATUS_HANDOFF.md](docs/STATUS_HANDOFF.md). Sau đó đọc code/test thực tế (nếu có) và tiếp tục task đầu tiên chưa hoàn thành. Không được nhận định tính năng đã xong chỉ vì có trong tài liệu.
+1. [AGENTS.md](AGENTS.md) — làm gì ngay khi tiếp quản, cổng quyền.
+2. [RULEBOOK.md](RULEBOOK.md) — quy tắc không được vi phạm.
+3. [docs/STATUS_HANDOFF.md](docs/STATUS_HANDOFF.md) — trạng thái mới nhất, nhiệm vụ duy nhất tiếp theo.
+4. [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) — yêu cầu giảng viên có bằng chứng.
+5. [PROJECT_SPEC.md](PROJECT_SPEC.md) — MVP, dữ liệu, hợp đồng hàm, oracle và test.
+6. [docs/PLAN.md](docs/PLAN.md) — roadmap và các task giao lập trình sau khi được phép.
+7. [docs/DELIVERABLES.md](docs/DELIVERABLES.md) — báo cáo PDF, video, tự chấm, minh chứng.
 
-## Cấu trúc code dự kiến (không phải file đã có)
-```text
-dataforge-mini/
-├── app.py               # Streamlit UI: tối thiểu, dễ thuyết trình
-├── analysis.py          # pandas + numpy: load, clean, statistics
-├── charts.py            # matplotlib plots
-├── sample_data.csv      # dataset học tập tổng hợp
-├── requirements.txt
-├── tests/
-│   └── test_analysis.py
-├── README.md
-├── AGENTS.md
-├── RULEBOOK.md
-├── PROJECT_SPEC.md
-└── docs/
-    ├── PLAN.md
-    ├── REQUIREMENTS.md
-    ├── DELIVERABLES.md  # Chỉ kế hoạch nộp PDF/YouTube/tự chấm
-    └── STATUS_HANDOFF.md
-```
+**Nguồn sự thật:** đọc đúng nhánh/PR hiện hành, không lấy `main` đang chưa merge làm bản đầy đủ. Lịch sử các phiên R01–R06 có trong git commits của PR #1. Không được báo code/test đã xong khi mới chỉ có tài liệu.
 
-Không thêm module/class/layer chỉ để "đẹp kiến trúc". Chỉ tách file khi giúp code dễ giải thích hơn.
+## Cấu trúc code tối thiểu được lên kế hoạch — CHƯA TẠO
 
-## Mối quan hệ với DataForge gốc
-Repo [Data-Forge](https://github.com/rikkurea-boop/Data-Forge) là training-data factory riêng; **không sửa, không import, không bắt DataForge Mini phụ thuộc vào nó**. Dự án này là bài tập độc lập.
+~~~text
+app.py                 # UI Streamlit một trang
+analysis.py            # Pandas + NumPy
+charts.py              # Matplotlib Figure
+sample_data.csv        # một bộ dữ liệu tổng hợp
+requirements.txt       # phiên bản chỉ chốt sau smoke test
+tests/test_analysis.py # test tập trung, cho phép tách charts khi có lý do
+~~~
+
+Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm `src/`, `services/`, CI/Docker, database hoặc các hệ thống phức tạp.**
+
+## DataForge gốc
+
+[Data-Forge](https://github.com/rikkurea-boop/Data-Forge) là dự án xử lý dữ liệu huấn luyện AI độc lập. **Không import, sửa hoặc phụ thuộc vào Data-Forge gốc** để hoàn thành bài tập này.
