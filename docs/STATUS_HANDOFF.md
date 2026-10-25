@@ -1,27 +1,42 @@
-# Status & AI Handoff – 2026-10-25
+# Status & AI Handoff — 2026-10-25, Research 01
 
-## Trạng thái đã xác minh
-- Repo mới khởi tạo với một README, chưa có code ứng dụng trước đợt thiết lập này.
-- Branch tài liệu: `docs/project-charter-ai-handoff`.
-- Đã soạn charter, AI rules, MVP, yêu cầu và kế hoạch.
-- **Không có kết quả app runtime hoặc pytest.** Không ghi là project đã hoàn thành.
-- Rubric / deadline / artifact yêu cầu chính thức: **chưa xác minh**.
+## Repo và luồng làm việc
+- Repo: https://github.com/rikkurea-boop/dataforge-mini (private).
+- main hiện chỉ có README khởi tạo.
+- Tài liệu gốc thuộc nhánh docs/project-charter-ai-handoff, PR #1: https://github.com/rikkurea-boop/dataforge-mini/pull/1.
+- Lượt R01 cập nhật tài liệu **trên cùng branch/PR #1**, không merge vào main.
+- **Chưa tạo source app, tests, dataset hay dependency file. Chưa chạy ứng dụng/pytest.**
 
-## Quyết định mới nhất từ user
-Mục tiêu số một là **tối giản và đúng trọng tâm bài tập**, không mở rộng tính năng; user phải trình bày và giải thích toàn bộ cấu trúc/code.
+## Progress
+- **R01: HOÀN THÀNH nghiên cứu, chờ owner nghiệm thu nếu cần.**
+- R02–R07: NOT STARTED.
+- FINAL review: NOT STARTED.
+- Implementation P0–P4: **BLOCKED — user chưa cho phép; không tự triển khai.**
 
-## Nhiệm vụ tiếp theo
-1. Kiểm tra và đối chiếu đề chính thức khi có tài liệu.
-2. Xây ứng dụng theo P0 → P4 của `docs/PLAN.md`; không dựng framework lớn.
-3. Bắt đầu P0: `requirements.txt`, `sample_data.csv`, giữ dependency tối thiểu; rồi P1 xử lý Pandas/NumPy.
+## Research 01 — phát hiện đã đối chiếu nguồn gốc
+Hai ảnh form người dùng gửi 2026-10-25 xác minh:
+- Dự án cá nhân Chương 5, chủ đề 5.5 "Phân tích dữ liệu cơ bản với NumPy, Pandas và Matplotlib".
+- Bắt buộc link GitHub, link YouTube demo, file PDF 15–20 trang <=100MB, đoạn tự nhận xét và tự chấm theo 3+2+2+1+2.
+- Người nộp kiểm tra thông tin cá nhân.
+- Deadline, PPT, thời lượng video chưa thấy trong vùng ảnh; không khẳng định không có.
+- Repo hiện private: phải xác minh quyền xem lúc nộp.
+- YouTube private hạn chế chia sẻ, nên cần phương án video có thể mở được bằng link.
 
-## Mẫu cập nhật sau mỗi phiên
-- Ngày / AI / branch / base SHA / head SHA / PR:
-- Đã sửa các file:
-- Kết quả thực sự chạy: lệnh, pass/fail, output:
-- Các phát biểu được chứng minh / chưa chứng minh:
-- Khó khăn và vấn đề còn mở:
-- Việc kế tiếp (một task cụ thể):
-- Đã thay đổi quyết định? Vì sao, ai duyệt?
+**Lỗi tài liệu cũ đã sửa:** đánh dấu video/PDF "nếu thầy yêu cầu" hoặc "UNKNOWN" — giờ xác định là BẮT BUỘC. Đồng thời sửa kế hoạch để AI không tự bắt đầu P0/P1 khi owner đang yêu cầu research 7+1.
 
-**Nguyên tắc:** không tuyên bố DONE nếu thiếu code, test và demo xác minh.
+## Quyết định/ranh giới
+- Đề tài: "Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python".
+- Tối giản và giải thích được toàn bộ code; không tích hợp Data-Forge gốc.
+- **Gợi ý** Streamlit/CSV/3 biểu đồ chưa được coi là yêu cầu chính thức, sẽ được R02/R03 kiểm tra.
+- Không tự xuất bản repo public hoặc thay visibility, không tự viết app/video/PDF.
+
+## Việc tiếp theo duy nhất
+**R02 — Nghiên cứu MVP và dataset.** Đọc docs/REQUIREMENTS.md, đánh giá kỹ 5 tiêu chí tự chấm và lựa chọn đúng mức độ chức năng tối thiểu, dataset minh chứng, luồng demo. Kết quả R02 cập nhật PROJECT_SPEC.md/PLAN.md và handoff; không code.
+
+## Định dạng handoff về sau
+- Lượt, ngày, branch/PR, commit SHA, changed files:
+- Nguồn đã xác minh / suy luận / đề xuất:
+- Checklist nghiệm thu của lượt:
+- Không làm / chưa làm:
+- Nhiệm vụ kế tiếp duy nhất:
+- Có cần owner quyết định ngoài phạm vi không:
