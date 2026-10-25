@@ -54,9 +54,9 @@
 | ID | Thiết kế | Tại sao | Nơi dùng |
 |---|---|---|---|
 | **D01** | Streamlit một trang, file CSV/10–12 record, không backend | Ít code UI, trình bày dễ | PROJECT_SPEC M01–M07 |
-| **D02** | Pandas dedup→median fill, NumPy stats ddof0, Matplotlib hist/bar/scatter | Ba thư viện dùng đúng trọng tâm, có expected values | PROJECT_SPEC `2–`5 |
+| **D02** | Pandas dedup→median fill, NumPy stats ddof0, Matplotlib hist/bar/scatter | Ba thư viện dùng đúng trọng tâm, có expected values | PROJECT_SPEC §§2–5 |
 | **D03** | Ba file chính `app.py`/`analysis.py`/`charts.py` | Tách UI/dữ liệu/hình, không overengineering | PLAN T03–T08 |
-| **D04** | Target Python3.13, cap CSV upload 2 MiB, QA 15 OR+10 IO+6 UI | Lặp lại được và không khó test | PROJECT_SPEC `5–`6 |
+| **D04** | Target Python3.13, cap CSV upload 2 MiB, QA 15 OR+10 IO+6 UI | Lặp lại được và không khó test | PROJECT_SPEC §5–`6 |
 | **D05** | Report đích 18 trang, YouTube demo khoảng 7 phút | Giúp quy trình minh chứng gọn | DELIVERABLES |
 
 **Vấn đề thường nhầm:** thầy yêu cầu **báo cáo PDF**, **không có căn cứ thầy yêu cầu ứng dụng tự xuất PDF**. PDF generator trong app là OUT OF SCOPE.

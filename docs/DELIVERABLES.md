@@ -139,8 +139,8 @@ Nguồn: https://support.google.com/youtube/answer/157177 ; https://support.goog
 
 | Claim | Oracle & Test | PDF | Video |
 |---|---|---|---|
-| Raw 12/2 duplicates/2 missing | PROJECT_SPEC `5; OR-01 | 05–06 | 01:05–01:45 |
-| Clean 10, median4/8, raw không mutate | PROJECT_SPEC `11; OR-02/03/12/15 | 07–08 | 01:45–02:35 |
+| Raw 12/2 duplicates/2 missing | PROJECT_SPEC §5; OR-01 | 05–06 | 01:05–01:45 |
+| Clean 10, median4/8, raw không mutate | PROJECT_SPEC §11; OR-02/03/12/15 | 07–08 | 01:45–02:35 |
 | Mean7.8, population std≈1.249 | OR-04/05 | 09–10 | 02:35–03:25 |
 | Groups A8/B7.6 | OR-06/11 | 10/12 | 02:35–04:35 |
 | Histogram counts, scatter pairs | OR-07/08 | 11/13 | 03:25–04:35 |
