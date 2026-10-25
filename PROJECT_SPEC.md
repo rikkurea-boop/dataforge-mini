@@ -389,24 +389,24 @@ These are documentation references, not evidence that the project is implemented
 From clone root, Python 3.13 available and network available only for install.
 
 Windows PowerShell:
-\`\`\`powershell
+```powershell
 py -3.13 -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe -m pip install pytest
 .venv\Scripts\python.exe -m pip check
 .venv\Scripts\python.exe -m pytest -q
 .venv\Scripts\python.exe -m streamlit run app.py
-\`\`\`
+```
 
 macOS/Linux:
-\`\`\`sh
+```sh
 python3.13 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m pip install pytest
 .venv/bin/python -m pip check
 .venv/bin/python -m pytest -q
 .venv/bin/python -m streamlit run app.py
-\`\`\`
+```
 
 - These are **future commands**, not evidence they have run; `requirements.txt`, tests and source don't exist during R05.
 - Prefer invoking the venv's exact interpreter rather than relying on a shell activation or globally installed `streamlit`/`pytest`. `python -m pytest` and `python -m streamlit` ensure consistent interpreter.
