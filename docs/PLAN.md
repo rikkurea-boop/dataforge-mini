@@ -1,54 +1,74 @@
-# Plan – Research-first, minimal-first
+# PLAN — research-first, minimal-first
 
-**Trạng thái:** Research 01/07. **Không viết code ứng dụng trong giai đoạn này.** Người dùng sẽ kích hoạt từng lượt riêng; kết thúc R07 còn 1 lượt final QA trước khi được phép triển khai.
+**Tiến độ:** R01 và R02 hoàn thành về mặt nghiên cứu; **R03 là lượt tiếp theo**. Đang ở pha CHỈ NGHIÊN CỨU, không được tạo code cho đến R01–R07 + FINAL và owner giao bắt đầu.
 
-## A. Chuẩn bị trước khi code: 7 lượt nghiên cứu + 1 final review
+## A. 7 research sessions + 1 final review
 
-| Lượt | Phạm vi riêng | Đầu ra phải ghi vào repo | Tiêu chí đóng lượt |
-|---|---|---|---|
-| R01 | Đối chiếu biểu mẫu thầy, phân loại yêu cầu/đề xuất/unknown, điểm tự đánh giá | docs/REQUIREMENTS.md, PROJECT_SPEC.md, STATUS_HANDOFF | Form requirements → artifact → evidence/gate truy vết được |
-| R02 | Lựa chọn chức năng MVP tối giản, dataset và luồng demo | PROJECT_SPEC.md + docs/PLAN.md | Chỉ giữ chức năng phục vụ 5.5, dataset có đáp án đối chứng |
-| R03 | Thiết kế kiến trúc/code gọn, UI, API/function contract | PROJECT_SPEC.md + RULEBOOK.md | Sinh viên có thể giải thích toàn bộ file và luồng dữ liệu |
-| R04 | Kiểm định thuật toán, thống kê, NaN, biểu đồ và các giả định toán | PROJECT_SPEC.md + docs/REQUIREMENTS.md | Công thức chính xác, kết quả fixture đối chiếu |
-| R05 | Bộ test, lỗi input, môi trường/cách chạy; phương án demo không lỗi | docs/PLAN.md + RULEBOOK.md | Test cases có input/expected; không khẳng định đã chạy |
-| R06 | Thiết kế báo cáo PDF 15–20 trang, video YouTube, tự đánh giá và bằng chứng | docs/DELIVERABLES.md (chỉ tạo khi bắt đầu R06) | Tất cả mục FORM-CONFIRMED có vị trí/đầu ra minh chứng |
-| R07 | Quy tắc AI handoff, coding scope, prompt/task và chống overengineering | AGENTS.md, RULEBOOK.md, docs/STATUS_HANDOFF.md | AI mới đọc repo là biết bắt đầu từ đâu và không làm gì |
-| FINAL | Rà soát chéo 7 lượt, loại trùng, khóa specification | Các file trên | Đánh dấu READY FOR IMPLEMENTATION chỉ khi đủ chứng cứ |
-
-**Sau mỗi lượt:** 1 commit hoặc PR có bằng chứng, cập nhật STATUS_HANDOFF; không chuyển bước tiếp theo chỉ vì có draft. Không thêm hàng loạt folder nghiên cứu nếu có thể hợp nhất vào file hiện có.
-
-## B. Quy trình triển khai — ĐÃ LÊN KẾ HOẠCH, CHƯA ĐƯỢC KÍCH HOẠT
-
-| Bước | Dự kiến | Bằng chứng hoàn tất cần có |
+| Lượt | Phạm vi, sản phẩm | Trạng thái |
 |---|---|---|
-| P0 | Khi user cho phép: xác minh đề, khóa MVP, venv, requirements.txt, sample_data.csv | Repo files tồn tại, dữ liệu mẫu có đáp án |
-| P1 | analysis.py: CSV, profile, missing/duplicates, basic stats Pandas/NumPy | Test đối chứng + edge cases pass |
-| P2 | charts.py: Matplotlib plots | Figures hợp lệ, labels đầy đủ, chart data chính xác |
-| P3 | app.py: Streamlit UI, preview, thao tác clean/stats/chart/download | Demo end-to-end chạy được |
-| P4 | QA cuối, README, video YouTube, PDF 15–20 trang, tự đánh giá, nộp form | Gate G-APP/G-CODE/G-VALID/G-REPO/G-VIDEO/G-PDF/G-SELF/G-SUBMIT đạt |
+| R01 | Đối chiếu form thầy, requirement IDs F01–F06, gates, điểm tự đánh giá → docs/REQUIREMENTS.md | DONE |
+| R02 | Khóa **MVP design baseline và dataset chính 12→10**, sơ đồ use case, so sánh công nghệ → PROJECT_SPEC.md | DONE |
+| R03 | Thiết kế hàm/API, số file code tối thiểu, giao diện Streamlit 1 trang, cơ chế không cần state phức tạp | NEXT |
+| R04 | Kiểm tra công thức, thống kê, thao tác cleaning và 3 chart; NaN/std (ddof), tránh kết luận nhân quả | NOT STARTED |
+| R05 | Soạn test cases, kỹ thuật chạy offline, Python/package versions, lỗi file và QA checklist | NOT STARTED |
+| R06 | Outline PDF 15–20 trang, storyboard video YouTube, evidence và mẫu tự chấm 5 tiêu chí | NOT STARTED |
+| R07 | Hoàn thiện rules/handoff, coding tasks & prompt cho AI sau này; tránh trùng tài liệu | NOT STARTED |
+| FINAL | Đối chiếu chéo mọi tài liệu; khóa baseline trước coding | NOT STARTED |
 
-Các chi tiết P0–P4 là dự kiến; khóa lại sau R02–R07. **Không được viện P0 là task tiếp theo để tự bắt đầu code ở giai đoạn research.**
+Không cần 7 file research riêng: kết quả mỗi lượt được hòa vào **PROJECT_SPEC.md**, **docs/REQUIREMENTS.md**, **docs/PLAN.md**, **RULEBOOK.md**, **AGENTS.md** và **docs/STATUS_HANDOFF.md**. Chỉ tạo \`docs/DELIVERABLES.md\` tại R06.
 
-## C. Định hướng dữ liệu đối chứng (đề xuất, R02 sẽ khóa)
-```csv
-ten,lop,gio_hoc,diem
-An,A,4,8
-Binh,B,2,6
-Chi,A,6,9
-Dung,B,3,7
-Ha,A,7,10
-```
-- mean(diem) = 8.0; nhóm A = 9.0; B = 6.5; số điểm >=8 là 3; mean(gio_hoc) = 4.4.
-- Fixture lỗi có dòng trùng/NaN **riêng**; không được thay đổi đáp án chuẩn.
+## B. R02: danh sách chức năng / thứ tự demo đã lựa chọn
 
-## D. Chống phát sinh ngoài phạm vi
-Ưu tiên CSV → profile → clean → basic stats → Matplotlib → CSV export. Không mở rộng Excel, database, AI, advanced statistical models, nhiều chart engine, PDF export từ app, auth/cloud. Các quyết định về số biểu đồ/UI còn thuộc R02–R03, không được mô tả là yêu cầu của thầy.
+**MVP CORE:** 
+1. Upload CSV hoặc tự nạp \`sample_data.csv\`.
+2. Hiển thị 12 dòng, 4 cột, 2 duplicate, 2 missing; xem vài dòng đầu.
+3. Một công tắc Clean: exact drop duplicates → numeric median fill, không sửa bảng raw; xem so sánh 12→10, NaN 2→0.
+4. Numeric mean/median/std/min/max; groupby \`lop\`–\`diem\`; NumPy có tính toán thực.
+5. Matplotlib: histogram \`diem\`, bar \`lop\`–điểm TB, scatter \`gio_hoc\`–\`diem\`.
+6. Download CSV đang xem.
 
-## E. Checklist nộp bài (cho giai đoạn cuối, chưa hoàn thành)
-- [ ] Đã có repo code thực tế, link cho người chấm mở được
-- [ ] Video YouTube xem được từ tài khoản khác/chưa đăng nhập, nội dung đúng sản phẩm
-- [ ] PDF báo cáo đúng 15–20 trang, đúng định dạng, <=100 MB
-- [ ] Có đoạn nhận xét/ưu nhược/tự chấm 5 mục theo 3+2+2+1+2
-- [ ] Tự điền và xác minh thông tin cá nhân trong form
-- [ ] Code/test/biểu đồ/báo cáo/video nhất quán
-- [ ] Mọi thông tin UNKNOWN được đối chiếu khi có nguồn mới
+**Ngoài phạm vi:** Excel, biểu đồ nâng cao/custom theme, phân trang, login, database, machine learning, Data-Forge gốc, Undo history, PDF generator **trong app**. Báo cáo **PDF bên ngoài app** vẫn bắt buộc khi nộp.
+
+**Không quyết trước R03:** số lượng file Python chính xác, chữ ký hàm, cách tổ chức st.session_state và cách render figure. Chọn hướng một trang nhưng R03 mới chốt contract.
+
+## C. Dataset (đặc tả duy nhất; chưa tạo file)
+
+Dữ liệu CSV giả lập 12 hàng / 4 cột nằm nguyên văn tại **PROJECT_SPEC.md §5**. Chỉ tạo một file \`sample_data.csv\` ở P0; không phân tách clean/dirty CSV.
+
+**Oracle R02 (tự tính từ specification, chưa test implementation):**
+
+| Chỉ số | Raw | Sau clean |
+|---|---:|---:|
+| Row count | 12 | 10 |
+| Exact duplicates | 2 | 0 |
+| Missing cells | 2 | 0 |
+| Mean điểm | 85/11 ≈ 7.7272727 | 78/10 = 7.8 |
+| Median fill giờ học | — | 4 |
+| Median fill điểm | — | 8 |
+| Mean điểm A | — | 8.0 |
+| Mean điểm B | — | 7.6 |
+| Số điểm >=8 | — | 6 |
+
+Ứng dụng/hàm tính dùng dataset này làm nguồn tham chiếu duy nhất khi quay video/báo cáo; 5-row fixture cũ chỉ dùng inline test nếu cần. R04/R05 tiếp tục độc lập xác minh số liệu, không sao chép ngầm các oracle chưa được kiểm tra.
+
+## D. Giai đoạn implementation — chưa kích hoạt
+
+| Bước | Việc | Gate |
+|---|---|---|
+| P0 | Khi được giao: khóa spec, requirements, tạo CSV giả lập từ PROJECT_SPEC và môi trường | Dữ liệu chuẩn có nguồn, chạy import module |
+| P1 | Code logic read/clean/stats Pandas + NumPy | Test oracle + error cases |
+| P2 | Code 3 Matplotlib figures | Chart theo đúng nguồn/nhãn |
+| P3 | Streamlit một trang, upload, preview/toggle, charts, export | Full demo end-to-end |
+| P4 | Test, README thực thi, quay YouTube, PDF 15–20 trang <=100MB, tự chấm, kiểm quyền xem links | Gates G-APP..G-SUBMIT |
+
+## E. Tiêu chí nghiệm thu R02
+- [x] Rà soát tất cả file và trạng thái repo/PR.
+- [x] Đối chiếu ngược với thang tự đánh giá của thầy.
+- [x] So sánh ít nhất bốn cách triển khai và lý do chọn UI 1 trang.
+- [x] Giới hạn rõ CORE/OUT và tính năng báo cáo trong app ≠ PDF nộp.
+- [x] Dataset 4 cột, trường hợp missing/duplicate, các phép tính oracle số học cụ thể.
+- [x] Nêu rõ rủi ro median fill, all-NaN, st rerun và khả năng trình bày.
+- [x] Ghi source docs chính thức, không bịa yêu cầu hay kết quả chạy code.
+- [x] Ghi R03 là nhiệm vụ kế tiếp duy nhất.
+
+**Gate để thông báo project đã xong sẽ hoàn toàn khác với gate nghiên cứu.** Không đánh dấu checklist implementation là pass ở lượt R02.

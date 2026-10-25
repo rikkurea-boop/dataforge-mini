@@ -93,3 +93,25 @@ Chưa có kết quả thực thi, do đó **chưa thể điền điểm tự ch�
 - **Chỉ đề xuất, chưa khóa:** luồng MVP cụ thể, UI, dataset, số biểu đồ và kiến trúc.
 - **Không được triển khai trong lượt 01:** tạo app, cài package, viết source, tạo slide/PDF/video.
 - **Lượt tiếp theo:** Research 02 — lựa chọn MVP tối thiểu + dataset phù hợp thang tự đánh giá, khóa tính năng bắt buộc/nên có/loại bỏ; dựa trên các ID F/U/D ở trên.
+
+
+---
+
+## 9. Research 02 — Quyết định thiết kế và bằng chứng kỹ thuật (2026-10-25)
+
+**Không có yêu cầu mới của thầy trong R02.** Các yêu cầu F01–F06 phía trên không đổi. R02 chỉ thu hẹp phương án D01/D02: một trang Streamlit + một CSV giả lập 12 hàng (2 trùng, 2 thiếu) + Pandas clean/profile + NumPy numeric stats + Matplotlib histogram/bar/scatter + CSV download. Xem **PROJECT_SPEC.md §§3–7** để có đặc tả nguồn sự thật.
+
+| Phát biểu | Trạng thái | Nguồn / bằng chứng |
+|---|---|---|
+| Pandas có đọc CSV file-like | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html |
+| \`drop_duplicates(keep="first")\` giữ bản đầu tiên | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html |
+| \`fillna\` có thể điền scalar vào cột thiếu; có lựa chọn không in-place | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html |
+| Pandas GroupBy mean bỏ giá trị thiếu | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/groupby.html |
+| NumPy nanmean/nanmedian xử lý NaN; all-NaN cần kiểm soát | DOC-VERIFIED | https://numpy.org/doc/stable/reference/generated/numpy.nanmean.html ; https://numpy.org/doc/stable/reference/generated/numpy.nanmedian.html |
+| Matplotlib hist tính bin và vẽ phân bố | DOC-VERIFIED | https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html |
+| Streamlit hỗ trợ uploader, Matplotlib Figure, download CSV; rerun theo tương tác | DOC-VERIFIED | https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader ; https://docs.streamlit.io/develop/api-reference/charts/st.pyplot ; https://docs.streamlit.io/develop/api-reference/widgets/st.download_button ; https://docs.streamlit.io/develop/concepts/architecture/session-state |
+| Một trang Streamlit là phương án tối ưu cho DataForge Mini | DESIGN EVALUATION | So sánh notebook/CLI/Tkinter/Flask/Streamlit trong PROJECT_SPEC §6; không phải yêu cầu bắt buộc |
+| R02 tính ra 12→10, median 4/8 và các mean | SPEC-ORACLE; NOT APP-TESTED | 12 dòng CSV in trong PROJECT_SPEC §5; không có code thực thi |
+| Cần đúng 3 biểu đồ, đúng cột sinh viên | DESIGN PROPOSED | Được chọn để demo đơn giản, không nằm trong form của thầy |
+
+**Lưu ý R03–R05:** khóa interfaces và test tương thích theo version thực tế; không lấy API docs của phiên bản mới làm bằng chứng mọi version đều có tham số tương ứng.
