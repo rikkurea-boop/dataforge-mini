@@ -6,6 +6,7 @@
 - Repo: https://github.com/rikkurea-boop/dataforge-mini (**private**).
 - Nguồn tài liệu: branch `docs/project-charter-ai-handoff`, PR #1 https://github.com/rikkurea-boop/dataforge-mini/pull/1 (**open, chưa merge** tại thời điểm R07).
 - `main` lúc bắt đầu R07 vẫn chỉ có README ban đầu. PR là nơi chứa toàn bộ tài liệu.
+- **Hạn chế tiếp quản:** URL repo nhánh mặc định có thể không hiển thị tài liệu khi PR chưa merge. Cho AI mới URL nhánh/PR; FINAL xem xét đề xuất hợp nhất vào `main`, **không tự merge khi chưa có chấp thuận của chủ dự án**.
 - R07: chuẩn hóa `README.md`, `AGENTS.md`, `RULEBOOK.md`, `PROJECT_SPEC.md`, `docs/REQUIREMENTS.md`, `docs/PLAN.md`, `docs/STATUS_HANDOFF.md`; giữ `docs/DELIVERABLES.md` làm nguồn kế hoạch nộp. Không đổi Data-Forge gốc.
 - HEAD SHA chính xác: kiểm tra trực tiếp PR trước khi làm, không tái sử dụng SHA ghi trong chat.
 
