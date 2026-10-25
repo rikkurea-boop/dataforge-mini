@@ -1,6 +1,6 @@
 # PLAN — research-first, minimal-first
 
-**Tiến độ:** R01–R03 hoàn thành về mặt nghiên cứu; **R04 là lượt tiếp theo**. Đang ở pha CHỈ NGHIÊN CỨU, không được tạo code cho đến R01–R07 + FINAL và owner giao bắt đầu.
+**Tiến độ:** R01–R04 hoàn thành về mặt nghiên cứu; **R05 là lượt tiếp theo**. Đang ở pha CHỈ NGHIÊN CỨU, không được tạo code cho đến R01–R07 + FINAL và owner giao bắt đầu.
 
 ## A. 7 research sessions + 1 final review
 
@@ -9,8 +9,8 @@
 | R01 | Đối chiếu form thầy, requirement IDs F01–F06, gates, điểm tự đánh giá → docs/REQUIREMENTS.md | DONE |
 | R02 | Khóa **MVP design baseline và dataset chính 12→10**, sơ đồ use case, so sánh công nghệ → PROJECT_SPEC.md | DONE |
 | R03 | Thiết kế **3 file Python**, hợp đồng 5 hàm analysis + 3 chart, một trang Streamlit rerun không custom state, kiến trúc một chiều | DONE |
-| R04 | Kiểm tra công thức, thống kê, thao tác cleaning và 3 chart; NaN/std (ddof), tránh kết luận nhân quả | NEXT |
-| R05 | Soạn test cases, kỹ thuật chạy offline, Python/package versions, lỗi file và QA checklist | NOT STARTED |
+| R04 | Độc lập xác minh CSV & oracle, ddof0, NA/inf, new duplicates after fill, histogram5, bar/scatter, OR-01..15 | DONE |
+| R05 | Thiết kế tests OR-01..15, cách chạy offline, versions & lỗi file | NEXT |
 | R06 | Outline PDF 15–20 trang, storyboard video YouTube, evidence và mẫu tự chấm 5 tiêu chí | NOT STARTED |
 | R07 | Hoàn thiện rules/handoff, coding tasks & prompt cho AI sau này; tránh trùng tài liệu | NOT STARTED |
 | FINAL | Đối chiếu chéo mọi tài liệu; khóa baseline trước coding | NOT STARTED |
@@ -82,3 +82,14 @@ Dữ liệu CSV giả lập 12 hàng / 4 cột nằm nguyên văn tại **PROJEC
 - [x] Chọn Matplotlib Figure tường minh thay global pyplot; phân loại các lựa chọn chưa xác minh.
 - [x] Dẫn tài liệu chính thức, **không có implementation/tests**.
 - [x] Ghi bước kế tiếp duy nhất: R04 – toán, NaN, statistics, correctness.
+
+
+## H. R04 verified mathematical baseline
+- [x] Recalculate canonical 12→10 dataset, raw/clean stats and groups.
+- [x] Choose population std ddof=0 = sqrt(1.56), sample std comparison only.
+- [x] Define numeric all-NA, one valid value, non-finite infinity policy.
+- [x] Document group missing names, generated duplicates after median fill and non-idempotence.
+- [x] Specify histogram five bins, group means bar axis baseline zero, paired scatter semantics.
+- [x] Deliver oracle cases **OR-01 through OR-15** in PROJECT_SPEC §11.
+- [x] Record independent temporary numerical validation but **no app tests/code**.
+- [x] Next only **R05 QA / testing / versions**.

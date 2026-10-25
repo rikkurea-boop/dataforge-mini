@@ -1,6 +1,6 @@
 # PROJECT SPEC — DataForge Mini, MVP research baseline (R02)
 
-**Trạng thái:** Research 03/07 hoàn thành; **MVP + ARCHITECTURE DESIGN BASELINE**, chưa phải code/final approval. R03 đã khóa sơ đồ module/hợp đồng hàm; R04 kiểm định toán; R05 test; R06 đồ án nộp bài; R07 handoff; FINAL mới có thể đạt READY FOR IMPLEMENTATION.
+**Trạng thái:** Research 04/07 hoàn thành; **MVP + ARCHITECTURE + MATHEMATICAL DESIGN BASELINE**, chưa phải code/final approval. R03 đã khóa sơ đồ module/hợp đồng hàm; R04 đã kiểm định toán; R05 test; R06 đồ án nộp bài; R07 handoff; FINAL mới có thể đạt READY FOR IMPLEMENTATION.
 
 ## 1. Thông tin khóa từ chủ dự án và giảng viên
 
@@ -85,7 +85,7 @@ Cơ sở lựa chọn: 4 cột dễ hiểu, 2 cột số cho scatter, 1 cột nh
 - Không suy ra giờ học gây ra điểm cao; biểu đồ scatter chỉ trực quan hóa mối liên hệ trong dữ liệu minh họa 10 dòng.
 - Dùng `DataFrame.copy()` hoặc cách tương đương để bảo toàn raw input.
 - Không ép điền cột phân loại, không xóa rows bị thiếu nếu ngoài 2 bản ghi trùng. Với CSV tùy chọn có cột numeric toàn NaN: giữ nguyên + cảnh báo; không được tuyên bố đã xóa hết NaN.
-- Thống kê `std` phải ghi rõ **ddof=0 hay ddof=1**, không trộn NumPy/Pandas mặc định; R04 sẽ khóa.
+- Thống kê `std` dùng **độ lệch chuẩn tổng thể, ddof=0**; R04 đã xác minh. Với 0 số hợp lệ: chỉ count=0, các chỉ số khác None; với 1 số hợp lệ std=0.
 
 ## 6. Lựa chọn công nghệ — so sánh R02; kết luận kiến trúc chi tiết tại R03 §10
 
@@ -111,7 +111,7 @@ Phụ thuộc ứng dụng dự kiến: **pandas, numpy, matplotlib, streamlit**
 
 ## 8. Những phần R03–R05 cần xử lý (ghi chú lịch sử nghiên cứu)
 - R03: **DONE** — API/function contracts, chính xác 3 file Python, toggle không custom state, uploaded source + sample fallback; xem §10.
-- R04: ddof chuẩn, tính không thiếu của các cột, xử lý NaN/all-NaN, binned histogram, interpretation; xác minh lại expected values.
+- R04: **DONE** — ddof=0, all-NaN, duplicate sau fill, histogram 5 bins và expected values; xem §11.
 - R05: test cases, environment/versions, file tải UTF-8, lỗi CSV rỗng/cột không hợp lệ, walkthrough fresh clone.
 - R06: PDF nộp bên ngoài app; video phải sử dụng dataset/phiên bản thống nhất.
 - R07/FINAL: chống mở rộng phạm vi và đảm bảo chỉ bắt đầu code khi user giao.
@@ -237,7 +237,7 @@ END; khi upload/checkbox/selectbox thay đổi, Streamlit rerun từ đầu
 **Chi tiết demo:** preview ưu tiên 12 hàng dữ liệu mẫu để thấy duplicate cuối file; với upload tùy ý có thể giới hạn `head(20)`. Dù upload mới, checkbox clean xử lý từ raw CSV được đọc lại; không nối/lưu dữ liệu giữa các nguồn. **CSV download luôn lấy `active_df`, không nhầm raw/cleaned.**
 
 ### 10.6. Ranh giới các lỗi & nghiên cứu sau
-- R04: chọn chính xác `ddof`; all-NaN, categorical NaN, duplicate sau median fill, cách làm tròn; định nghĩa bins, percent? (không thêm nếu không cần).
+- R04: **DONE** — ddof=0, all-NaN, categorical NA, duplicate sau fill, rounding/UI, histogram 5 bins, density=False; xem §11.
 - R05: version Streamlit/Python, file size limit hợp lý, decode/ParserError, CSV vô cột, dtypes lạ, kiểm thử chart, smoke UI.
 - Không hỗ trợ general data cleaning pipeline, dữ liệu lớn, inference/AI, frontend phức tạp, sinh PDF từ app.
 - Không thêm `st.data_editor` cho sửa bảng bằng tay: sẽ phát sinh state, điều kiện kiểm tra và code vượt phạm vi.
@@ -259,3 +259,108 @@ END; khi upload/checkbox/selectbox thay đổi, Streamlit rerun từ đầu
 - https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html — bỏ index khi export.
 
 **Các link xác minh được khả năng kỹ thuật, không xác minh code đang chạy.**
+
+
+---
+
+## 11. RESEARCH 04 — Mathematical correctness and data QA (2026-10-25)
+
+**Scope:** independent arithmetic verification and specification decisions. This is NOT application code, test execution, or a claim that DataForge Mini runs. Verified arithmetic with temporary pandas 2.2.3 / NumPy 2.3.5 outside the repo, cross-checked using exact fractions and documentation. R05 designs tests and versions.
+
+### 11.1. Canonical calculation oracle for dataset in `5
+
+**Order is mandatory:** inspect raw → make a copy → `drop_duplicates(keep="first")` over all columns → take column-wise median among remaining rows → fill only missing numeric cells. Do not re-run deduplication after fill. Keep the original untouched.
+
+| Metric | Raw | Cleaned |
+|---|---:|---:|
+| Rows / columns | 12 / 4 | 10 / 4 |
+| Exact duplicates | 2 | 0 for canonical data |
+| Missing numeric cells | 2 | 0 for canonical data |
+| Valid `diem` observations | 11 | 10 |
+| Score sum | 85 | 78 |
+| Score mean | 85/11 ≈ 7.7272727273 | 78/10 = **7.8** |
+| Score median / min / max | — | 8 / 6 / 10 |
+| Mean hours | — | 4.4 |
+| Group A, n/sum/mean | — | 5 / 40 / **8.0** |
+| Group B, n/sum/mean | — | 5 / 38 / **7.6** |
+| Scores ≥8 | — | 6 / 10 |
+| Scatter valid (hours, score) pairs | 10 | 10 |
+
+- Median fill values (computed **after removing duplicates**): `gio_hoc=4` and `diem=8`; specifically `Minh.gio_hoc=4` and `Ngoc.diem=8`.
+- Exact cleaned grade sequence, original retained order: **8, 6, 9, 7, 10, 8, 7, 8, 6, 9**.
+- Squared deviations from 7.8 sum to **15.6** = 78/5. Population variance is 15.6/10 = **1.56** = 39/25.
+- **Population std** = sqrt(1.56) ≈ **1.24899959968** (`ddof=0`). **Sample std** = sqrt(15.6/9) ≈ **1.31656117721** (`ddof=1`) is only a comparison, NOT UI choice.
+- Frequency grade 6:2; 7:2; 8:3; 9:2; 10:1. Raw complete scatter pairs 10 are NOT the same set of individual rows as the 10 cleaned pairs.
+
+### 11.2. Mandatory statistical conventions
+
+- **Choose population standard deviation (`ddof=0`)** to describe all valid observations in the currently displayed dataset. State the convention in video/PDF and UI.
+- NumPy `np.std` defaults to ddof=0; Pandas `Series.std()` defaults to ddof=1. If implementation uses Pandas for comparison, explicitly pass `ddof=0`. Do not mix defaults.
+- `numeric_stats` should select a valid numeric column with Pandas, discard missing values, and use **real NumPy calculations** for mean, median, min, max, std. Do not round before return, or compare floats with exact equality in tests.
+- **0 valid numeric values:** result `count=0` and `mean/median/min/max/std=None`; UI says insufficient observations. Never display 0/NaN as computed mean or call unguarded NumPy reductions on empty arrays.
+- **1 valid numeric value:** `count=1`, mean=median=min=max=this value, `std(ddof=0)=0`; histogram may render one observation.
+- **n≥2 valid values:** compute statistics over nonmissing finite values; only format decimals when displaying (suggest 2 decimals). Tests use numeric tolerance.
+- **Entire numeric column NaN:** median is undefined; clean leaves NA and UI reports remaining missing cells. No "everything cleaned" guarantee for arbitrary CSV.
+- Numeric ±infinity is **different from missing**. For simplicity MVP declares numeric inputs containing ±∞ unsupported: show a clear error and stop the analysis rather than silently clipping, including infinity in median, or plotting wrong values. NA remains supported for cleaning. R05 decides exact location to implement this input guard.
+
+### 11.3. Cleaning and duplicate subtleties
+
+1. `duplicated` and `drop_duplicates` use *whole-row equality*, not repeated student names or index values; keep the first exact row. Do NOT manually test missingness by `value == np.nan`.
+2. Median must be calculated on 10 deduplicated rows of the canonical fixture. Changing operation order can change the expected result on other inputs.
+3. Do not mutate original `DataFrame`. Every checkbox rerun starts from raw, not previous cleaned table.
+4. **Median imputation can CREATE duplicates**. Counterexample: rows `(X,1), (X,NA), (Y,1)` have 0 exact duplicates originally; median=1, so cleaned rows have duplicate `(X,1)`. After cleaning, report actual duplicate count; do NOT automatically drop again just to claim zero.
+5. Because of #4, `clean_data(clean_data(df))` is **not guaranteed** equal to `clean_data(df)` for arbitrary input. Do not assert general idempotency in tests. Single-run-from-raw behavior is intentional.
+6. Category/text missing values are **left missing**, not filled with mode/zero. GroupBy's default NA key handling excludes them; display that group keys with NA were excluded (rather than pretending they have group names).
+7. For uploaded CSVs containing no numeric columns, display inspection and a message; omit numeric stats and incompatible charts; do not coerce text fields silently.
+
+### 11.4. GroupBy correctness
+
+- `mean_by_group(df, group_col, value_col)` requires a group/category column and a numeric value column. Use Pandas GroupBy mean while excluding NA keys by policy (`dropna=True`).
+- Missing numeric *values* do not count in that group's mean; groups with zero valid values yield NaN, **not 0**. Do not plot such a group as a bar of height zero.
+- If every group label is NA or no valid group mean exists: skip the bar with a clear message.
+- Canonical fixture uses group A mean 40/5=8.0, B 38/5=7.6. Do not present their 0.4 gap as statistically significant or causal.
+
+### 11.5. Matplotlib Figure semantics
+
+**Histogram**: for one numeric Series after dropping missing values, choose `bins=5, density=False`; Y axis "Số quan sát"/"Tần suất", X actual column name. No percentile/normalized density. For cleaned grade values 6–10, five equal bins have edges [6, 6.8, 7.6, 8.4, 9.2, 10] and counts **[2, 2, 3, 2, 1]**, summing to 10. Last bin includes its right endpoint. A histogram groups intervals, not necessarily one bar per unique value. Skip if zero valid values.
+
+**Group bar**: Figure consumes `mean_by_group` Series (no duplicate computations) and plots A=8.0, B=7.6; Y axis "Điểm trung bình" (NOT row count); **Y-axis starts at 0** to avoid visually exaggerated differences. Omit NA means, don't substitute 0.
+
+**Scatter**: Figure consumes columns `x=gio_hoc` / `y=diem` by default; eliminate NA using **one joint two-column dropna**, not two independent dropped series; require distinct numeric columns and at least one complete pair. There are 10 valid pairs in canonical cleaned data (also 10 in raw but rows differ). Titles and axes must label units; overlapped points may exist. No regression line, correlation significance claim or inference of causality.
+
+For any Figure: never draw made-up points for missing observations, and never use a plotted count different from the active DataFrame. R05 will define how to test labels and counts without generating app now.
+
+### 11.6. ORACLE → future R05 test matrix
+
+| ID | Input condition | Expected result |
+|---|---|---|
+| OR-01 | Canonical raw CSV spec | 12x4, 2 duplicates, 2 missing |
+| OR-02 | Clean canonical CSV | 10x4, original unchanged, no remaining missing/duplicate |
+| OR-03 | Individual fill | Minh hours 4, Ngoc grade 8 |
+| OR-04 | Cleaned numeric statistics | count10, min6, max10, median8, mean7.8 |
+| OR-05 | Population std | sqrt(1.56) ≈ 1.24899959968; ddof0 |
+| OR-06 | A/B group means | n5 mean8.0 / n5 mean7.6 |
+| OR-07 | Histogram | bins5, count [2,2,3,2,1], total10 |
+| OR-08 | Scatter | raw10/clean10 paired points; no mismatch of rows |
+| OR-09 | All-NaN numeric column | preserve missing; count0; all other stats None; skip numeric plots |
+| OR-10 | Single numeric observation | population std0; mean equals value |
+| OR-11 | Missing group name / all-NA value group | missing keys excluded; NaN group mean omitted from bar, NOT 0 |
+| OR-12 | Duplicate created by median fill | actual duplicate count reports 1; no second cleanup |
+| OR-13 | Numeric ±inf | unsupported input warning, do not plot/compute |
+| OR-14 | No numeric or incompatible chart columns | skip functions/plot with clear message |
+| OR-15 | Arbitrary clean_data called twice | no **global** idempotency assertion; Streamlit always calls from raw |
+
+**Implementation status:** None of the OR-* are project tests yet. R05 designs the actual test suite, and only implementation may run tests and report pass/fail.
+
+### 11.7. Evidence / official API references
+
+- NumPy std/ddof https://numpy.org/doc/stable/reference/generated/numpy.std.html
+- NumPy nanstd warnings https://numpy.org/doc/stable/reference/generated/numpy.nanstd.html
+- NumPy isfinite https://numpy.org/doc/stable/reference/generated/numpy.isfinite.html
+- Pandas sample std default https://pandas.pydata.org/docs/reference/api/pandas.Series.std.html
+- Pandas duplicate https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html
+- Pandas missing data https://pandas.pydata.org/docs/user_guide/missing_data.html
+- Pandas GroupBy missing key handling https://pandas.pydata.org/docs/user_guide/groupby.html
+- Matplotlib hist bins and density https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html
+
+These are documentation references, not evidence that the project is implemented.

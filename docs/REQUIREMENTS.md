@@ -132,3 +132,23 @@ Chưa có kết quả thực thi, do đó **chưa thể điền điểm tự ch�
 | Streamlit download truyền data bằng bộ nhớ, widget có thể rerun | https://docs.streamlit.io/develop/api-reference/widgets/st.download_button | CSV nhỏ, xuất từ active_df của lần render đang hiển thị |
 
 **Các mốc R03 chỉ là quyết định kiến trúc của người nghiên cứu**, không phải nội dung thầy giao cụ thể. Báo cáo chỉ được nêu "đã phát triển" sau khi P0–P4 triển khai/kiểm tra.
+
+
+---
+
+## 11. Research 04 — Mathematical evidence (2026-10-25)
+
+**Instructor form requirements unchanged.** These are technical design facts and test oracles, not the professor's own rubric.
+
+| Fact / rule | Source | R04 decision |
+|---|---|---|
+| NumPy std default ddof0 | https://numpy.org/doc/stable/reference/generated/numpy.std.html | Population std, n denominator |
+| Pandas Series.std default ddof1 | https://pandas.pydata.org/docs/reference/api/pandas.Series.std.html | Avoid default mismatch; explicitly choose ddof0 |
+| All-NA nanstd returns NaN and warns | https://numpy.org/doc/stable/reference/generated/numpy.nanstd.html | Guard count0 before operations |
+| NA differs from positive/negative infinity | https://numpy.org/doc/stable/reference/generated/numpy.isfinite.html | Permit NA/median fill, reject numeric infinity |
+| Whole-row duplicates keep first | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html | Drop first, then fill |
+| NA scalar equality is unreliable | https://pandas.pydata.org/docs/user_guide/missing_data.html | Detect with Pandas isna |
+| Missing group keys excluded by default | https://pandas.pydata.org/docs/user_guide/groupby.html | Explain exclusion, do not treat missing as zero |
+| Histogram bins/density/last edge | https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html | 5 bins, frequency, last right edge included |
+
+**Independent computational audit (temporary environment, not project code):** Pandas 2.2.3, NumPy 2.3.5; CSV literal from PROJECT_SPEC §5 yields 12 raw records, 2 duplicate, 2 NA; after duplicate drop and numeric median fill 10, mean 7.8; A8.0/B7.6; population variance 1.56 and std≈1.24899959968; five-bin histogram counts [2,2,3,2,1]. Future test specifications OR-01..OR-15 in PROJECT_SPEC §11.

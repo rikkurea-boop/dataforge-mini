@@ -27,3 +27,13 @@
 - **Không cần `st.session_state` tùy biến, cache, callback, class, Undo/Redo** cho phiên bản mẫu 12 dòng. Các lựa chọn được tính lại từ raw khi widget đổi.
 - Chart tạo **Figure tường minh** và trả về; Streamlit nhận Figure; không sử dụng global `plt.show()`, `plt.gcf()` hay charting library khác.
 - Đặc tả hợp đồng hàm tại `PROJECT_SPEC.md §10`. **R04–R05 được quyền sửa chi tiết toán/test để đảm bảo đúng**, không tự mở rộng tính năng.
+
+
+## R04 numerical safeguards
+- Descriptive **population std** uses explicit `ddof=0`. Never silently mix it with Pandas default `ddof=1`.
+- If numeric column has 0 valid values, return count0 and other stats None, not NaN or zero. One valid value has population std0.
+- Keep raw unchanged; drop whole-row duplicates once, **then** fill numeric NA by column median. Median fill can create duplicates; do not run another automatic dedup pass.
+- Categorical NA is not filled; missing GroupBy keys are excluded and must be described. A missing group mean is not 0.
+- Numeric infinity is unsupported; report rather than plotting/computing it. NA for the demo remains allowed.
+- Histogram 5 equal-width bins, `density=False`, bar mean begins Y at 0, scatter drops NA as **row pairs**; no causal claims.
+- Numerical comparisons in tests use tolerances; rounding only in UI. See PROJECT_SPEC `11 for OR-01..OR-15.
