@@ -6,7 +6,7 @@
 
 - Tên chính thức: **Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python**.
 - Mục 5.5: phân tích dữ liệu cơ bản với **NumPy, Pandas, Matplotlib**.
-- Bài nộp cá nhân; link mã nguồn, link video YouTube, **báo cáo PDF 15–20 trang không quá 100 MB**, tự nhận xét/tự chấm theo 3+2+2+1+2. Xem \`docs/REQUIREMENTS.md\`.
+- Bài nộp cá nhân; link mã nguồn, link video YouTube, **báo cáo PDF 15–20 trang không quá 100 MB**, tự nhận xét/tự chấm theo 3+2+2+1+2. Xem `docs/REQUIREMENTS.md`.
 - Ưu tiên chủ dự án: **tối giản tối đa nhưng đủ chức năng; giải thích được toàn bộ code khi trình bày**.
 - Dự án độc lập; không sửa, không import hoặc bắt phụ thuộc Data-Forge gốc.
 - **Không viết code/app/dataset thật trong 7 lượt nghiên cứu và lượt FINAL.**
@@ -45,15 +45,15 @@ Người dùng có bảng kết quả học tập dạng CSV, muốn nhanh chón
 - Bắt đầu bằng file demo; cho phép upload CSV thay thế. Không cần bước tạo tài khoản, chọn project, workflow setup.
 - Chỉ có **một checkbox/toggle** để xem bảng sạch; mỗi lần chuyển trạng thái tính **từ bảng gốc**, không cộng dồn. Cơ chế rerun tự nhiên của Streamlit cho phép bỏ Undo/Redo; xem docs Streamlit session/rerun. Nếu thực thi cần state, R03 phải giải thích nhu cầu tối thiểu.
 - **Làm sạch không âm thầm:** hiển thị số dòng và ô NaN trước/sau, và thao tác đã áp dụng; không tự đổi tên/xóa cột dữ liệu.
-- Stats mặc định cột \`diem\` của bộ demo; người dùng được chọn numeric column nếu upload dữ liệu khác.
-- Biểu đồ mặc định: \`diem\` histogram; \`lop\` vs mean \`diem\` bar; \`gio_hoc\` vs \`diem\` scatter. Chỉ chọn cột tương thích, nếu không có thì thông báo/ẩn biểu đồ đó; **không** có chỉnh màu, style, palette, animation, hiệu ứng.
+- Stats mặc định cột `diem` của bộ demo; người dùng được chọn numeric column nếu upload dữ liệu khác.
+- Biểu đồ mặc định: `diem` histogram; `lop` vs mean `diem` bar; `gio_hoc` vs `diem` scatter. Chỉ chọn cột tương thích, nếu không có thì thông báo/ẩn biểu đồ đó; **không** có chỉnh màu, style, palette, animation, hiệu ứng.
 - CSV khác được hỗ trợ theo quy tắc chung với numeric/category; **không** hứa hỗ trợ tùy ý mọi định dạng, cột datetime, encoding hiếm hoặc dữ liệu lớn.
 
 ## 5. Dataset chính duy nhất — SPEC, KHÔNG PHẢI FILE CSV ĐÃ TẠO
 
-**Tên file dự kiến khi bắt đầu code:** \`sample_data.csv\`. **Nguồn:** dữ liệu giả lập tự thiết kế, không phải điểm cá nhân có thật; cột \`ten, lop, gio_hoc, diem\`, dấu phẩy CSV, UTF-8 ASCII values. Dùng **một file duy nhất** để minh họa xem dữ liệu bẩn và sau làm sạch; **không thêm file dirty thứ hai**.
+**Tên file dự kiến khi bắt đầu code:** `sample_data.csv`. **Nguồn:** dữ liệu giả lập tự thiết kế, không phải điểm cá nhân có thật; cột `ten, lop, gio_hoc, diem`, dấu phẩy CSV, UTF-8 ASCII values. Dùng **một file duy nhất** để minh họa xem dữ liệu bẩn và sau làm sạch; **không thêm file dirty thứ hai**.
 
-\`\`\`csv
+```csv
 ten,lop,gio_hoc,diem
 An,A,4,8
 Binh,B,2,6
@@ -67,15 +67,15 @@ Phuc,A,3,6
 Quynh,B,6,9
 An,A,4,8
 Dung,B,3,7
-\`\`\`
+```
 
 Cơ sở lựa chọn: 4 cột dễ hiểu, 2 cột số cho scatter, 1 cột nhóm cho bar/groupby, điểm số có phân bố cho histogram; đúng 2 duplicate **toàn dòng** và đúng 2 NaN trong numeric; 12 dòng đủ nhỏ để kiểm chứng thủ công và hiện rõ trong demo.
 
 ### Expected results — tính theo chính dữ liệu trên, trước khi viết app
-- **Raw:** 12 dòng, 4 cột; 2 exact duplicate (các dòng lặp \`An\`/\`Dung\`), 2 ô trống (\`Minh.gio_hoc\`, \`Ngoc.diem\`).
-- **Thứ tự làm sạch bắt buộc để đối chiếu:** \`drop_duplicates(keep="first")\` → median-fill numeric của **10 dòng còn lại**. Median(\`gio_hoc\`) = 4; median(\`diem\`) = 8.
-- **Clean:** 10 dòng, 4 cột, 0 duplicate, 0 NaN; \`Minh.gio_hoc = 4\`, \`Ngoc.diem = 8\`.
-- **Clean score:** sum = 78; mean = **7.8**; groupby \`lop\`: A **8.0** (5 sinh viên), B **7.6** (5 sinh viên); \`diem >= 8\`: **6/10**; mean \`gio_hoc\` = **4.4**.
+- **Raw:** 12 dòng, 4 cột; 2 exact duplicate (các dòng lặp `An`/`Dung`), 2 ô trống (`Minh.gio_hoc`, `Ngoc.diem`).
+- **Thứ tự làm sạch bắt buộc để đối chiếu:** `drop_duplicates(keep="first")` → median-fill numeric của **10 dòng còn lại**. Median(`gio_hoc`) = 4; median(`diem`) = 8.
+- **Clean:** 10 dòng, 4 cột, 0 duplicate, 0 NaN; `Minh.gio_hoc = 4`, `Ngoc.diem = 8`.
+- **Clean score:** sum = 78; mean = **7.8**; groupby `lop`: A **8.0** (5 sinh viên), B **7.6** (5 sinh viên); `diem >= 8`: **6/10**; mean `gio_hoc` = **4.4**.
 - **Raw score mean** (bỏ NaN, *có* hai dòng trùng): 85/11 = **7.7272727...**. Không so sánh với mean clean như thể dữ liệu được cải thiện theo một thước đo khách quan.
 - **Dữ liệu 5 dòng từng dùng trong PPT trước đây** có mean điểm 8.0/A 9.0/B 6.5, là ví dụ khác; **không dùng đáp án đó để đánh giá dataset mới**. Nếu muốn giữ, dùng inline làm test nhỏ, **không tạo fixture CSV thứ hai**.
 - Giá trị từ R02 là expected values được tính độc lập từ đặc tả, **chưa chạy pandas/numpy app**. R04 đối chiếu lại bằng công thức, R05 lập unit-test chính thức, implementation mới chạy pytest.
@@ -83,9 +83,9 @@ Cơ sở lựa chọn: 4 cột dễ hiểu, 2 cột số cho scatter, 1 cột nh
 ### Chính sách dữ liệu
 - Median fill để minh họa phương pháp; với điểm học tập thật, **không được xem đó là điểm được xác minh**. Ghi chú dataset chỉ là mô phỏng.
 - Không suy ra giờ học gây ra điểm cao; biểu đồ scatter chỉ trực quan hóa mối liên hệ trong dữ liệu minh họa 10 dòng.
-- Dùng \`DataFrame.copy()\` hoặc cách tương đương để bảo toàn raw input.
+- Dùng `DataFrame.copy()` hoặc cách tương đương để bảo toàn raw input.
 - Không ép điền cột phân loại, không xóa rows bị thiếu nếu ngoài 2 bản ghi trùng. Với CSV tùy chọn có cột numeric toàn NaN: giữ nguyên + cảnh báo; không được tuyên bố đã xóa hết NaN.
-- Thống kê \`std\` phải ghi rõ **ddof=0 hay ddof=1**, không trộn NumPy/Pandas mặc định; R04 sẽ khóa.
+- Thống kê `std` phải ghi rõ **ddof=0 hay ddof=1**, không trộn NumPy/Pandas mặc định; R04 sẽ khóa.
 
 ## 6. Lựa chọn công nghệ — kết luận nghiên cứu R02, R03 mới khóa chi tiết
 

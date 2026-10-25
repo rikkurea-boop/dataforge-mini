@@ -2,9 +2,9 @@
 
 ## Trạng thái có căn cứ
 - Repository private: https://github.com/rikkurea-boop/dataforge-mini
-- **Branch làm việc:** \`docs/project-charter-ai-handoff\`; **PR #1 đang mở:** https://github.com/rikkurea-boop/dataforge-mini/pull/1
-- **main** chỉ có \`README.md\` ban đầu. Các tài liệu chuẩn hiện sống trên nhánh PR #1, **chưa merge main**.
-- Repo nhánh nghiên cứu có 8 file: \`README.md\`, \`AGENTS.md\`, \`RULEBOOK.md\`, \`PROJECT_SPEC.md\`, \`docs/REQUIREMENTS.md\`, \`docs/PLAN.md\`, \`docs/STATUS_HANDOFF.md\`, \`.gitignore\`.
+- **Branch làm việc:** `docs/project-charter-ai-handoff`; **PR #1 đang mở:** https://github.com/rikkurea-boop/dataforge-mini/pull/1
+- **main** chỉ có `README.md` ban đầu. Các tài liệu chuẩn hiện sống trên nhánh PR #1, **chưa merge main**.
+- Repo nhánh nghiên cứu có 8 file: `README.md`, `AGENTS.md`, `RULEBOOK.md`, `PROJECT_SPEC.md`, `docs/REQUIREMENTS.md`, `docs/PLAN.md`, `docs/STATUS_HANDOFF.md`, `.gitignore`.
 - **Chưa có app.py, analysis.py, charts.py, sample_data.csv, requirements.txt, test hoặc video/PDF. Không có runtime/pytest report.**
 - Không đổi visibility, không merge tự động, không sửa Data-Forge gốc.
 
@@ -32,7 +32,7 @@
 8. Chưa tạo file CSV hay code; số liệu oracle **chưa phải kết quả chạy app**.
 
 ## Tài liệu quyền lực
-\`docs/REQUIREMENTS.md\`: nguồn từ form + trạng thái chứng cứ; \`RULEBOOK.md\` và \`AGENTS.md\`: quy tắc bất biến; \`PROJECT_SPEC.md\`: phạm vi MVP + source CSV + oracle; \`docs/PLAN.md\`: lượt R03 và các bước sau. Không suy diễn nhiệm vụ từ chat cũ hoặc main trống.
+`docs/REQUIREMENTS.md`: nguồn từ form + trạng thái chứng cứ; `RULEBOOK.md` và `AGENTS.md`: quy tắc bất biến; `PROJECT_SPEC.md`: phạm vi MVP + source CSV + oracle; `docs/PLAN.md`: lượt R03 và các bước sau. Không suy diễn nhiệm vụ từ chat cũ hoặc main trống.
 
 ## Những vấn đề đã hoãn có chủ đích
 - Chọn file layout, function contracts, UI rerun/session state: **R03**.

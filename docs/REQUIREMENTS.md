@@ -104,8 +104,8 @@ Chưa có kết quả thực thi, do đó **chưa thể điền điểm tự ch�
 | Phát biểu | Trạng thái | Nguồn / bằng chứng |
 |---|---|---|
 | Pandas có đọc CSV file-like | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html |
-| \`drop_duplicates(keep="first")\` giữ bản đầu tiên | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html |
-| \`fillna\` có thể điền scalar vào cột thiếu; có lựa chọn không in-place | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html |
+| `drop_duplicates(keep="first")` giữ bản đầu tiên | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html |
+| `fillna` có thể điền scalar vào cột thiếu; có lựa chọn không in-place | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html |
 | Pandas GroupBy mean bỏ giá trị thiếu | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/groupby.html |
 | NumPy nanmean/nanmedian xử lý NaN; all-NaN cần kiểm soát | DOC-VERIFIED | https://numpy.org/doc/stable/reference/generated/numpy.nanmean.html ; https://numpy.org/doc/stable/reference/generated/numpy.nanmedian.html |
 | Matplotlib hist tính bin và vẽ phân bố | DOC-VERIFIED | https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html |

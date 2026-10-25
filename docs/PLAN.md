@@ -15,16 +15,16 @@
 | R07 | Hoàn thiện rules/handoff, coding tasks & prompt cho AI sau này; tránh trùng tài liệu | NOT STARTED |
 | FINAL | Đối chiếu chéo mọi tài liệu; khóa baseline trước coding | NOT STARTED |
 
-Không cần 7 file research riêng: kết quả mỗi lượt được hòa vào **PROJECT_SPEC.md**, **docs/REQUIREMENTS.md**, **docs/PLAN.md**, **RULEBOOK.md**, **AGENTS.md** và **docs/STATUS_HANDOFF.md**. Chỉ tạo \`docs/DELIVERABLES.md\` tại R06.
+Không cần 7 file research riêng: kết quả mỗi lượt được hòa vào **PROJECT_SPEC.md**, **docs/REQUIREMENTS.md**, **docs/PLAN.md**, **RULEBOOK.md**, **AGENTS.md** và **docs/STATUS_HANDOFF.md**. Chỉ tạo `docs/DELIVERABLES.md` tại R06.
 
 ## B. R02: danh sách chức năng / thứ tự demo đã lựa chọn
 
 **MVP CORE:** 
-1. Upload CSV hoặc tự nạp \`sample_data.csv\`.
+1. Upload CSV hoặc tự nạp `sample_data.csv`.
 2. Hiển thị 12 dòng, 4 cột, 2 duplicate, 2 missing; xem vài dòng đầu.
 3. Một công tắc Clean: exact drop duplicates → numeric median fill, không sửa bảng raw; xem so sánh 12→10, NaN 2→0.
-4. Numeric mean/median/std/min/max; groupby \`lop\`–\`diem\`; NumPy có tính toán thực.
-5. Matplotlib: histogram \`diem\`, bar \`lop\`–điểm TB, scatter \`gio_hoc\`–\`diem\`.
+4. Numeric mean/median/std/min/max; groupby `lop`–`diem`; NumPy có tính toán thực.
+5. Matplotlib: histogram `diem`, bar `lop`–điểm TB, scatter `gio_hoc`–`diem`.
 6. Download CSV đang xem.
 
 **Ngoài phạm vi:** Excel, biểu đồ nâng cao/custom theme, phân trang, login, database, machine learning, Data-Forge gốc, Undo history, PDF generator **trong app**. Báo cáo **PDF bên ngoài app** vẫn bắt buộc khi nộp.
@@ -33,7 +33,7 @@ Không cần 7 file research riêng: kết quả mỗi lượt được hòa và
 
 ## C. Dataset (đặc tả duy nhất; chưa tạo file)
 
-Dữ liệu CSV giả lập 12 hàng / 4 cột nằm nguyên văn tại **PROJECT_SPEC.md §5**. Chỉ tạo một file \`sample_data.csv\` ở P0; không phân tách clean/dirty CSV.
+Dữ liệu CSV giả lập 12 hàng / 4 cột nằm nguyên văn tại **PROJECT_SPEC.md §5**. Chỉ tạo một file `sample_data.csv` ở P0; không phân tách clean/dirty CSV.
 
 **Oracle R02 (tự tính từ specification, chưa test implementation):**
 
