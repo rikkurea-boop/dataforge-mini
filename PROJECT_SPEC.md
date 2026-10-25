@@ -40,7 +40,7 @@ Người dùng có bảng kết quả học tập dạng CSV, muốn nhanh chón
 
 **Sự phân biệt then chốt:** video YouTube và báo cáo PDF là **bắt buộc cho bài nộp**, còn *chức năng ứng dụng tự sinh báo cáo PDF* không bắt buộc.
 
-## 4. Đề xuất UX tối thiểu (chi tiết code để R03 quyết định)
+## 4. UX tối thiểu từ R02 (R03 đã khóa hợp đồng tại §10)
 - **Một trang**, bốn khu vực theo thứ tự: nguồn dữ liệu → xem/clean → thống kê → ba biểu đồ → tải CSV.
 - Bắt đầu bằng file demo; cho phép upload CSV thay thế. Không cần bước tạo tài khoản, chọn project, workflow setup.
 - Chỉ có **một checkbox/toggle** để xem bảng sạch; mỗi lần chuyển trạng thái tính **từ bảng gốc**, không cộng dồn. Cơ chế rerun tự nhiên của Streamlit cho phép bỏ Undo/Redo; xem docs Streamlit session/rerun. Nếu thực thi cần state, R03 phải giải thích nhu cầu tối thiểu.
@@ -87,7 +87,7 @@ Cơ sở lựa chọn: 4 cột dễ hiểu, 2 cột số cho scatter, 1 cột nh
 - Không ép điền cột phân loại, không xóa rows bị thiếu nếu ngoài 2 bản ghi trùng. Với CSV tùy chọn có cột numeric toàn NaN: giữ nguyên + cảnh báo; không được tuyên bố đã xóa hết NaN.
 - Thống kê `std` phải ghi rõ **ddof=0 hay ddof=1**, không trộn NumPy/Pandas mặc định; R04 sẽ khóa.
 
-## 6. Lựa chọn công nghệ — kết luận nghiên cứu R02, R03 mới khóa chi tiết
+## 6. Lựa chọn công nghệ — so sánh R02; kết luận kiến trúc chi tiết tại R03 §10
 
 | Phương án | Ưu điểm | Nhược điểm theo mục tiêu user | Kết luận |
 |---|---|---|---|
@@ -109,8 +109,8 @@ Phụ thuộc ứng dụng dự kiến: **pandas, numpy, matplotlib, streamlit**
 | UX/biểu đồ (1) | M05/M07 | Một trang đơn giản, nhãn/trục đủ, chọn biến đúng loại |
 | Báo cáo/minh chứng (2) | Không phải tính năng app | PDF 15–20 trang + YouTube demo + ảnh + tự chấm trung thực |
 
-## 8. Điểm nghiên cứu R03–R05 phải khóa (không tự mở scope)
-- R03: API/function contract, chia file 2 hay 3 modules, thiết kế toggle để hạn chế state, source upload fallback.
+## 8. Những phần R03–R05 cần xử lý (ghi chú lịch sử nghiên cứu)
+- R03: **DONE** — API/function contracts, chính xác 3 file Python, toggle không custom state, uploaded source + sample fallback; xem §10.
 - R04: ddof chuẩn, tính không thiếu của các cột, xử lý NaN/all-NaN, binned histogram, interpretation; xác minh lại expected values.
 - R05: test cases, environment/versions, file tải UTF-8, lỗi CSV rỗng/cột không hợp lệ, walkthrough fresh clone.
 - R06: PDF nộp bên ngoài app; video phải sử dụng dataset/phiên bản thống nhất.
