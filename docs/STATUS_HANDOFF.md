@@ -1,49 +1,32 @@
-# STATUS_HANDOFF — DataForge Mini · 2026-10-25 · End of R07
+# STATUS_HANDOFF — FINAL COMPLETE · 2026-10-25
 
-**Trạng thái:** **RESEARCH 7/7 DONE — FINAL CROSS-QA NEXT. NOT READY FOR IMPLEMENTATION.** Không có source app/test/CSV thật, không có PDF/video/EV thật; test app chưa chạy.
+**FINAL PASS — READY FOR IMPLEMENTATION (PLAN ONLY).** **NOT AUTHORIZED TO CODE**: chờ lệnh mới của chủ dự án. Không có app/code Python, sample CSV, dependencies, tests, PDF, video hay evidence thực.
 
-## Repo và bằng chứng hiện tại
-- Repo: https://github.com/rikkurea-boop/dataforge-mini (**private**).
-- Nguồn tài liệu: branch `docs/project-charter-ai-handoff`, PR #1 https://github.com/rikkurea-boop/dataforge-mini/pull/1 (**open, chưa merge** tại thời điểm R07).
-- `main` lúc bắt đầu R07 vẫn chỉ có README ban đầu. PR là nơi chứa toàn bộ tài liệu.
-- **Hạn chế tiếp quản:** URL repo nhánh mặc định có thể không hiển thị tài liệu khi PR chưa merge. Cho AI mới URL nhánh/PR; FINAL xem xét đề xuất hợp nhất vào `main`, **không tự merge khi chưa có chấp thuận của chủ dự án**.
-- R07: chuẩn hóa `README.md`, `AGENTS.md`, `RULEBOOK.md`, `PROJECT_SPEC.md`, `docs/REQUIREMENTS.md`, `docs/PLAN.md`, `docs/STATUS_HANDOFF.md`; giữ `docs/DELIVERABLES.md` làm nguồn kế hoạch nộp. Không đổi Data-Forge gốc.
-- HEAD SHA chính xác: kiểm tra trực tiếp PR trước khi làm, không tái sử dụng SHA ghi trong chat.
+## GitHub và source of truth
+- Repo private: https://github.com/rikkurea-boop/dataforge-mini
+- Docs branch: `docs/project-charter-ai-handoff`, open PR #1: https://github.com/rikkurea-boop/dataforge-mini/pull/1
+- `main` vẫn chỉ có README ban đầu. Toàn bộ tài liệu đang ở PR; AI mới phải nhận URL nhánh/PR cho đến khi owner cho phép merge. **Không tự merge hoặc đổi visibility**.
+- Nhánh research gồm **9 file** (8 Markdown và .gitignore), chưa có code. Data-Forge gốc không được đụng tới.
 
-## Trạng thái giai đoạn
-| Phase | Status | Evidence |
-|---|---|---|
-| R01 | DONE (docs) | Đề/biểu mẫu và tiêu chí tự đánh giá |
-| R02 | DONE (docs) | MVP scope + một dataset 12→10 |
-| R03 | DONE (docs) | 3 file Python được đề xuất + 8 hợp đồng hàm |
-| R04 | DONE (docs) | Oracle toán, std ddof0, NaN/inf/duplicates |
-| R05 | DONE (docs) | 31 test cases dạng **đặc tả**, env chỉ là đề xuất |
-| R06 | DONE (docs) | PDF/video/EV evidence plan, **không sản xuất** |
-| R07 | **DONE (docs)** | Rulebook, AI handoff, task packets và các quyết định hợp nhất |
-| FINAL | **NEXT, NOT STARTED** | Kiểm định độc lập trước khi cho phép coding |
-| P0–P4 | **BLOCKED** | Chỉ bắt đầu nếu FINAL đạt READY và owner có lệnh mới |
+## Trạng thái
+| Phase | Trạng thái |
+|---|---|
+| R01–R07 | DONE — research/spec only |
+| FINAL | **PASS — plan ready**, independent cross-review complete |
+| P0–P4 (T01–T10) | **NOT STARTED; PERMISSION BLOCKED** |
 
-## R07 audit, sửa đổi
-- Giảm nội dung trùng giữa tài liệu. Mỗi nhóm thông tin có một file chủ: requirement / spec / plan / deliverable / status.
-- Bảo toàn sample 12 records và oracle, 5+3 hợp đồng hàm, 31 test IDs, yêu cầu PDF/YouTube/self-eval và EV IDs.
-- Giữ **9 file tổng** (8 Markdown + .gitignore), không sinh docs mới/đường dẫn phức tạp; lịch sử nghiên cứu cũ có thể truy ở commit của PR.
-- Làm rõ các điểm dễ hiểu nhầm: plan kiểm thử không phải test pass; thư viện mới chỉ ứng viên; PDF bắt buộc nhưng PDF generator không bắt buộc; R07 DONE không phải READY.
-- Không có runtime/pytest outputs; không hứa đã chạy code hoặc nộp form.
+## Kết quả kiểm định FINAL
+- Đọc 9 file, PR/head/tree, crossrefs và nội dung thầy đã được trích từ ảnh ở R01: F01–F06, link mã nguồn, YouTube, PDF 15–20 trang ≤100MB, tự đánh giá 3+2+2+1+2. **Chưa có ảnh gốc lưu trong repo**; nếu thầy cập nhật form phải kiểm trực tiếp.
+- Kiểm đủ MVP 7 chức năng M01–M07, ba file Python dự kiến, 5+3 hợp đồng hàm, test behaviors 15 OR + 10 IO + 6 UI, 10 tasks T01–T10 và 16 evidence EV. Đề cương PDF đúng 18 trang dự kiến.
+- **Kiểm tính toán độc lập, không chạy app:** pandas 2.2.3 / NumPy 2.3.5, raw12x4, duplicate2, NA2; cleaned10x4, median giờ4/điểm8, grade mean7.8, variance1.56, population std≈1.24899959968, groups A8/B7.6, histogram 5 bins [2,2,3,2,1], scatter 10 pairs. Median fill cũng có thể tạo duplicate mới trên input khác.
+- Đã sửa thực tế: tham chiếu § cũ trong DELIVERABLES, T02 không thể phụ thuộc OR-01 trước T03, tách exception loader khỏi lỗi UI, kiểm URL repo trong T10, và quy tắc pandas 2/3 dtype + header trùng. Ghi baseline SHA cho code/data riêng các commit chỉ sửa README/STATUS.
+- Markdown/link nội bộ và cây 9 file hợp lệ; không phát hiện phụ thuộc code/app bên ngoài. **Không chạy pytest, chưa pin packages, chưa kiểm tương thích chạy app hoặc xuất PDF/video.**
 
-## Việc tiếp theo DUY NHẤT: FINAL CROSS-QA
-1. Đọc toàn bộ 9 file, kiểm tra GitHub PR/head, crossrefs, Markdown và không có source app.
-2. Đối chiếu yêu cầu giảng viên F02–F06 với spec/task/deliverables; kiểm oracle/tính đúng và thuật ngữ.
-3. Kiểm không có phát biểu chưa xác minh được diễn đạt thành yêu cầu thầy hoặc "đã chạy".
-4. Kiểm tính khả thi của P0–P4 và hướng dẫn resume cho AI mới, không mở rộng scope.
-5. Sửa có chọn lọc lỗi thật, ghi kết quả PASS/BLOCKED vào STATUS; chỉ khi đủ điều kiện có thể đặt `READY FOR IMPLEMENTATION` về **tài liệu**, không phải code.
-6. **Vẫn chưa code trong FINAL.** Sau FINAL, chờ owner chủ động giao việc mới.
+## Những việc còn mở — không cản chuẩn bị coding
+Deadline, PPT có bắt buộc không, thời lượng video, PDF template chi tiết, quyền xem code khi repo private, OS thực và chính xác bộ phiên bản package (xác minh trong P0). Nội dung trong form chưa thấy hết: kiểm lại trước khi nộp.
 
-## Những điều còn UNKNOWN
-Deadline, độ dài video bắt buộc, PPT, template PDF, tên/chi tiết các trường form ngoài vùng ảnh; hệ điều hành máy sẽ chạy app; tổ hợp phiên bản packages cuối sau cài đặt. Không suy đoán.
+## Bước tiếp theo duy nhất
+**Owner xem xét việc merge PR #1 vào `main`** để AI mới mở repo mặc định thấy tài liệu, hoặc tiếp tục dùng trực tiếp docs branch. Sau đó **owner chủ động giao lệnh bắt đầu T01** nếu muốn triển khai. Quyết định FINAL PASS không phải lệnh viết app.
 
-## Mẫu cập nhật bàn giao
-- Date / task-phase / branch / PR / before→after SHA:
-- Files changed & justification:
-- Evidence commands/tests run and exact outcomes (hoặc "not run"):
-- DONE/PARTIAL/BLOCKED + unresolved/UNKNOWN:
-- Next single task and permission gate:
+## Update format khi có tiến độ mới
+Phase, date, branch/PR, SHA trước/sau, file sửa, lệnh test đã chạy và kết quả hoặc NOT RUN, blocker, next single task.

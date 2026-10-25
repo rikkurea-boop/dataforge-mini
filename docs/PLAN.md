@@ -1,4 +1,4 @@
-# PLAN — DataForge Mini · R07 complete, FINAL NEXT
+# PLAN — DataForge Mini · R01–R07 + FINAL PASS · PLAN READY
 
 **CHỈ TÀI LIỆU**. Đây là kế hoạch có thể giao cho AI sau khi nghiên cứu hoàn tất. **Không khởi chạy các task coding bên dưới trước khi FINAL ghi READY FOR IMPLEMENTATION VÀ chủ dự án yêu cầu bắt đầu.**
 
@@ -13,19 +13,19 @@
 | R05 | Thiết kế test/env/IO | DONE | `PROJECT_SPEC.md` |
 | R06 | PDF/video/self-eval/evidence | DONE | `docs/DELIVERABLES.md` |
 | R07 | Rulebook, AI bootstrap, task packets | **DONE** | `AGENTS.md`, `RULEBOOK.md`, file này |
-| **FINAL** | **Kiểm định chéo độc lập**, sửa mâu thuẫn cuối và quyết định READY/BLOCKED | **NEXT, NOT STARTED** | `docs/STATUS_HANDOFF.md` |
+| **FINAL** | **Kiểm định chéo độc lập**, sửa mâu thuẫn cuối và quyết định READY/BLOCKED | **PASS — READY (PLAN ONLY)** | `docs/STATUS_HANDOFF.md` |
 
-### FINAL independent QA gate
-- [ ] Đọc 9 file, xác minh HEAD/PR, không có source app; **ghi rõ tài liệu vẫn chưa ở nhánh `main`**.
-- [ ] FORM-CONFIRMED F02–F06 đối chiếu với PDF/video/GitHub/tự chấm.
-- [ ] Cấu trúc 3 file và 8 hợp đồng hàm nhất quán, không có logic test khống.
-- [ ] Oracle sample 12→10, median 4/8, mean 7.8, ddof0 std≈1.249, group means A8/B7.6, histogram đúng.
-- [ ] 15 OR + 10 IO + 6 UI được thiết kế đủ, không bắt phải viết 31 test functions.
-- [ ] Chuỗi task P0–P4 có thứ tự, outputs, cổng bằng chứng, chỉ một next task.
-- [ ] Hướng dẫn mở PR, cập nhật status, cấm code trong FINAL đúng rõ ràng.
-- [ ] Link tài liệu và Markdown được kiểm tra, không có file/claim giả.
-- [ ] Quyết định cách đưa tài liệu từ PR #1 lên **default branch** để AI mới mở repo thấy được. **Chỉ merge khi chủ dự án đồng ý**; nếu chưa merge, bàn giao link thẳng tới nhánh/PR và ghi rõ hạn chế.
-- [ ] Lưu bản kiểm định FINAL trong STATUS_HANDOFF/commit, đặt **READY FOR IMPLEMENTATION** chỉ nếu thực sự đạt. **Chưa được phép code dù READY** cho tới khi owner ra lệnh.
+### FINAL independent QA gate — PASS, 2026-10-25
+- [x] Đọc 9 file, xác minh HEAD/PR, không có source app; **ghi rõ tài liệu vẫn chưa ở nhánh `main`**.
+- [x] FORM-CONFIRMED F02–F06 đối chiếu với PDF/video/GitHub/tự chấm.
+- [x] Cấu trúc 3 file và 8 hợp đồng hàm nhất quán, không có logic test khống.
+- [x] Oracle sample 12→10, median 4/8, mean 7.8, ddof0 std≈1.249, group means A8/B7.6, histogram đúng.
+- [x] 15 OR + 10 IO + 6 UI được thiết kế đủ, không bắt phải viết 31 test functions.
+- [x] Chuỗi task P0–P4 có thứ tự, outputs, cổng bằng chứng, chỉ một next task.
+- [x] Hướng dẫn mở PR, cập nhật status, cấm code trong FINAL đúng rõ ràng.
+- [x] Link tài liệu và Markdown được kiểm tra, không có file/claim giả.
+- [x] Quyết định cách đưa tài liệu từ PR #1 lên **default branch** để AI mới mở repo thấy được. **Chỉ merge khi chủ dự án đồng ý**; nếu chưa merge, bàn giao link thẳng tới nhánh/PR và ghi rõ hạn chế.
+- [x] Lưu bản kiểm định FINAL trong STATUS_HANDOFF/commit, đặt **READY FOR IMPLEMENTATION** chỉ nếu thực sự đạt. **Chưa được phép code dù READY** cho tới khi owner ra lệnh.
 
 ## 2. Future implementation: 5 giai đoạn, 10 task nhỏ
 
@@ -66,3 +66,11 @@ Một task chỉ DONE khi:
 
 ## 5. Phạm vi bị loại khỏi roadmap
 Machine learning, clone/nhúng Data-Forge gốc, dashboard đa trang, Excel, database, cloud, AI agent, REST/API, custom frontend, tài khoản, hệ thống report PDF bên trong ứng dụng, undo history, chart builder, 10+ biểu đồ, CI/Docker/browser automation. **Tránh task về các phần trên** trừ khi giảng viên có chỉ dẫn mới có bằng chứng và chủ dự án phê duyệt.
+
+## 6. FINAL audit — PASS (2026-10-25)
+- READY FOR IMPLEMENTATION áp dụng **cho hồ sơ tài liệu**, chưa có lệnh coding và không có app/test chạy.
+- Đã đọc 9 file; đối chiếu yêu cầu F01–F06; 7 M, 8 hàm, 15 OR/10 IO/6 UI, 10 T, 16 EV và PDF dự kiến 18 trang. Nguồn ảnh form là bản trích xuất R01, chưa có bản gốc trong repo.
+- Kiểm lại độc lập dataset 12→10, median4/8, mean7.8, variance1.56, std≈1.249, A8/B7.6, hist [2,2,3,2,1], và edge case fill tạo duplicate bằng pandas/NumPy tạm (KHÔNG phải app runtime).
+- Đã sửa tham chiếu PROJECT_SPEC trong DELIVERABLES, T02/T03 acceptance dependency, dtype pandas, header trùng, tách SHA baseline code+dataset khỏi update docs.
+- Cả 9 file/Markdown/links đã kiểm. PR #1 vẫn chưa merge: chỉ được tiếp quản từ nhánh/PR này tới khi owner duyệt merge.
+- **Next: chủ dự án cân nhắc merge PR #1; coding T01 chỉ khi có lệnh riêng sau FINAL.**
