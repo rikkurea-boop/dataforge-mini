@@ -152,3 +152,27 @@ Chưa có kết quả thực thi, do đó **chưa thể điền điểm tự ch�
 | Histogram bins/density/last edge | https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html | 5 bins, frequency, last right edge included |
 
 **Independent computational audit (temporary environment, not project code):** Pandas 2.2.3, NumPy 2.3.5; CSV literal from PROJECT_SPEC §5 yields 12 raw records, 2 duplicate, 2 NA; after duplicate drop and numeric median fill 10, mean 7.8; A8.0/B7.6; population variance 1.56 and std≈1.24899959968; five-bin histogram counts [2,2,3,2,1]. Future test specifications OR-01..OR-15 in PROJECT_SPEC §11.
+
+
+---
+
+## 12. R05 — package/runtime/docs references and risk record (2026-10-25)
+
+**No new professor requirement** in R05; Python 3.13, test design and 2 MiB upload are **project recommendations**, never form requirements.
+
+| Evidence fact | Verified source | Implication |
+|---|---|---|
+| Python 3.15 exists but 3.13 supported | https://www.python.org/downloads/ | Choose Python 3.13 for stable classroom baseline |
+| NumPy 2.5.4 published Oct 10, 2026; requires Python ≥3.12 | https://pypi.org/project/numpy/2.5.4/ | CPython 3.13 eligible, not end-to-end compatibility proof |
+| pandas 3.1.0 released Oct 22, 2026, compatible classifiers include 3.13 | https://pypi.org/project/pandas/3.1.0/ | Candidate current release |
+| Matplotlib 3.11 family, Python ≥3.11 | https://pypi.org/project/matplotlib/ | Candidate family, P0 choose exact verified wheel |
+| Streamlit 1.66.1 published Oct 21, 2026 | https://pypi.org/project/streamlit/ | Current candidate; verify wheel/dependencies at P0 |
+| pytest 9.1.1 published Jun 19, 2026 | https://pypi.org/project/pytest/ | Test-only dependency |
+| Pandas 3 defaults inferred strings to str, not object | https://pandas.pydata.org/docs/whatsnew/v3.0.0.html | Regression test `lop` group selector; object-only broken |
+| Streamlit requires Figure in `st.pyplot(fig)`; kwargs deprecation | https://docs.streamlit.io/develop/quick-reference/release-notes/2026 | R03 OO Figure decision corroborated |
+| Pandas may parse short CSV records as NA; `on_bad_lines="error"` applies to bad lines but not all ambiguities | https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html | Do not promise strict RFC CSV validation with one function |
+| `EmptyDataError` and `ParserError` are documented parse exceptions | https://pandas.pydata.org/docs/reference/api/pandas.errors.EmptyDataError.html ; https://pandas.pydata.org/docs/reference/api/pandas.errors.ParserError.html | Local user-facing errors, no silent drop |
+| Streamlit uploader historically defaults 200MB | https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader | Project chooses 2 MiB upload max, not teacher PDF size |
+| Python venv official mechanism and pytest approx assertions | https://docs.python.org/3/library/venv.html ; https://docs.pytest.org/en/stable/how-to/assert.html | Windows/macOS/Linux setup and float comparison |
+
+**Status distinction:** web/PyPI metadata is version eligibility only; no install, pip dependency resolution, GUI render or pytest execution was performed for the project. QA gates and test plans detailed in PROJECT_SPEC `12.

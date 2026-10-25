@@ -1,6 +1,6 @@
 # PROJECT SPEC — DataForge Mini, MVP research baseline (R02)
 
-**Trạng thái:** Research 04/07 hoàn thành; **MVP + ARCHITECTURE + MATHEMATICAL DESIGN BASELINE**, chưa phải code/final approval. R03 đã khóa sơ đồ module/hợp đồng hàm; R04 đã kiểm định toán; R05 test; R06 đồ án nộp bài; R07 handoff; FINAL mới có thể đạt READY FOR IMPLEMENTATION.
+**Trạng thái:** Research 05/07 hoàn thành; **MVP + ARCHITECTURE + MATH + TEST/ENV DESIGN BASELINE**, chưa phải code/final approval. R03 đã khóa sơ đồ module/hợp đồng hàm; R04 đã kiểm định toán; R05 đã thiết kế kiểm thử/môi trường; R06 đồ án nộp bài; R07 handoff; FINAL mới có thể đạt READY FOR IMPLEMENTATION.
 
 ## 1. Thông tin khóa từ chủ dự án và giảng viên
 
@@ -267,7 +267,7 @@ END; khi upload/checkbox/selectbox thay đổi, Streamlit rerun từ đầu
 
 **Scope:** independent arithmetic verification and specification decisions. This is NOT application code, test execution, or a claim that DataForge Mini runs. Verified arithmetic with temporary pandas 2.2.3 / NumPy 2.3.5 outside the repo, cross-checked using exact fractions and documentation. R05 designs tests and versions.
 
-### 11.1. Canonical calculation oracle for dataset in `5
+### 11.1. Canonical calculation oracle for dataset in §5
 
 **Order is mandatory:** inspect raw → make a copy → `drop_duplicates(keep="first")` over all columns → take column-wise median among remaining rows → fill only missing numeric cells. Do not re-run deduplication after fill. Keep the original untouched.
 
@@ -364,3 +364,136 @@ For any Figure: never draw made-up points for missing observations, and never us
 - Matplotlib hist bins and density https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html
 
 These are documentation references, not evidence that the project is implemented.
+
+
+---
+
+## 12. RESEARCH 05 — Testing, environment and reproducibility (2026-10-25)
+
+**STATUS: QA SPEC DONE, NOT TESTED IN APP.** No Python application/source/fixtures/dependency files created. R05 researched release records and docs, designed test cases, and audited consistency. Exact package versions remain **candidate**, not integration-tested; P0 must resolve and verify before pins.
+
+### 12.1. Runtime and dependency policy (candidate, no installation claim)
+
+- Recommended Python: **CPython 3.13 x64 / arm64 as applicable**, **not** Python 3.15 merely because newest. Python 3.13 is supported; package PyPI classifiers include 3.13 for intended choices.
+- Application's four **direct** dependencies only: `numpy`, `pandas`, `matplotlib`, `streamlit`. `pytest` is development/test-only; Python standard library is otherwise sufficient.
+- Release references **as of 2026-10-25**: Python 3.13.17 (Oct 21); NumPy 2.5.4 (Oct 10); pandas 3.1.0 (Oct 22); Streamlit 1.66.1 (Oct 21); Matplotlib 3.11.x (release family); pytest 9.1.1 (Jun 19). These are **investigated release candidates**, **NOT an installed, proven compatible 5-package lockset**. Version of Matplotlib in implementation must be checked on PyPI when P0 runs. Never paste this paragraph as requirements.txt unchanged.
+- Candidate **major-family bounds** for P0 evaluation: Python `>=3.13,<3.14`, NumPy `>=2.4,<3`, Pandas `>=3.0,<4`, Matplotlib `>=3.10,<4`, Streamlit `>=1.60,<2`, pytest `>=9,<10`. These are **selection constraints, not compatibility proof**; pip resolves transitive deps. R05 recommendation, not user/instructor mandate.
+- At P0 install/test on the owner's actual OS/Python architecture, run `python -m pip check`, package import/version check, clean env smoke, tests, then pin **verified exact top-level versions** in `requirements.txt`. Avoid manual requirements from hypothetical compatibility; don't add Conda/Poetry/Docker/uv just for packaging.
+- **Important Pandas 3.0 change:** inferred text columns use `str` dtype rather than `object`. Never use `dtype == "object"` alone or `select_dtypes(include="object")` alone to find `lop`. Select text/category with a compatible dtype predicate including string and object/category; guard against bool/datetime masquerading as groups. Verify with `sample_data.csv` parsed on chosen Pandas version.
+- **Streamlit 1.62+ change:** `st.pyplot(fig)` requires explicit Figure; using `st.pyplot()` with no figure is not supported; custom `savefig` kwargs deprecated. Keep object-oriented Matplotlib contract of R03.
+- Streamlit uploader has a large default max (200 MB historically); **project local upload policy: 2 MiB max** because all operations in memory and project intentionally small. Prefer a simple upload-size check (`uploaded_file.size`) plus user-facing message; if chosen Streamlit has a stable per-widget size option it can be used, but still verify semantics in P0. **This 2 MiB limit is unrelated to the teacher's PDF submission maximum of 100 MB.**
+- No cloud/server deployment necessary for submission; run locally and capture YouTube video. No network access needed *while running* after dependencies have been installed.
+
+### 12.2. Cross-platform setup procedure for implementation stage (DO NOT execute during research)
+
+From clone root, Python 3.13 available and network available only for install.
+
+Windows PowerShell:
+\`\`\`powershell
+py -3.13 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m pip install pytest
+.venv\Scripts\python.exe -m pip check
+.venv\Scripts\python.exe -m pytest -q
+.venv\Scripts\python.exe -m streamlit run app.py
+\`\`\`
+
+macOS/Linux:
+\`\`\`sh
+python3.13 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m pip install pytest
+.venv/bin/python -m pip check
+.venv/bin/python -m pytest -q
+.venv/bin/python -m streamlit run app.py
+\`\`\`
+
+- These are **future commands**, not evidence they have run; `requirements.txt`, tests and source don't exist during R05.
+- Prefer invoking the venv's exact interpreter rather than relying on a shell activation or globally installed `streamlit`/`pytest`. `python -m pytest` and `python -m streamlit` ensure consistent interpreter.
+- At P0 check `python --version` and record `python -m pip list` exact installed versions and host OS. Do a **fresh venv smoke check** after locking requirements and a second run from a different working directory if app sample lookup relies on `__file__`.
+- If internet is absent before installation, cannot assume library wheels exist locally. Prepare dependency installation once while online, then verify app works offline.
+- Do **not** create CI/Docker/GitHub Actions or a lock framework until a real blocker justifies them.
+
+### 12.3. Minimal testing architecture
+
+- **One test file** `tests/test_analysis.py` to hold data/unit/chart contract tests, if this remains readable; add `tests/test_charts.py` **only if** needed to separate Matplotlib assertions from numerical tests and justify during P2. No conftest/plugin/fixtures directory or CI required.
+- Pure functions tested without Streamlit server. Use `io.StringIO`/`io.BytesIO` in tests to construct small input cases; **one** canonical dataset file `sample_data.csv` created only at P0. Do not litter repo with 10 physical malformed CSV files.
+- `pytest.approx` (and `numpy.testing`/`pandas.testing` where useful) compares floats with tolerance, not direct equality. Compare DataFrames without mutation using Pandas testing helpers.
+- Matplotlib tests should assert `Figure`, plot axes labels, histogram patch/bin counts, group bar heights and zero baseline, scatter point offsets/count. Avoid brittle image pixel snapshot comparisons.
+- Manual UI smoke is mandatory after P3: these can complement, not replace, unit tests. Streamlit AppTest is an **optional** enhancement if it replaces manual repetitions without many lines of extra test code. It is not mandatory for a 1-page student app.
+- In P0/P1... log test command, outcome, Python/package versions and commit SHA; **do not report "pass" if unavailable or skipped**.
+
+### 12.4. OR-01..OR-15 executable test design (source oracle at `11; NOT executed)
+
+| ID | How to construct / call in P1–P3 | Assertion and failure mode | Priority |
+|---|---|---|---|
+| OR-01 | `load_csv(sample_data.csv)`, `inspect_data` | shape 12x4, duplicates2, missing2; grade/hours parsed as numeric | P0 |
+| OR-02 | `raw.copy(deep=True)`; `clean_data(raw)` | cleaned 10x4, no NA/duplicates **for canonical input**, raw deeply equal snapshot | P0 |
+| OR-03 | Look up `ten=="Minh"` and `ten=="Ngoc"` post-clean | exact numeric values hours4, grade8 | P0 |
+| OR-04 | `numeric_stats(clean,"diem")` | count10, min6/max10, mean7.8 median8; use approx on floats | P0 |
+| OR-05 | Same stats | `std == approx(sqrt(1.56))`, **ddof=0**, not Pandas default ddof1 | P0 |
+| OR-06 | `mean_by_group(clean,"lop","diem")` | A≈8.0, B≈7.6, each n=5 by separate Pandas group sizes | P0 |
+| OR-07 | `histogram(clean,"diem")` | figure, axis labels, 5 bars/interval counts [2,2,3,2,1], total 10 | P0 |
+| OR-08 | `scatter(raw,..)` and `scatter(clean,..)` | each 10 complete **paired** points; offsets match paired data, not independently filtered arrays | P0 |
+| OR-09 | In-memory numeric column all NA, plus valid group | missing remains; stats count0, others None; no misleading histogram/bar | P0 |
+| OR-10 | In-memory one numeric value | std0, mean/median/min/max that value | P0 |
+| OR-11 | Text group NA; another group all NA numeric | group key NA excluded; bar omits NaN group mean and doesn't plot zero | P0 |
+| OR-12 | `[("X",1),("X",None),("Y",1)]` | no duplicate before, 1 after fill; no second automatic drop | P0 |
+| OR-13 | In-memory numeric ±inf with valid other values | input rejected gracefully with clear diagnostic; never figure rendered | P0 |
+| OR-14 | DataFrame with no numeric, one numeric, no category | incompatible stats/plots prevented, valid parts remain; no fabricated cols | P0 |
+| OR-15 | Call UI cleaning from same raw twice (two independent runs) | reproducible same cleaned view; **do not require** `clean_data(clean_data(df)) == clean_data(df)` for arbitrary datasets | P1 |
+
+**P0/P1 in Priority column refers to test implementation urgency *after* coding is authorized, not to current R05 phase.** 
+
+For OR-13 the source of error may be loader/UI or function guard, but API contracts must agree; avoid silently calling `np.nanmean` with inf.
+
+### 12.5. Input/interaction QA supplement (small, no overengineering)
+
+| ID | Case | Expected minimal UX behavior |
+|---|---|---|
+| IO-01 | Zero-byte CSV / whitespace-only file | `EmptyDataError` or equivalent caught; user-facing error, stop current render |
+| IO-02 | Header-only CSV, 0 data rows | distinguish from no header; explain empty dataset, don't compute stats/charts |
+| IO-03 | Malformed quotation / extra fields | `ParserError` or warning if Pandas detects problem; do not silently set `on_bad_lines="skip"`. Some ragged CSV with too few fields may be parsed as missing values: **do not promise all malformed CSVs are rejected by Pandas** |
+| IO-04 | UTF-8 with BOM | read as expected (UTF-8-SIG or compatible), preserve column names |
+| IO-05 | Invalid UTF-8 bytes | catch `UnicodeDecodeError`, tell user expected UTF-8 |
+| IO-06 | Wrong delimiter (`;`), one-column CSV | report format incompatibility if needed; do not guess arbitrary delimiters silently |
+| IO-07 | Empty/duplicate/unnamed column headers | require unambiguous header; do not imply renamed Pandas columns have same original meaning (P0 decide simplest guard) |
+| IO-08 | Oversized upload >2 MiB | clear stop; does not affect teacher PDF 100MB limit |
+| IO-09 | Numeric text values that Pandas infers as string | don't silently coerce; numeric features hidden/explained |
+| IO-10 | CSV export raw vs cleaned | file round-trips to current `active_df` with exactly 4 columns in sample, **no extra index**, UTF-8-SIG works in common spreadsheet viewer |
+| UI-01 | No upload | bundled sample selected from path relative to `app.py` |
+| UI-02 | Upload another valid CSV | uploaded file replaces sample; no residual rows/data |
+| UI-03 | Toggle raw → clean → raw | 12→10→12, raw not mutated, metrics and plots reflect same active view |
+| UI-04 | Change numeric/group selections | no crashes or mismatched chart labels; invisible plots when inappropriate |
+| UI-05 | Only one numeric / no text groups | histogram remains if possible; scatter or bar omitted with helpful note |
+| UI-06 | Download before/after clean | currently shown data exported; check parse again and values |
+
+**Validation policy (minimal):** Catch expected `pd.errors.EmptyDataError`, `pd.errors.ParserError`, `UnicodeDecodeError`, `OSError`, `ValueError` (including unsupported schema/inf) and show understandable messages. Do not use broad `except Exception: pass` and do not print a traceback to user. Keep errors localized, not an error-handling framework. Some Pandas malformed inputs may parse with warnings or implicit NA; **test against actual selected Pandas version**.
+
+**Additional Pandas 3.x regression:** `lop` text/category detection must work when dtype is `str`, not merely legacy `object`. Add explicit assertion to OR-01 or IO-09. This is confirmed in pandas 3.0 official migration docs.
+
+### 12.6. Acceptance gates at the end of implementation (future)
+
+**STOP / NO SUBMISSION** if:
+1. App crashes on canonical sample or doesn't show correct 12→10 profile;
+2. NumPy/Pandas/Matplotlib not actually used in executed workflow;
+3. Wrong mean/std/group/histogram/scatter pairing;
+4. Imported CSV secretly rewritten or silently discarded;
+5. Report/video describe unimplemented functionality or wrong numbers;
+6. Source GitHub link inaccessible to teacher; YouTube link cannot be viewed; PDF not 15–20 pages or >100MB; self-assessment incomplete.
+
+**P0–P4 completion evidence record:** commit SHA, exact Python and 4 library versions, `python -m pip check` result, `python -m pytest -q` pass/fail counts, GUI smoke checklist, sample CSV hash/check and screenshots from correct build, PDF pages/bytes, accessibility of links. Treat skipped/unrun tests as unverified.
+
+### 12.7. Evidence / primary sources checked for R05
+
+- Python supported releases: https://www.python.org/downloads/
+- PyPI Python requirements / release candidates: https://pypi.org/project/numpy/ ; https://pypi.org/project/pandas/ ; https://pypi.org/project/matplotlib/ ; https://pypi.org/project/streamlit/ ; https://pypi.org/project/pytest/
+- Pandas 3.0 string dtype change: https://pandas.pydata.org/docs/whatsnew/v3.0.0.html and https://pandas.pydata.org/docs/user_guide/migration-3-strings.html
+- Pandas read_csv & parsing: https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html ; https://pandas.pydata.org/docs/reference/api/pandas.errors.EmptyDataError.html ; https://pandas.pydata.org/docs/reference/api/pandas.errors.ParserError.html
+- Streamlit releases and `st.pyplot(fig)`: https://docs.streamlit.io/develop/quick-reference/release-notes/2026 ; https://docs.streamlit.io/develop/api-reference/charts/st.pyplot
+- Streamlit upload/download and limits: https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader ; https://docs.streamlit.io/develop/api-reference/widgets/st.download_button
+- pytest approximate: https://docs.pytest.org/en/stable/how-to/assert.html
+- Streamlit AppTest (optional): https://docs.streamlit.io/develop/concepts/app-testing/get-started
+- Python virtual environments: https://docs.python.org/3/library/venv.html
+
+**Knowledge boundary:** These URLs verify APIs/releases and constrain the *plan*, NOT proof the specific package combination installs/runs or the app passes tests. As packages change, verify again in P0.

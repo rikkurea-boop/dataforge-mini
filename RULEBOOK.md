@@ -37,3 +37,13 @@
 - Numeric infinity is unsupported; report rather than plotting/computing it. NA for the demo remains allowed.
 - Histogram 5 equal-width bins, `density=False`, bar mean begins Y at 0, scatter drops NA as **row pairs**; no causal claims.
 - Numerical comparisons in tests use tolerances; rounding only in UI. See PROJECT_SPEC `11 for OR-01..OR-15.
+
+
+## R05 QA and reproducibility rules
+- Runtime target **CPython 3.13**; verify exact top-level dependency versions on owner's actual computer at P0, **then pin what passed**. Never present PyPI classifiers as proof a full environment is functional.
+- Pandas ≥3 string columns may be `str` rather than `object`; group selection must recognize both, including `lop`.
+- One canonical CSV file only; in-memory CSV test inputs allowed. No elaborate mock fixtures, browsers, Docker, CI, Selenium or frontend testing framework unless a concrete blocker requires them.
+- Use `pytest.approx` for floating results; inspect Matplotlib Figure attributes rather than image pixels; manual browser smoke for Streamlit.
+- On invalid bytes, empty/broken UTF-8 CSV, unsupported columns or ±infinity, show clear message; never silently discard errors.
+- **Upload <=2 MiB** for small-data classroom MVP. This is independent from **teacher PDF upload <=100MB**.
+- Before "DONE": venv fresh install + pip check + test outputs + chart/UI smoke + source/video/PDF agreement. OR-/IO-/UI- IDs in PROJECT_SPEC `12 are **plans until executed**.
