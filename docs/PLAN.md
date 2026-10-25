@@ -30,14 +30,14 @@
 Các chi tiết P0–P4 là dự kiến; khóa lại sau R02–R07. **Không được viện P0 là task tiếp theo để tự bắt đầu code ở giai đoạn research.**
 
 ## C. Định hướng dữ liệu đối chứng (đề xuất, R02 sẽ khóa)
-\`\`\`csv
+```csv
 ten,lop,gio_hoc,diem
 An,A,4,8
 Binh,B,2,6
 Chi,A,6,9
 Dung,B,3,7
 Ha,A,7,10
-\`\`\`
+```
 - mean(diem) = 8.0; nhóm A = 9.0; B = 6.5; số điểm >=8 là 3; mean(gio_hoc) = 4.4.
 - Fixture lỗi có dòng trùng/NaN **riêng**; không được thay đổi đáp án chuẩn.
 

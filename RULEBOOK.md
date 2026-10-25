@@ -14,6 +14,8 @@
 10. **Git:** feature branch/PR; không force push/xóa lịch sử/merge code chưa test; tránh sửa file của phiên khác; mọi claim "đã xong" phải có commit hoặc output test.
 11. **Nguồn gốc:** không clone code của bên thứ ba rồi nói là tự viết; giữ license và trích nguồn khi dùng.
 12. **Handoff:** kết phiên cập nhật `docs/STATUS_HANDOFF.md` với nhiệm vụ hoàn thành/chưa hoàn thành, mã commit, test và bước tiếp theo.
-13. **Đồng bộ bài thuyết trình:** PPT/video/report chỉ giới thiệu những tính năng đã chạy; biểu đồ và con số khớp dataset/commit demo.
-14. **Thiếu yêu cầu chính thức:** không suy diễn deadline, rubric, độ dài slide/video/báo cáo; ghi trong `docs/REQUIREMENTS.md`.
-15. **Definition of Done:** code chạy được, test logic đạt, demo được, giải thích được vai trò từng hàm/thư viện; không coi tài liệu lập kế hoạch là sản phẩm.
+13. **Đồng bộ bài nộp:** video YouTube và báo cáo PDF 15–20 trang <=100 MB **bắt buộc theo form**, cùng với link code và đoạn tự đánh giá. Nội dung chỉ giới thiệu tính năng đã chạy; biểu đồ và số liệu khớp dataset/commit demo. PPT chưa xác minh là bắt buộc.
+14. **Bằng chứng & điều chưa biết:** form đã xác nhận chủ đề 5.5, code link, YouTube link, PDF 15–20 trang, giới hạn 100 MB, điểm **tự đánh giá 3+2+2+1+2**. Không suy diễn deadline, thời lượng video, slide, định dạng chi tiết hay rubric chấm cuối. Tách `FORM-CONFIRMED`, `USER-DECIDED`, `DESIGN-PROPOSED`, `UNKNOWN` như `docs/REQUIREMENTS.md`.
+15. **Definition of Done:** khi được phép coding mới yêu cầu code chạy được, test logic đạt, demo được, giải thích được từng hàm/thư viện; không coi kế hoạch là sản phẩm.
+16. **Research-only gate:** 7 lượt nghiên cứu và 1 lượt QA cuối được làm tuần tự. **Cấm khởi tạo source code, dependencies, dataset thực tế hoặc nộp sản phẩm trước khi owner giao lập trình.**
+17. **Bảo mật & nộp bài:** repo đang private; kiểm tra quyền truy cập người chấm trước khi gửi, không tự chuyển public. YouTube link phải xem được bởi người chấm; thử qua phiên không đăng nhập.
