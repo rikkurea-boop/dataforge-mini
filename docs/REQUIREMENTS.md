@@ -1,187 +1,90 @@
-# Yêu cầu chính thức, bằng chứng và ma trận nghiệm thu — Research 01
+# REQUIREMENTS — yêu cầu có bằng chứng và nguồn tham chiếu
 
-**Cập nhật:** 2026-10-25 · **Nguồn ưu tiên:** hai ảnh biểu mẫu người dùng cung cấp trong chat ngày 2026-10-25.  
-**Chế độ:** xác minh yêu cầu, KHÔNG triển khai ứng dụng. Đọc cùng PROJECT_SPEC.md và docs/PLAN.md.
+**Mục tiêu:** phân biệt **thầy thực sự yêu cầu**, **user quyết định**, **AI đề xuất**, và **chưa biết**. Đây là hồ sơ truy xuất nguồn, không phải danh sách tính năng tự tưởng tượng. R01 xác minh **hai ảnh biểu mẫu do user cung cấp trong chat ngày 2026-10-25**, R02–R06 bổ sung giải pháp kỹ thuật và tài liệu bên ngoài. **Ảnh gốc chưa có trong repo**, không được tuyên bố đã kiểm lại nguyên ảnh chỉ nhờ file này; nếu có form cập nhật, đối chiếu trực tiếp và sửa các mục liên quan.
 
-## 1. Quy tắc phân loại bằng chứng
-- **FORM-CONFIRMED**: thấy trực tiếp trong phần biểu mẫu/đoạn thông báo được chụp. Chỉ khẳng định nội dung có trong vùng ảnh; ảnh không chứng minh toàn bộ biểu mẫu không có trường khác.
-- **USER-DECIDED**: quyết định được người dùng trực tiếp xác nhận trong chat.
-- **DESIGN-PROPOSED**: giải pháp nhóm nghiên cứu đề xuất để đáp ứng bài tập, không phải quy định của giảng viên.
-- **UNKNOWN**: chưa có căn cứ; không suy diễn, không tự coi là không bắt buộc.
-- **PLATFORM-DOC**: quy tắc từ tài liệu nền tảng chính thức, KHÔNG phải tiêu chí giảng viên.
+## 1. Bốn mức bằng chứng
 
-## 2. Nguồn gốc chứng cứ
+- **FORM-CONFIRMED:** nhìn thấy trực tiếp trong vùng ảnh biểu mẫu; không suy diễn toàn bộ form đã được quan sát.
+- **USER-DECIDED:** yêu cầu/ưu tiên do chủ dự án trực tiếp chốt.
+- **DESIGN-PROPOSED:** giải pháp để đạt mục tiêu, **không phải** yêu cầu từ thầy.
+- **UNKNOWN:** ảnh hiện có không đủ xác minh, không tự coi là "không bắt buộc".
 
-| ID | Nguồn | Phạm vi được quan sát | Giới hạn |
+## 2. Ma trận yêu cầu đã xác nhận
+
+| ID | Loại | Nội dung và giới hạn bằng chứng | Cổng bằng chứng khi hoàn thành |
 |---|---|---|---|
-| FORM-01 | Ảnh 1 do người dùng cung cấp (2026-10-25) | Thông báo bài tập cá nhân "Chương 5 – Ứng dụng Python"; danh sách chủ đề 5.1–5.5 | Không chứa toàn bộ hướng dẫn thực hiện hoặc hạn nộp |
-| FORM-02 | Ảnh 2 do người dùng cung cấp (2026-10-25) | Các mục Google Form về link mã nguồn, video YouTube, PDF 15–20 trang, tự đánh giá 5 tiêu chí | Ảnh bị giới hạn khung nhìn; các câu hỏi phía dưới có thể chưa xuất hiện |
-| USER-01 | User trực tiếp chọn đề tài trong chat | "Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python" | Là tên đề tài, không phải câu chữ của thầy |
-| USER-02 | User trực tiếp quyết định cách làm | DataForge Mini độc lập DataForge; tối giản, dễ trình bày toàn bộ code | Không đồng nghĩa mọi chức năng đề xuất đều đã được duyệt |
-| USER-03 | User yêu cầu quy trình làm việc | 7 lượt research chuyên sâu + 1 lượt kiểm định trước khi triển khai; chỉ chuẩn bị, không làm project ở giai đoạn này | Không được bắt đầu code khi chưa có quyết định cho triển khai |
-| PLATFORM-01 | https://docs.github.com/en/repositories/creating-and-managing-repositories/about-repositories | Private repository không mặc nhiên truy cập được từ bên ngoài | Quy tắc nền tảng |
-| PLATFORM-02 | https://support.google.com/youtube/answer/157177?hl=en | Public/Unlisted có thể xem bằng link; Private giới hạn người được cho phép | Quy tắc nền tảng |
+| **F01** | FORM-CONFIRMED | Bài tập **cá nhân** trong Chương 5, chọn **5.5 – Phân tích dữ liệu cơ bản với NumPy, Pandas và Matplotlib** | Mã nguồn/README và demo đúng đề tài |
+| **F02** | FORM-CONFIRMED | Tự điền và kiểm tra **thông tin cá nhân** trên form | Người nộp xác minh trong form, không commit PII lên repo |
+| **F03** | FORM-CONFIRMED | **Link mã nguồn GitHub hoặc nền tảng tương đương** (trường bắt buộc) | Link source đúng bản cuối, thầy mở được |
+| **F04** | FORM-CONFIRMED | **Link video YouTube demo sản phẩm** (trường bắt buộc) | URL watch mở được với quyền người chấm |
+| **F05** | FORM-CONFIRMED | **Một PDF báo cáo 15–20 trang, dung lượng tối đa 100 MB** (trường bắt buộc) | File mở, đếm trang vật lý, kiểm byte/ảnh/link |
+| **F06** | FORM-CONFIRMED | **Đoạn văn ngắn tự nhận xét và tự chấm** theo 5 tiêu chí, nêu ưu điểm/hạn chế/lý do | Nội dung có thực chứng, tối đa 10 điểm |
+| **U01** | USER-DECIDED | Tên đề tài: “Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python” | Thống nhất trên README/báo cáo/video |
+| **U02** | USER-DECIDED | DataForge Mini **độc lập** DataForge gốc; ưu tiên **cực gọn**, user giải thích được toàn bộ code | Không phụ thuộc original repo, source ít tầng |
+| **U03** | USER-DECIDED | Nghiên cứu **7 lượt + 1 FINAL** riêng; **chưa viết app** trong research | Git tree research chỉ tài liệu, coding phải có lệnh mới |
 
-**Trích yếu chính xác từ FORM-01:** thông báo yêu cầu sinh viên điền thông tin và nộp sản phẩm dự án cá nhân thuộc Chương 5, tự kiểm tra thông tin cá nhân, đường dẫn mã nguồn và các tài liệu minh chứng; "Mỗi sinh viên nộp sản phẩm của chính mình". Chủ đề 5.5: "Phân tích dữ liệu cơ bản với NumPy, Pandas và Matplotlib".
+**Nguồn gốc:** FORM-01 ảnh đầu chứa thông báo dự án cá nhân và danh sách chủ đề 5.1–5.5; FORM-02 ảnh tiếp theo thể hiện trường link code, video YouTube, PDF 15–20 trang ≤100MB và tự chấm điểm. Hai ảnh đang nằm trong conversation, không có SHA file ảnh ở GitHub. Nếu cần kiểm toán nguyên văn lần sau, chủ dự án cần cung cấp file ảnh/form hoặc quyền xem chat chứa nguồn.
 
-**Trích yếu chính xác từ FORM-02:** "Link mã nguồn dự án (GitHub hoặc nền tảng tương đương)" (*); "Link video Youtube demo sản phẩm" (*); "PDF Báo cáo (từ 15-20 trang)" (*) với "Tải 1 tệp được hỗ trợ lên: PDF. Kích thước tối đa 100 MB"; mục "Tự đánh giá dự án cá nhân" (*) yêu cầu đoạn văn ngắn tự nhận xét, chấm theo 5 tiêu chí, nêu ưu điểm, hạn chế, giải thích điểm.
+## 3. Cơ cấu TỰ ĐÁNH GIÁ có trong form (không khẳng định là rubric chấm cuối duy nhất)
 
-Ảnh gốc hiện nằm trong cuộc hội thoại của chủ dự án, **chưa lưu dưới dạng file ảnh trong repository**. Bản ghi này là bản trích xuất thủ công để các AI về sau tiếp quản được; nếu cần kiểm toán nguyên ảnh phải xin file gốc hoặc quyền xem chat.
+| Tiêu chí sinh viên tự chấm | Tối đa |
+|---|---:|
+| Mức độ hoàn thành chức năng | **3** |
+| Kiến thức và kỹ thuật Python | **2** |
+| Chất lượng mã nguồn | **2** |
+| Giao diện/trải nghiệm hoặc trực quan hóa | **1** |
+| Báo cáo và minh chứng | **2** |
+| **Tổng** | **10** |
 
-## 3. Yêu cầu truy vết (RTM)
+**Không điền điểm trước khi kiểm thử sản phẩm.** Khung nhận xét và evidence liên kết với từng tiêu chí nằm trong `docs/DELIVERABLES.md`.
 
-| ID | Phân loại | Yêu cầu / quyết định | Minh chứng cần có khi nộp | Xác minh |
-|---|---|---|---|---|
-| F01 | FORM-CONFIRMED | Một sản phẩm cá nhân thuộc Chương 5, chọn mục 5.5 | Repo/code có nguồn gốc rõ, tên/chủ đề đúng | Xem repo + đối chiếu sản phẩm |
-| F02 | FORM-CONFIRMED | Điền và kiểm tra thông tin cá nhân trong form | Các trường thông tin trong biểu mẫu | Người nộp tự kiểm tra; **không đưa dữ liệu cá nhân vào repo** |
-| F03 | FORM-CONFIRMED | Nộp link mã nguồn GitHub hoặc tương đương | Link đúng commit/branch chứa sản phẩm | Mở link từ tài khoản không có quyền sở hữu |
-| F04 | FORM-CONFIRMED | Nộp link video YouTube demo sản phẩm | Video hoạt động, thể hiện sản phẩm thật | Mở link từ cửa sổ chưa đăng nhập |
-| F05 | FORM-CONFIRMED | Nộp 1 file báo cáo PDF 15–20 trang, tối đa 100 MB | File PDF và số trang, dung lượng thật | Đếm trang, kiểm tra file và dung lượng |
-| F06 | FORM-CONFIRMED | Đoạn tự nhận xét và tự đánh giá 5 tiêu chí, nêu ưu/nhược và lý do điểm | Nội dung điền trong form, gắn bằng chứng | Đủ năm thành phần và lập luận |
-| U01 | USER-DECIDED | Tên đề tài: Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python | Tên nhất quán trong README, báo cáo và video | So khớp tên |
-| U02 | USER-DECIDED | Dự án tách biệt Data-Forge gốc, tối giản, giải thích toàn bộ code | Source tree ít tầng, code có thể walkthrough | Code review + demo lời giải thích |
-| U03 | USER-DECIDED | Chỉ nghiên cứu/chuẩn bị cho đến khi kế hoạch 7+1 lượt được khóa | Repo docs/plan; không có implementation ngoài phê duyệt | Kiểm tra git diff/commit |
-| D01 | DESIGN-PROPOSED | App dùng Streamlit với CSV → Pandas → NumPy → Matplotlib → xuất CSV | Demo logic ba thư viện | Test và video; sẽ khóa ở Research 02–03 |
-| D02 | DESIGN-PROPOSED | Thống kê mô tả, 2–3 biểu đồ, cleaning đơn giản, ví dụ đối chứng | Dataset mẫu, kết quả chuẩn | Test và đối chiếu tính tay; sẽ khóa ở Research 02–04 |
+## 4. Điều chưa được ảnh/form chứng minh
 
-**Lưu ý:** việc giảng viên liệt kê tên ba thư viện trong chủ đề **không chứng minh** có một số lượng hàm/biểu đồ bắt buộc cụ thể. Yêu cầu app, lựa chọn CSV/Streamlit và 3 chart là thiết kế của dự án để đáp ứng chủ đề, không được ghi "thầy yêu cầu" khi chưa có bằng chứng.
+- **Deadline**, giờ đóng form, lịch bảo vệ và xử lý nộp muộn.
+- **Thời lượng video** và việc có cần facecam/giọng thuyết minh.
+- **PPT** có bắt buộc không; ảnh không cho phép kết luận có/không.
+- **Template PDF** (font, lề, APA/IEEE, phụ lục có được tính trang không). Đề xuất mặc định đếm trang vật lý cả bìa/mục lục cho an toàn.
+- Yêu cầu của thầy về **framework GUI**, CSV/Excel, số biểu đồ, kỹ thuật cleaning cụ thể và những trường form ngoài ảnh.
+- Phiên bản Python/package hoặc hệ điều hành máy chủ dự án sẽ sử dụng.
 
-## 4. Thang điểm **tự đánh giá** nhìn thấy trên biểu mẫu
+**Khi có nguồn mới:** ghi URL/ảnh/tên file, mục/trang/giờ kiểm; cập nhật Fxx nếu thực sự thêm yêu cầu; kiểm ảnh hưởng lên `PROJECT_SPEC`/`PLAN`/`DELIVERABLES` và ghi quyết định.
 
-| Tiêu chí | Tối đa | Loại minh chứng dự kiến | Cách tránh tự chấm quá mức |
-|---|---:|---|---|
-| Mức độ hoàn thành chức năng | 3 | Từng chức năng demo chạy, đối chiếu với spec | Chỉ nêu tính năng đã chạy |
-| Kiến thức và kỹ thuật Python | 2 | Giải thích rõ Pandas, NumPy, Matplotlib và code sử dụng | Không ghi tên thư viện mà không có xử lý thật |
-| Chất lượng mã nguồn | 2 | Cấu trúc gọn, hàm rõ, test, xử lý lỗi | Không tự nhận "clean code" nếu chưa review |
-| Giao diện/trải nghiệm hoặc trực quan hóa dữ liệu | 1 | Ảnh giao diện và biểu đồ có nhãn, đúng dữ liệu | Không đánh đồng giao diện bóng bẩy với tính đúng |
-| Báo cáo và minh chứng sản phẩm | 2 | PDF 15–20 trang, demo YouTube, ảnh/code đối chứng | Link/file phải truy cập được và khớp phiên bản |
-| **Tổng** | **10** | | |
+## 5. Thiết kế do project tự chọn — không gán cho thầy
 
-Đây là **các mục sinh viên tự chấm trong form**; không suy diễn rằng giảng viên chấm cuối cùng theo một rubric duy nhất giống hệt.
+| ID | Thiết kế | Tại sao | Nơi dùng |
+|---|---|---|---|
+| **D01** | Streamlit một trang, file CSV/10–12 record, không backend | Ít code UI, trình bày dễ | PROJECT_SPEC M01–M07 |
+| **D02** | Pandas dedup→median fill, NumPy stats ddof0, Matplotlib hist/bar/scatter | Ba thư viện dùng đúng trọng tâm, có expected values | PROJECT_SPEC `2–`5 |
+| **D03** | Ba file chính `app.py`/`analysis.py`/`charts.py` | Tách UI/dữ liệu/hình, không overengineering | PLAN T03–T08 |
+| **D04** | Target Python3.13, cap CSV upload 2 MiB, QA 15 OR+10 IO+6 UI | Lặp lại được và không khó test | PROJECT_SPEC `5–`6 |
+| **D05** | Report đích 18 trang, YouTube demo khoảng 7 phút | Giúp quy trình minh chứng gọn | DELIVERABLES |
 
-Chưa có kết quả thực thi, do đó **chưa thể điền điểm tự chấm cụ thể**.
+**Vấn đề thường nhầm:** thầy yêu cầu **báo cáo PDF**, **không có căn cứ thầy yêu cầu ứng dụng tự xuất PDF**. PDF generator trong app là OUT OF SCOPE.
 
-## 5. Ma trận tiêu chí nghiệm thu nội bộ (không phải đòi hỏi nguyên văn của thầy)
+## 6. Nguồn kỹ thuật tham khảo — API/standard, KHÔNG phải rule của thầy
 
-| Gate | Điều kiện kiểm tra | Cơ sở |
+Nguồn gốc qua R02–R05 được lưu trong git history; dưới đây là các trang **chính thức** có vai trò trong quyết định hiện hành. Đọc lại theo đúng phiên bản dependency khi P0 bắt đầu.
+
+| Nhóm | Nguồn | Dùng để xác minh |
 |---|---|---|
-| G-APP | MVP làm đúng luồng xử lý dữ liệu, ba thư viện xuất hiện trong code chạy thật | Thiết kế để đáp ứng F01; chi tiết khóa ở lượt 02–04 |
-| G-CODE | Không có hệ thống không cần thiết; người học giải thích được toàn bộ file/hàm | U02 |
-| G-VALID | Kết quả xử lý và biểu đồ có test/đối chứng; lỗi đầu vào được xử lý | Dự án cam kết chất lượng; cụ thể hóa lượt 04–05 |
-| G-REPO | Link mã nguồn xem được bởi người chấm, không phụ thuộc nhánh research | F03; GitHub access |
-| G-VIDEO | YouTube demo đúng commit sản phẩm và có thể xem qua link | F04; YouTube access |
-| G-PDF | PDF mở được, đủ 15–20 trang, <=100MB; nội dung trùng khớp phiên bản demo | F05 |
-| G-SELF | Đã viết đánh giá trung thực theo 5 tiêu chí, nêu ưu/nhược và lý do | F06 |
-| G-SUBMIT | Điền đủ thông tin người nộp và xác minh mọi link/file trước khi gửi form | F02–F06 |
+| Pandas CSV | https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html | Đọc CSV, parse/file-like |
+| Pandas duplicate/NA | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html ; https://pandas.pydata.org/docs/user_guide/missing_data.html | whole-row dedup, missing/fill |
+| Pandas GroupBy | https://pandas.pydata.org/docs/user_guide/groupby.html | mean, group key NA handling |
+| Pandas std | https://pandas.pydata.org/docs/reference/api/pandas.Series.std.html | mặc định ddof1, phải ghi ddof0 nếu dùng |
+| Pandas string dtype 3.0 | https://pandas.pydata.org/docs/whatsnew/v3.0.0.html ; https://pandas.pydata.org/docs/user_guide/migration-3-strings.html | text dtype `str` có thể không là object |
+| NumPy std/finite | https://numpy.org/doc/stable/reference/generated/numpy.std.html ; https://numpy.org/doc/stable/reference/generated/numpy.isfinite.html | ddof0; phân biệt NA/inf |
+| Matplotlib histogram | https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html | bins/density, last-edge semantics |
+| Matplotlib Figure | https://matplotlib.org/stable/api/figure_api.html | trả Figure độc lập |
+| Streamlit widgets | https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader ; https://docs.streamlit.io/develop/api-reference/charts/st.pyplot ; https://docs.streamlit.io/develop/api-reference/widgets/st.download_button | upload, explicit Figure, export |
+| Streamlit rerun | https://docs.streamlit.io/develop/concepts/architecture/session-state | widget reruns mà không cần custom state |
+| Test/venv | https://docs.pytest.org/en/stable/how-to/assert.html ; https://docs.python.org/3/library/venv.html | approx comparison, virtual environments |
+| Release candidates | https://www.python.org/downloads/ ; https://pypi.org/project/numpy/ ; https://pypi.org/project/pandas/ ; https://pypi.org/project/matplotlib/ ; https://pypi.org/project/streamlit/ ; https://pypi.org/project/pytest/ | Python3.13 / package candidates; **không phải bằng chứng tổ hợp đã chạy** |
 
-## 6. Điều chưa thể kết luận từ hai ảnh
-- **Deadline, giờ đóng form, chính sách trễ hạn:** UNKNOWN.
-- **Video tối thiểu/tối đa bao nhiêu phút, định dạng lời thoại:** UNKNOWN.
-- **Có yêu cầu PPT/slides hay không:** UNKNOWN; **chưa thấy** trong phần ảnh.
-- **Báo cáo có biểu mẫu, trích dẫn, định dạng, số trang tính phụ lục ra sao:** UNKNOWN ngoài 15–20 trang PDF.
-- **Thầy yêu cầu giao diện Tkinter/Flask/Streamlit không:** UNKNOWN; chọn 5.5 không đồng nghĩa phải dùng 5.1 hoặc 5.2.
-- **Cần đồ án nhóm hay cá nhân:** FORM-01 khẳng định bài nộp là cá nhân.
-- **Có thêm trường form ngoài khung ảnh không:** UNKNOWN.
-- **Có tiêu chí chấm ngoài phần tự đánh giá không:** UNKNOWN.
+## 7. Nguồn quy trình nộp / quyền truy cập
 
-## 7. Hai rủi ro có thể khóa ngay từ lúc chuẩn bị
-1. Repo hiện là **private**, nên link GitHub tự nó không đảm bảo thầy xem được. Trước khi nộp, chọn public (sau khi kiểm tra dữ liệu/secret) hoặc phương án cấp quyền phù hợp và kiểm tra bằng tài khoản không có quyền. Không đổi quyền riêng tư nếu user chưa đồng ý.
-2. Video YouTube **Private** không phải dạng chỉ cần link là ai cũng xem được; Public hoặc Unlisted phù hợp hơn cho việc nộp link. Chọn quyền riêng tư do owner quyết định; kiểm tra thực tế từ trình duyệt không đăng nhập.
+- YouTube Public/Unlisted/Private: https://support.google.com/youtube/answer/157177 . Unlisted xem được qua URL nhưng có thể chia sẻ lại; Private không chỉ cần link.
+- GitHub access: https://docs.github.com/en/repositories/creating-and-managing-repositories/access-to-repositories . Repo hiện private; xác minh quyền người chấm, **không tự thay visibility**.
+- Quy trình báo cáo kỹ thuật và nguồn đại học: xem **`docs/DELIVERABLES.md`**.
+- 100 MB của PDF **khác** giới hạn CSV upload 2 MiB do project tự đặt.
 
-## 8. Research 01: kết luận và ranh giới
-- **Đã xác minh:** F01–F06 và cơ cấu 3+2+2+1+2; cập nhật hồ sơ.
-- **Chỉ đề xuất, chưa khóa:** luồng MVP cụ thể, UI, dataset, số biểu đồ và kiến trúc.
-- **Không được triển khai trong lượt 01:** tạo app, cài package, viết source, tạo slide/PDF/video.
-- **Lượt tiếp theo:** Research 02 — lựa chọn MVP tối thiểu + dataset phù hợp thang tự đánh giá, khóa tính năng bắt buộc/nên có/loại bỏ; dựa trên các ID F/U/D ở trên.
-
-
----
-
-## 9. Research 02 — Quyết định thiết kế và bằng chứng kỹ thuật (2026-10-25)
-
-**Không có yêu cầu mới của thầy trong R02.** Các yêu cầu F01–F06 phía trên không đổi. R02 chỉ thu hẹp phương án D01/D02: một trang Streamlit + một CSV giả lập 12 hàng (2 trùng, 2 thiếu) + Pandas clean/profile + NumPy numeric stats + Matplotlib histogram/bar/scatter + CSV download. Xem **PROJECT_SPEC.md §§3–7** để có đặc tả nguồn sự thật.
-
-| Phát biểu | Trạng thái | Nguồn / bằng chứng |
-|---|---|---|
-| Pandas có đọc CSV file-like | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html |
-| `drop_duplicates(keep="first")` giữ bản đầu tiên | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html |
-| `fillna` có thể điền scalar vào cột thiếu; có lựa chọn không in-place | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html |
-| Pandas GroupBy mean bỏ giá trị thiếu | DOC-VERIFIED | https://pandas.pydata.org/docs/reference/groupby.html |
-| NumPy nanmean/nanmedian xử lý NaN; all-NaN cần kiểm soát | DOC-VERIFIED | https://numpy.org/doc/stable/reference/generated/numpy.nanmean.html ; https://numpy.org/doc/stable/reference/generated/numpy.nanmedian.html |
-| Matplotlib hist tính bin và vẽ phân bố | DOC-VERIFIED | https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html |
-| Streamlit hỗ trợ uploader, Matplotlib Figure, download CSV; rerun theo tương tác | DOC-VERIFIED | https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader ; https://docs.streamlit.io/develop/api-reference/charts/st.pyplot ; https://docs.streamlit.io/develop/api-reference/widgets/st.download_button ; https://docs.streamlit.io/develop/concepts/architecture/session-state |
-| Một trang Streamlit là phương án tối ưu cho DataForge Mini | DESIGN EVALUATION | So sánh notebook/CLI/Tkinter/Flask/Streamlit trong PROJECT_SPEC §6; không phải yêu cầu bắt buộc |
-| R02 tính ra 12→10, median 4/8 và các mean | SPEC-ORACLE; NOT APP-TESTED | 12 dòng CSV in trong PROJECT_SPEC §5; không có code thực thi |
-| Cần đúng 3 biểu đồ, đúng cột sinh viên | DESIGN PROPOSED | Được chọn để demo đơn giản, không nằm trong form của thầy |
-
-**Lưu ý R03–R05:** khóa interfaces và test tương thích theo version thực tế; không lấy API docs của phiên bản mới làm bằng chứng mọi version đều có tham số tương ứng.
-
-
----
-
-## 10. Research 03 — Đối chiếu chứng cứ thiết kế từ docs chính thức (2026-10-25)
-
-| Vấn đề | Căn cứ chính thức | Quyết định của project |
-|---|---|---|
-| Streamlit rerun theo thao tác widget, Session State không bắt buộc cho xử lý thuần | https://docs.streamlit.io/develop/concepts/architecture/session-state ; https://docs.streamlit.io/develop/concepts/architecture/widget-behavior | Dùng lại raw input mỗi lần; 1 checkbox bật/tắt cleaning; **không tự viết state** |
-| UploadedFile là subclass BytesIO, có thể dùng với pd.read_csv; `read()` làm di chuyển pointer | https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader | Đọc file-like; `seek(0)` nếu đã đọc, không dùng `.name` làm file path |
-| st.pyplot chấp nhận Figure tường minh; lối global pyplot deprecated | https://docs.streamlit.io/develop/api-reference/charts/st.pyplot | 3 chart functions trả Figure |
-| Matplotlib cho phép tạo Figure trực tiếp ngoài pyplot; pyplot có registry figure | https://matplotlib.org/stable/api/figure_api.html ; https://matplotlib.org/stable/users/interactive.html | Tạo `Figure(...)` + `fig.subplots()`, không cần pyplot registry / close |
-| pandas.select_dtypes dùng `include="number"` để lọc cột số | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.select_dtypes.html | Chỉ hiển thị numeric selector khi có cột hợp lệ |
-| pandas DataFrame.to_csv mặc định kèm index nếu không cấu hình | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html | Xuất `index=False` để roundtrip đúng cột |
-| Streamlit download truyền data bằng bộ nhớ, widget có thể rerun | https://docs.streamlit.io/develop/api-reference/widgets/st.download_button | CSV nhỏ, xuất từ active_df của lần render đang hiển thị |
-
-**Các mốc R03 chỉ là quyết định kiến trúc của người nghiên cứu**, không phải nội dung thầy giao cụ thể. Báo cáo chỉ được nêu "đã phát triển" sau khi P0–P4 triển khai/kiểm tra.
-
-
----
-
-## 11. Research 04 — Mathematical evidence (2026-10-25)
-
-**Instructor form requirements unchanged.** These are technical design facts and test oracles, not the professor's own rubric.
-
-| Fact / rule | Source | R04 decision |
-|---|---|---|
-| NumPy std default ddof0 | https://numpy.org/doc/stable/reference/generated/numpy.std.html | Population std, n denominator |
-| Pandas Series.std default ddof1 | https://pandas.pydata.org/docs/reference/api/pandas.Series.std.html | Avoid default mismatch; explicitly choose ddof0 |
-| All-NA nanstd returns NaN and warns | https://numpy.org/doc/stable/reference/generated/numpy.nanstd.html | Guard count0 before operations |
-| NA differs from positive/negative infinity | https://numpy.org/doc/stable/reference/generated/numpy.isfinite.html | Permit NA/median fill, reject numeric infinity |
-| Whole-row duplicates keep first | https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html | Drop first, then fill |
-| NA scalar equality is unreliable | https://pandas.pydata.org/docs/user_guide/missing_data.html | Detect with Pandas isna |
-| Missing group keys excluded by default | https://pandas.pydata.org/docs/user_guide/groupby.html | Explain exclusion, do not treat missing as zero |
-| Histogram bins/density/last edge | https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html | 5 bins, frequency, last right edge included |
-
-**Independent computational audit (temporary environment, not project code):** Pandas 2.2.3, NumPy 2.3.5; CSV literal from PROJECT_SPEC §5 yields 12 raw records, 2 duplicate, 2 NA; after duplicate drop and numeric median fill 10, mean 7.8; A8.0/B7.6; population variance 1.56 and std≈1.24899959968; five-bin histogram counts [2,2,3,2,1]. Future test specifications OR-01..OR-15 in PROJECT_SPEC §11.
-
-
----
-
-## 12. R05 — package/runtime/docs references and risk record (2026-10-25)
-
-**No new professor requirement** in R05; Python 3.13, test design and 2 MiB upload are **project recommendations**, never form requirements.
-
-| Evidence fact | Verified source | Implication |
-|---|---|---|
-| Python 3.15 exists but 3.13 supported | https://www.python.org/downloads/ | Choose Python 3.13 for stable classroom baseline |
-| NumPy 2.5.4 published Oct 10, 2026; requires Python ≥3.12 | https://pypi.org/project/numpy/2.5.4/ | CPython 3.13 eligible, not end-to-end compatibility proof |
-| pandas 3.1.0 released Oct 22, 2026, compatible classifiers include 3.13 | https://pypi.org/project/pandas/3.1.0/ | Candidate current release |
-| Matplotlib 3.11 family, Python ≥3.11 | https://pypi.org/project/matplotlib/ | Candidate family, P0 choose exact verified wheel |
-| Streamlit 1.66.1 published Oct 21, 2026 | https://pypi.org/project/streamlit/ | Current candidate; verify wheel/dependencies at P0 |
-| pytest 9.1.1 published Jun 19, 2026 | https://pypi.org/project/pytest/ | Test-only dependency |
-| Pandas 3 defaults inferred strings to str, not object | https://pandas.pydata.org/docs/whatsnew/v3.0.0.html | Regression test `lop` group selector; object-only broken |
-| Streamlit requires Figure in `st.pyplot(fig)`; kwargs deprecation | https://docs.streamlit.io/develop/quick-reference/release-notes/2026 | R03 OO Figure decision corroborated |
-| Pandas may parse short CSV records as NA; `on_bad_lines="error"` applies to bad lines but not all ambiguities | https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html | Do not promise strict RFC CSV validation with one function |
-| `EmptyDataError` and `ParserError` are documented parse exceptions | https://pandas.pydata.org/docs/reference/api/pandas.errors.EmptyDataError.html ; https://pandas.pydata.org/docs/reference/api/pandas.errors.ParserError.html | Local user-facing errors, no silent drop |
-| Streamlit uploader historically defaults 200MB | https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader | Project chooses 2 MiB upload max, not teacher PDF size |
-| Python venv official mechanism and pytest approx assertions | https://docs.python.org/3/library/venv.html ; https://docs.pytest.org/en/stable/how-to/assert.html | Windows/macOS/Linux setup and float comparison |
-
-**Status distinction:** web/PyPI metadata is version eligibility only; no install, pip dependency resolution, GUI render or pytest execution was performed for the project. QA gates and test plans detailed in PROJECT_SPEC `12.
-
-
----
-
-## 13. Research 06 — requirement/evidence distinction (2026-10-25)
-
-No new teacher document was provided in R06. **FORM-CONFIRMED** F02–F06 requirements remain: code link, YouTube demo link, PDF 15–20 pages ≤100MB, self-assessment 3+2+2+1+2. Deadline, exact video duration, PPT necessity and report template still **UNKNOWN**.
-
-**DESIGN-PROPOSED**, not teacher mandate: 18-page report target including cover/ToC, ~7-minute video, 1080p screen recording, EV-01..EV-16 evidence IDs and submission QC. Full single-source detail and references (university report guides, official YouTube privacy/upload and GitHub access) are in **`docs/DELIVERABLES.md`**.
+**Quy tắc trích dẫn:** dẫn đúng trang tài liệu dùng, phiên bản/ngày nếu claim phụ thuộc release; không tuyên bố đã xem một trang cụ thể trong PDF/trang web khi mới xem mục lục. Không bịa URL hoặc ngày.
