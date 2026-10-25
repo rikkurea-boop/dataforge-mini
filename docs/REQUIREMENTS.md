@@ -176,3 +176,12 @@ Chưa có kết quả thực thi, do đó **chưa thể điền điểm tự ch�
 | Python venv official mechanism and pytest approx assertions | https://docs.python.org/3/library/venv.html ; https://docs.pytest.org/en/stable/how-to/assert.html | Windows/macOS/Linux setup and float comparison |
 
 **Status distinction:** web/PyPI metadata is version eligibility only; no install, pip dependency resolution, GUI render or pytest execution was performed for the project. QA gates and test plans detailed in PROJECT_SPEC `12.
+
+
+---
+
+## 13. Research 06 — requirement/evidence distinction (2026-10-25)
+
+No new teacher document was provided in R06. **FORM-CONFIRMED** F02–F06 requirements remain: code link, YouTube demo link, PDF 15–20 pages ≤100MB, self-assessment 3+2+2+1+2. Deadline, exact video duration, PPT necessity and report template still **UNKNOWN**.
+
+**DESIGN-PROPOSED**, not teacher mandate: 18-page report target including cover/ToC, ~7-minute video, 1080p screen recording, EV-01..EV-16 evidence IDs and submission QC. Full single-source detail and references (university report guides, official YouTube privacy/upload and GitHub access) are in **`docs/DELIVERABLES.md`**.

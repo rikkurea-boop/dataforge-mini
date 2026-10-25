@@ -497,3 +497,16 @@ For OR-13 the source of error may be loader/UI or function guard, but API contra
 - Python virtual environments: https://docs.python.org/3/library/venv.html
 
 **Knowledge boundary:** These URLs verify APIs/releases and constrain the *plan*, NOT proof the specific package combination installs/runs or the app passes tests. As packages change, verify again in P0.
+
+
+---
+
+## 13. Research 06 — plan for course deliverables (2026-10-25)
+
+**DOCS-ONLY, no PDF/video/app produced.** Detailed single-source guide: **`docs/DELIVERABLES.md`**.
+
+- Instructor-confirmed: code URL, YouTube demo URL, PDF **15–20 pages ≤100MB**, five self-assessment criteria **3+2+2+1+2**.
+- Proposal: **18 physical pages** (including cover and table of contents), ~7-minute video, **EV-01..EV-16** to capture actual source/test/UI/screenshots and ensure consistency.
+- One release SHA, actual package versions and canonical dataset connect report/video/code; no fake screenshots or claims.
+- Report is a separate PDF submission. **Do not add PDF-export functionality to the application**.
+- R07 AI handoff and FINAL cross-QA remain; application coding only after explicit owner permission.

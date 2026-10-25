@@ -47,3 +47,12 @@
 - On invalid bytes, empty/broken UTF-8 CSV, unsupported columns or ±infinity, show clear message; never silently discard errors.
 - **Upload <=2 MiB** for small-data classroom MVP. This is independent from **teacher PDF upload <=100MB**.
 - Before "DONE": venv fresh install + pip check + test outputs + chart/UI smoke + source/video/PDF agreement. OR-/IO-/UI- IDs in PROJECT_SPEC `12 are **plans until executed**.
+
+
+## R06 deliverable controls
+- **PDF 15–20 pages ≤100MB is an academic report**, not an app PDF-export feature.
+- Target 18 physical pages and a ~7-min video are design preferences, not additional instructor rules; detailed plan at `docs/DELIVERABLES.md`.
+- All real screenshots, numeric claims, pytest output, charts, PDF and YouTube must match one final source SHA, dataset and environment; EV-* IDs are plans until captured.
+- Never self-score 10/10 by default; fill 3+2+2+1+2 only after app actually passes QA; show true strengths and limitations.
+- Do not add features to fill pages. Preserve private data, do not auto-publicize repo or upload video.
+- Before submission inspect full PDF render, physical page count, size, glyphs, captions and links; validate YouTube and GitHub viewing permissions.

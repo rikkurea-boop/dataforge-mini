@@ -1,6 +1,6 @@
 # PLAN — research-first, minimal-first
 
-**Tiến độ:** R01–R05 hoàn thành về mặt nghiên cứu; **R06 là lượt tiếp theo**. Đang ở pha CHỈ NGHIÊN CỨU, không được tạo code cho đến R01–R07 + FINAL và owner giao bắt đầu.
+**Tiến độ:** R01–R06 hoàn thành về mặt nghiên cứu; **R07 là lượt tiếp theo**. Đang ở pha CHỈ NGHIÊN CỨU, không được tạo code cho đến R01–R07 + FINAL và owner giao bắt đầu.
 
 ## A. 7 research sessions + 1 final review
 
@@ -11,11 +11,11 @@
 | R03 | Thiết kế **3 file Python**, hợp đồng 5 hàm analysis + 3 chart, một trang Streamlit rerun không custom state, kiến trúc một chiều | DONE |
 | R04 | Độc lập xác minh CSV & oracle, ddof0, NA/inf, new duplicates after fill, histogram5, bar/scatter, OR-01..15 | DONE |
 | R05 | Đặc tả OR-01..15 + IO-01..10 + UI-01..06; Python 3.13, dependency candidate bounds, P0 exact-pin gate, fresh venv & smoke | DONE |
-| R06 | Outline PDF 15–20 trang, storyboard video YouTube, evidence và mẫu tự chấm 5 tiêu chí | NEXT |
-| R07 | Hoàn thiện rules/handoff, coding tasks & prompt cho AI sau này; tránh trùng tài liệu | NOT STARTED |
+| R06 | docs/DELIVERABLES.md: report 18-page target, ~7-minute video, EV-01..16, self-eval and PDF/link checks | DONE |
+| R07 | Hoàn thiện rules/handoff, coding tasks & prompt cho AI sau này; tránh trùng tài liệu | NEXT |
 | FINAL | Đối chiếu chéo mọi tài liệu; khóa baseline trước coding | NOT STARTED |
 
-Không cần 7 file research riêng: kết quả mỗi lượt được hòa vào **PROJECT_SPEC.md**, **docs/REQUIREMENTS.md**, **docs/PLAN.md**, **RULEBOOK.md**, **AGENTS.md** và **docs/STATUS_HANDOFF.md**. Chỉ tạo `docs/DELIVERABLES.md` tại R06.
+Không cần 7 file research riêng: kết quả mỗi lượt được hòa vào **PROJECT_SPEC.md**, **docs/REQUIREMENTS.md**, **docs/PLAN.md**, **RULEBOOK.md**, **AGENTS.md** và **docs/STATUS_HANDOFF.md**. R06 đã tạo `docs/DELIVERABLES.md`; không sinh thêm tài liệu trùng nội dung.
 
 ## B. R02: danh sách chức năng / thứ tự demo đã lựa chọn
 
@@ -29,7 +29,7 @@ Không cần 7 file research riêng: kết quả mỗi lượt được hòa và
 
 **Ngoài phạm vi:** Excel, biểu đồ nâng cao/custom theme, phân trang, login, database, machine learning, Data-Forge gốc, Undo history, PDF generator **trong app**. Báo cáo **PDF bên ngoài app** vẫn bắt buộc khi nộp.
 
-**R03 đã quyết:** app.py / analysis.py / charts.py (3 files); 5 analysis functions + 3 Matplotlib Figure functions; không dùng st.session_state custom; `st.pyplot(fig)` với Figure tạo trực tiếp. Chi tiết hợp đồng ở PROJECT_SPEC §10. **R04/R05 còn kiểm định** ddof, exceptions, version/runtime.
+**R03 đã quyết:** app.py / analysis.py / charts.py (3 files); 5 analysis functions + 3 Matplotlib Figure functions; không dùng st.session_state custom; `st.pyplot(fig)` với Figure tạo trực tiếp. Chi tiết hợp đồng ở PROJECT_SPEC §10. **R04 đã khóa toán; R05 đã lập QA/env plan**; xem PROJECT_SPEC §§11–12.
 
 ## C. Dataset (đặc tả duy nhất; chưa tạo file)
 
@@ -98,9 +98,19 @@ Dữ liệu CSV giả lập 12 hàng / 4 cột nằm nguyên văn tại **PROJEC
 ## I. R05 — QA/environment design review checklist (2026-10-25)
 - [x] Read all 8 repository files and confirmed docs branch PR#1 remains open.
 - [x] Recommended CPython 3.13 and checked releases/PyPI; did NOT declare untested exact package combo "working".
-- [x] R05 spec `12 documents candidate dependency bounds, venv commands for Windows and macOS/Linux, pip check, exact-pins-after-smoke policy.
+- [x] R05 spec §12 documents candidate dependency bounds, venv commands for Windows and macOS/Linux, pip check, exact-pins-after-smoke policy.
 - [x] OR-01..OR-15 converted into test method/expected assertions with priority; added IO-01..10 + UI-01..06, without test code.
 - [x] Identified Pandas 3.0 new default str dtype (regression for `lop`), Streamlit explicit Figure requirement, file_uploader 200MB default vs 2MiB project cap, and potential download rerun.
 - [x] Designed fail-fast for empty/malformed/invalid-UTF8/oversize CSV and +/-infinity without sophisticated validation framework.
 - [x] Defined smoke/manual tests and acceptance gates before YouTube/report; no fake pass claims.
 - [x] Chose R06 (report/video/evidence plan) as sole next task. R05 did not create .py / .csv / requirements or run application.
+
+
+## K. R06 — hồ sơ nộp và minh chứng (DONE 2026-10-25)
+- [x] PDF **18 trang vật lý dự kiến**, tính bìa/mục lục; phù hợp giới hạn 15–20, ≤100MB, không lấp bằng source code.
+- [x] YouTube demo storyboard ~7 phút (khuyến nghị, chưa có thời lượng bắt buộc).
+- [x] EV-01..EV-16 liên kết cùng Git SHA, phiên bản thư viện/dataset, ảnh và code/test đúng sự thật.
+- [x] Tự đánh giá 5 mục **3+2+2+1+2**, chưa gán điểm trước khi làm app.
+- [x] Kiểm link GitHub private/YouTube visibility, chất lượng HD, PDF trang/kích thước/Unicode/hình/bảng.
+- [x] Toàn bộ hướng dẫn chi tiết ở **docs/DELIVERABLES.md**; chỉ research, không tạo code/report/video.
+- [x] Nhiệm vụ duy nhất tiếp theo R07, sau đó FINAL; P0–P4 bị BLOCKED.

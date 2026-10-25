@@ -1,44 +1,34 @@
-# STATUS_HANDOFF — DataForge Mini Research 05 (2026-10-25)
+# STATUS_HANDOFF — DataForge Mini Research R06 (2026-10-25)
 
-## Repo and permission gate
-- Repo: https://github.com/rikkurea-boop/dataforge-mini — private.
-- Docs branch: `docs/project-charter-ai-handoff` within open PR #1 https://github.com/rikkurea-boop/dataforge-mini/pull/1; `main` still initial README at start of R05.
-- Research-only phase: zero app source, test code, dataset CSV, requirements, report PDF or YouTube video created. No installed app/runtime tests or pytest result. No change to original Data-Forge repo.
-- User requires **7 research sessions + FINAL** completed AND new explicit user authorization before implementation P0–P4.
+## Repository & boundary
+- Private repo: https://github.com/rikkurea-boop/dataforge-mini
+- Branch: `docs/project-charter-ai-handoff`; PR #1: https://github.com/rikkurea-boop/dataforge-mini/pull/1 — OPEN, unmerged; `main` still initial README at R06 start.
+- R06 only updated Markdown documentation. **No application/test source, CSV file, requirements, final PDF or YouTube video created. No actual software tests.**
+- Original Data-Forge repo untouched, visibility unchanged.
 
-## Stage status
-| Stage | State | Outcome |
+## Session status
+| Session | Status | Result |
 |---|---|---|
-| R01 | DONE | Teacher F01–F06, link to code/video, PDF 15–20 pages <=100MB, self-assessment 3+2+2+1+2 |
-| R02 | DONE | Constrained CSV→Pandas→NumPy→Matplotlib MVP; 12→10 sample oracle |
-| R03 | DONE | 3 Python app files planned, 5 analysis + 3 charts functions |
-| R04 | DONE | Math/stat/chart correctness; OR-01..15, population std ddof0 |
-| R05 | **DONE — QA DESIGN ONLY** | Python3.13 target; PyPI/current API review; OR-01..15 test designs, IO-01..10, UI-01..06; venv + acceptance gates |
-| R06 | **NEXT** | PDF report outline 15–20 pages, YouTube demo storyboard, evidence artifacts and self-assessment |
-| R07 | NOT STARTED | AI handoff rules/tasks/code prompts |
-| FINAL | NOT STARTED | Cross-review, READY FOR IMPLEMENTATION only if clean |
-| P0–P4 | **BLOCKED** | Only after owner explicitly requests coding |
+| R01 | DONE | Verified teacher form F01–F06, source link, YouTube demo, PDF 15–20 pages ≤100MB, 3+2+2+1+2 self-eval |
+| R02 | DONE | Minimal one-page Streamlit, CSV→Pandas→NumPy→Matplotlib MVP, one 12→10-row dataset spec |
+| R03 | DONE | 3 Python app files planned, 5 analysis + 3 Figure function contracts |
+| R04 | DONE | Canonical arithmetic/statistics and OR-01..15 |
+| R05 | DONE | Python 3.13 proposal, QA OR-01..15/IO-01..10/UI-01..06, candidate environment, not tested |
+| R06 | **DONE — DELIVERY PLAN ONLY** | New `docs/DELIVERABLES.md`: PDF target 18 physical pages, ~7-min video storyboard, EV-01..16, 5-criterion self-eval, link/PDF checks |
+| R07 | **NEXT** | AI bootstrap rules, implementation prompts/tasks, stale-doc reconciliation |
+| FINAL | NOT STARTED | Cross-document QA, possible READY FOR IMPLEMENTATION |
+| P0–P4 | **BLOCKED** | Explicit owner go-ahead required after R07+FINAL |
 
-## Specific R05 findings
-- Latest Python is NOT automatically target: prefer CPython 3.13 stable classroom runtime. PyPI metadata for current NumPy, pandas, Matplotlib, Streamlit and pytest assessed; **no combined installation verified**. Exact pinned versions must be selected and smoke-tested in P0.
-- Important bug class: Pandas 3.x infers string dtype `str` rather than `object`; app must still discover `lop` and group bar.
-- Strong separation between developer QA and course deliverables: Python scripts and tests are NOT yet created.
-- Bound project CSV uploader to <=2MiB; the 100MB form limit applies only to report PDF.
-- Planned Windows/macOS/Linux venv commands, `pip check`, version log, unit/figure test vs manual Streamlit GUI smoke.
-- Tests: OR-01..15 from R04 mapped to precise assertions; IO-01..10 for empty/corrupt/encoding/oversized/header/export; UI-01..06 for app transitions; full descriptions at `PROJECT_SPEC.md §12`.
-- No claim that all malformed CSV are detected by Pandas; short rows can become NA. No app deployment, browser automation, login, ML or DB added.
-- README/Rules/Spec/Plan/Requirements/Handoff updated, PR remains unmerged (recheck state at start of R06).
+## Findings and source of truth
+- **Only `docs/DELIVERABLES.md`** contains the detailed R06 page plan, storyboard, EV evidence ledger and self-evaluation framework. Don't duplicate these tables.
+- The **PDF 15–20 pages ≤100MB**, YouTube link, code link and self-assessment are **FORM-CONFIRMED**. Target 18 pages including cover/TOC, video ~7 minutes, 1080p, EV IDs are **PROJECT PROPOSALS**.
+- Evidence EV-01..16 is **future capture work**, NOT evidence files that exist. Keep a single final Git SHA/dataset/package version for app screenshots, YouTube and PDF.
+- GitHub private requires grader access; YouTube Unlisted can be reshared by anyone with link. No permission changes/upload without owner decision.
+- Deadline, fixed video length, required PPT and official PDF template remain UNKNOWN.
+- R06 references university technical-report guides, YouTube official Help and GitHub access documentation in DELIVERABLES.
 
-## Important unresolved items
-- R06: detailed page-level PDF plan, demo video flow, screenshots/evidence, self-assessment template; URLs tested only at submission.
-- Teacher deadline, video duration and any PPT requirement not visible in screenshots remain UNKNOWN.
-- R07: concise AI bootstrap/checklist; FINAL cross-document inconsistencies and release decision.
-
-## Next task (only one)
-**R06 — research deliverable planning only:** 15–20 page PDF outline, YouTube demo storyboard and shot list, self-review draft framework grounded in five criteria; verify precise form constraints from REQUIREMENTS without inventing rubric. No creation of final PDF/YouTube video yet.
+## Sole next task
+**R07 only:** inspect all existing files including DELIVERABLES, PR and branch status; consolidate AI handoff/rulebook, break authorized future implementation into small tasks, find/fix stale or inconsistent instructions. **Do not write app, tests, PDF or video during R07**. FINAL independent QA comes after.
 
 ## Handoff metadata
-- Date 2026-10-25; docs branch `docs/project-charter-ai-handoff`, PR #1.
-- Latest R05 commit SHA: read branch PR head; don't copy stale SHA forward.
-- Files modified R05: PROJECT_SPEC.md, docs/PLAN.md, docs/REQUIREMENTS.md, RULEBOOK.md, docs/STATUS_HANDOFF.md, README.md.
-- QA test plan completed, not software tests passed.
+Date 2026-10-25; docs branch and open PR #1; confirm latest SHA directly from PR when taking over. R06 modified README, PROJECT_SPEC, PLAN, REQUIREMENTS, RULEBOOK, STATUS_HANDOFF and added DELIVERABLES.
