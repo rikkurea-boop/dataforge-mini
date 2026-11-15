@@ -1,21 +1,24 @@
-# STATUS_HANDOFF — DataForge Mini · T01 (P0) DONE trên nhánh `feat/implementation`
+# STATUS_HANDOFF — DataForge Mini · Bước 2 (`S02`) DONE trên nhánh `feat/implementation`
 
-**CURRENT STATE: P0 / T01 DONE ON `feat/implementation` — CHỜ DUYỆT KẾ HOẠCH RÚT GỌN HOẶC TIẾP TỤC T02.** Đã hoàn tất khởi tạo môi trường ảo CPython 3.13.16, cài đặt và xác minh tương thích 5 thư viện, khóa `requirements.txt`.
+**CURRENT STATE: S02 (`T02–T05`) DONE ON `feat/implementation` — CHỜ LỆNH TIẾP TỤC BƯỚC 3 (`S03`: `charts.py` + `app.py`).** Đã cập nhật kế hoạch 5 bước tinh gọn vào `docs/PLAN.md`, tạo `sample_data.csv`, `analysis.py` (5 hàm chuẩn) và `tests/test_analysis.py` (8/8 PASS).
 
 ## Repository và phiên bản nguồn sự thật
 
 - Repository: https://github.com/rikkurea-boop/dataforge-mini (**private**, không đổi quyền).
-- Nhánh mặc định trên remote: `main` (PR #1 merge commit `c3d979c20a8a49493139d195130713097ae77b83`, baseline trước T01: `b47682db9705c2c5e279d4e0d79b9f862bbd478e`).
-- Nhánh làm việc hiện hành: **`feat/implementation`**.
-- **Chưa có** `app.py`, `analysis.py`, `charts.py`, `sample_data.csv`, `tests/test_analysis.py`, PDF, video hay bằng chứng chạy ứng dụng. Không sửa Data-Forge gốc.
+- Nhánh mặc định trên remote: `main` (PR #1 merge commit `c3d979c20a8a49493139d195130713097ae77b83`, baseline trước coding: `b47682db9705c2c5e279d4e0d79b9f862bbd478e`).
+- Nhánh làm việc hiện hành: **`feat/implementation`** (commit T01 trước đó: `011320cd5d754d4f1993c3425a0da061d8480cbc`).
+- **Đã có:** `requirements.txt`, `sample_data.csv`, `analysis.py`, `tests/test_analysis.py`.
+- **Chưa có:** `charts.py`, `app.py`, PDF, video hay bằng chứng chạy ứng dụng Streamlit. Không sửa Data-Forge gốc.
 
 ## Tiến độ
 
-| Phase | State | Ghi chú |
+| Bước (Lộ trình 5 bước) | State | Ghi chú |
 |---|---|---|
 | R01–R07 + FINAL | DONE | Hồ sơ đặc tả đã merge vào `main` qua PR #1 |
-| P0 — T01 (Environment & Lock) | **DONE** | Tạo `.venv` Python 3.13.16, `pip check` & smoke import PASS, khóa `requirements.txt` |
-| P0–P4 / T02–T10 | **NOT STARTED** | Đang chờ chủ dự án xác nhận phương án gộp bước kế hoạch hoặc mở T02 |
+| **S01** (T01 — Môi trường) | **DONE** (`011320c`) | `.venv` Python 3.13.16, `pip check` & smoke import PASS, khóa `requirements.txt` |
+| **S02** (T02–T05 — Dữ liệu & `analysis.py`) | **DONE** (hiện tại) | `sample_data.csv` (12×4), 5 hàm `analysis.py`, 8/8 tests `pytest` PASS |
+| **S03** (T06–T08 — `charts.py` & `app.py`) | **NEXT** | Chờ tiếp tục triển khai 3 Figure Matplotlib & UI Streamlit 1 trang |
+| **S04–S05** (T09–T10 — QA & Sản phẩm nộp) | **NOT STARTED** | QA toàn trình, baseline SHA, PDF 15–20 trang, video YouTube, tự chấm |
 
 ## Quyết định đã khóa
 
@@ -35,13 +38,20 @@
   - `.venv/bin/python -m pip check` → `No broken requirements found.` (exit 0)
   - `MPLCONFIGDIR=/tmp/mpl .venv/bin/python -c "import numpy as np, pandas as pd, matplotlib, matplotlib.figure as mf, streamlit as st, pytest; df = pd.DataFrame({'a': [1.0, 2.0]}); s = float(np.std(df['a'].to_numpy(), ddof=0)); fig = mf.Figure(); print('OK', np.__version__, pd.__version__, matplotlib.__version__, st.__version__, pytest.__version__, s)"` → `OK 2.5.4 3.1.1 3.11.2 1.67.0 9.2.0 0.5` (exit 0)
 
+## Bằng chứng thực thi S02 (2026-11-16)
+
+- Nhánh: `feat/implementation` (sau commit T01 `011320cd5d754d4f1993c3425a0da061d8480cbc`).
+- File tạo/sửa: `docs/PLAN.md`, `sample_data.csv`, `analysis.py`, `tests/test_analysis.py`, `README.md`, `docs/STATUS_HANDOFF.md`.
+- Lệnh & kết quả kiểm thử thực tế:
+  - `PYTHONPATH=/Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/.venv/bin/python -m pytest -v /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/tests/test_analysis.py` → `8 passed in 0.75s` (exit 0), bao phủ `OR-01..06`, `OR-09..13`, `OR-15` và `IO-01..10`.
+
 ## Điều còn chưa xác minh
 
 Deadline, video length bắt buộc, việc phải làm PPT, PDF template chi tiết, chính sách xem private repo của thầy. Không đoán, kiểm lại trước thời điểm nộp.
 
 ## Hành động tiếp theo duy nhất
 
-**Trình chủ dự án phương án tối giản và gộp các bước trong `docs/PLAN.md` (theo yêu cầu mới nhất), hoặc bắt đầu `T02` (tạo `sample_data.csv`).**
+**Thực hiện Bước 3 (`S03`: tạo `charts.py`, dựng giao diện 1 trang `app.py` và bổ sung test hình/kiểm thử UI).**
 
 ## Handoff template
 

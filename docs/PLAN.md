@@ -27,9 +27,21 @@
 - [x] Đã xem xét cách đưa tài liệu lên nhánh mặc định. Sau khi chủ dự án đồng ý, **PR #1 đã được merge vào `main`**, nên AI mới đọc trực tiếp nhánh mặc định.
 - [x] Lưu bản kiểm định FINAL trong STATUS_HANDOFF/commit, đặt **READY FOR IMPLEMENTATION** chỉ nếu thực sự đạt. **Chưa được phép code dù READY** cho tới khi owner ra lệnh.
 
-## 2. Future implementation: 5 giai đoạn, 10 task nhỏ
+## 2. Lộ trình triển khai tinh gọn: 5 bước (được chủ dự án phê duyệt 2026-11-16)
 
-**Mỗi task** có file được phép sửa và test nghiệm thu. Các task này là **lệnh mẫu sau khi được phê duyệt**, không phải nhiệm vụ đang chạy.
+Theo yêu cầu tối giản hóa của chủ dự án (`AGENTS.md` §0 mục 5: yêu cầu mới nhất của chủ dự án > PLAN cũ), 10 task chi tiết `T01–T10` được gộp thành **5 bước thực thi (`S01–S05`)** mà vẫn giữ nguyên 100% hợp đồng hàm, bài kiểm thử `OR/IO/UI` và bằng chứng `EV-01..16`.
+
+| Bước | Gộp từ | Trạng thái | File / đầu ra | Cổng nghiệm thu |
+|---|---|---|---|---|
+| **S01** | T01 | **DONE** (`011320c`) | `.venv/`, `requirements.txt`, `README.md`, `docs/STATUS_HANDOFF.md` | Python 3.13.16, `pip check` PASS, smoke import PASS |
+| **S02** | T02 + T03 + T04 + T05 | **DONE** (hiện tại) | `sample_data.csv`, `analysis.py`, `tests/test_analysis.py` | 12×4 chuẩn + 5 hàm `analysis.py` + `pytest` PASS `OR-01..06, 09..13, 15` & `IO-01..10` |
+| **S03** | T06 + T07 + T08 | **NEXT** | `charts.py`, `app.py`, cập nhật `tests/` | 3 Figure (`OR-07/08/11/14`), UI Streamlit 1 trang, bắt lỗi ≤2 MiB, export CSV (`UI-01..06`) |
+| **S04** | T09 | NOT STARTED | `README.md`, `docs/STATUS_HANDOFF.md`, rà soát code | Toàn bộ `pytest` + `pip check` + chạy thử Streamlit thật, đóng băng baseline SHA, thu `EV-01..13` |
+| **S05** | T10 | NOT STARTED | PDF 15–20 trang ≤100 MB, YouTube demo, tự chấm F06 | Kiểm đủ `EV-14..16`, link người chấm mở được, không tự gửi form |
+
+### Bảng đối chiếu 10 task gốc (tham chiếu chi tiết từng gate)
+
+Các task `T01–T10` dưới đây là bản phân rã gốc dùng để đối chiếu chi tiết các tiêu chí trong `PROJECT_SPEC.md`:
 
 | Mã | Giai đoạn / task | File/đầu ra cho phép | Gate nghiệm thu — bằng chứng phải có |
 |---|---|---|---|

@@ -4,7 +4,7 @@
 **Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
 **Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
 
-**Trạng thái:** **T01 (P0) đã hoàn thành** trên nhánh `feat/implementation` — đã tạo `.venv` với CPython `3.13.16`, kiểm tra `pip check` và smoke test thành công, khóa phiên bản vào [requirements.txt](requirements.txt). **Chưa có ứng dụng Python (`app.py`, `analysis.py`, `charts.py`), `sample_data.csv`, test thực thi, PDF hay video.**
+**Trạng thái:** **Bước 2 (`S02`: `T02–T05`) đã hoàn thành** trên nhánh `feat/implementation` — đã tạo bộ dữ liệu mẫu [sample_data.csv](sample_data.csv), module lõi [analysis.py](analysis.py) và bộ test [tests/test_analysis.py](tests/test_analysis.py) (8/8 bài test `pytest` PASS). **Chưa có `charts.py`, `app.py`, PDF hay video.**
 
 ## Môi trường đã kiểm chứng (T01 — macOS 26.6.2 / CPython 3.13.16)
 
@@ -31,15 +31,15 @@ python3.13 -m venv .venv
 
 **Nguồn sự thật hiện tại:** nhánh mặc định **`main`**. Đọc `AGENTS.md`, `docs/STATUS_HANDOFF.md` và các tài liệu tại đây; PR #1 đã merge và lưu lịch sử R01–R07/FINAL. Khi có nhánh triển khai mới, đọc trạng thái và các thay đổi mới nhất trước khi thao tác. Không coi thiết kế/test case là ứng dụng đã chạy.
 
-## Cấu trúc code tối thiểu được lên kế hoạch — CHƯA TẠO
+## Cấu trúc code tối thiểu
 
 ~~~text
-app.py                 # UI Streamlit một trang
-analysis.py            # Pandas + NumPy
-charts.py              # Matplotlib Figure
-sample_data.csv        # một bộ dữ liệu tổng hợp
-requirements.txt       # phiên bản chỉ chốt sau smoke test
-tests/test_analysis.py # test tập trung, cho phép tách charts khi có lý do
+app.py                 # UI Streamlit một trang (sắp làm ở Bước 3)
+analysis.py            # Pandas + NumPy (đã tạo ở Bước 2)
+charts.py              # Matplotlib Figure (sắp làm ở Bước 3)
+sample_data.csv        # bộ dữ liệu tổng hợp 12×4 (đã tạo ở Bước 2)
+requirements.txt       # phiên bản khóa thực tế (đã tạo ở Bước 1)
+tests/test_analysis.py # unit test tập trung (đã tạo và PASS ở Bước 2)
 ~~~
 
 Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm `src/`, `services/`, CI/Docker, database hoặc các hệ thống phức tạp.**
@@ -50,4 +50,4 @@ Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm 
 
 ## Tiến độ triển khai hiện tại
 
-**T01 (P0)** đã hoàn tất và khóa [requirements.txt](requirements.txt). Nhiệm vụ tiếp theo là **T02** trong [docs/PLAN.md](docs/PLAN.md) (hoặc cập nhật kế hoạch tinh gọn nếu chủ dự án duyệt phương án gộp bước). Tiếp tục theo từng bước được giao với kiểm thử/commit/handoff đầy đủ. Không tự tạo framework bổ sung.
+Theo lộ trình 5 bước tinh gọn trong [docs/PLAN.md](docs/PLAN.md): **Bước 1 (`S01`)** và **Bước 2 (`S02`: `sample_data.csv` + `analysis.py` + `tests/test_analysis.py`)** đã hoàn tất. Nhiệm vụ tiếp theo là **Bước 3 (`S03`: viết `charts.py` và `app.py`)**. Không tự tạo framework bổ sung.
