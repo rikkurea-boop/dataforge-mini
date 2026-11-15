@@ -4,7 +4,20 @@
 **Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
 **Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
 
-**Trạng thái:** **R01–R07 + FINAL đã PASS — READY FOR IMPLEMENTATION (chỉ kế hoạch)**. Bộ tài liệu đã được hợp nhất vào **`main` qua PR #1**. **Chưa có ứng dụng Python, CSV mẫu thực, test thực thi, PDF hay video**. Chỉ bắt đầu viết code khi chủ dự án có lệnh triển khai mới.
+**Trạng thái:** **T01 (P0) đã hoàn thành** trên nhánh `feat/implementation` — đã tạo `.venv` với CPython `3.13.16`, kiểm tra `pip check` và smoke test thành công, khóa phiên bản vào [requirements.txt](requirements.txt). **Chưa có ứng dụng Python (`app.py`, `analysis.py`, `charts.py`), `sample_data.csv`, test thực thi, PDF hay video.**
+
+## Môi trường đã kiểm chứng (T01 — macOS 26.6.2 / CPython 3.13.16)
+
+- `numpy==2.5.4`, `pandas==3.1.1`, `matplotlib==3.11.2`, `streamlit==1.67.0`, `pytest==9.2.0`
+- Khởi tạo và kiểm tra nhanh:
+
+~~~bash
+python3.13 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m pip check
+~~~
+
+*(Sau khi các file code và test được tạo ở các bước tiếp theo, chạy kiểm thử bằng `.venv/bin/python -m pytest -q` và chạy ứng dụng bằng `.venv/bin/python -m streamlit run app.py`.)*
 
 ## Bắt đầu / AI tiếp quản
 
@@ -35,6 +48,6 @@ Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm 
 
 [Data-Forge](https://github.com/rikkurea-boop/Data-Forge) là dự án xử lý dữ liệu huấn luyện AI độc lập. **Không import, sửa hoặc phụ thuộc vào Data-Forge gốc** để hoàn thành bài tập này.
 
-## Bắt đầu triển khai trong tương lai
+## Tiến độ triển khai hiện tại
 
-Khi chủ dự án **chủ động giao việc**, AI đầu tiên thực hiện **T01** trong [docs/PLAN.md](docs/PLAN.md), tiếp tục từng task T02–T10 với kiểm thử/commit/handoff đầy đủ. Không tự tạo framework bổ sung, không cần hỏi thiết kế lại từ đầu. **Hiện trạng: T01 chưa bắt đầu.**
+**T01 (P0)** đã hoàn tất và khóa [requirements.txt](requirements.txt). Nhiệm vụ tiếp theo là **T02** trong [docs/PLAN.md](docs/PLAN.md) (hoặc cập nhật kế hoạch tinh gọn nếu chủ dự án duyệt phương án gộp bước). Tiếp tục theo từng bước được giao với kiểm thử/commit/handoff đầy đủ. Không tự tạo framework bổ sung.
