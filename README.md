@@ -23,6 +23,7 @@ dataforge-mini/
 ├── run_app.bat             # Tệp nhấp đúp khởi động nhanh ứng dụng trên Windows
 ├── run_app.command         # Tệp nhấp đúp khởi động nhanh ứng dụng trên macOS
 ├── sample_data.csv         # Bộ dữ liệu mẫu giả lập (12 dòng × 4 cột)
+├── samples/                # 10 file CSV mẫu đa dạng (8 bộ hợp lệ/biên + 2 file test báo lỗi)
 ├── requirements.txt        # Phiên bản thư viện đã kiểm chứng
 └── tests/
     └── test_analysis.py    # 11 bài kiểm thử tự động (dữ liệu, thống kê, biểu đồ & UI)
