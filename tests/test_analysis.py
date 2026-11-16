@@ -1,4 +1,4 @@
-"""Unit tests cho module analysis.py (bao phủ OR-01..06, OR-09..13, OR-15 và IO-01..10)."""
+"""Kiểm thử tự động cho xử lý dữ liệu (analysis), biểu đồ (charts) và giao diện (app)."""
 
 import io
 import math
@@ -24,8 +24,8 @@ from charts import group_bar, histogram, scatter
 SAMPLE_CSV_PATH = Path(__file__).resolve().parent.parent / "sample_data.csv"
 
 
-def test_sample_raw_profile_or01():
-    """OR-01: Dataset chuẩn có 12x4, 2 duplicate toàn dòng, 2 ô thiếu và đúng kiểu cột."""
+def test_sample_raw_profile():
+    """Dataset mẫu ban đầu có 12x4, 2 dòng trùng toàn phần, 2 ô thiếu và đúng kiểu cột."""
     raw = load_csv(SAMPLE_CSV_PATH)
     profile = inspect_data(raw)
 
@@ -41,8 +41,8 @@ def test_sample_raw_profile_or01():
     assert set(text_cols) == {"ten", "lop"}
 
 
-def test_clean_data_canonical_or02_or03_or15():
-    """OR-02/03/15: Xóa trùng trước rồi điền median (4 và 8), không làm đổi bảng raw."""
+def test_clean_data_canonical():
+    """Xóa dòng trùng trước rồi điền trung vị (4 và 8), giữ nguyên bảng gốc."""
     raw = load_csv(SAMPLE_CSV_PATH)
     raw_snapshot = raw.copy(deep=True)
 
@@ -55,21 +55,18 @@ def test_clean_data_canonical_or02_or03_or15():
         "missing_cells": 0,
         "duplicate_rows": 0,
     }
-    # Bảng raw không bị thay đổi sau clean_data
     pd.testing.assert_frame_equal(raw, raw_snapshot)
 
-    # Kiểm tra đúng 2 ô được điền theo oracle
     minh_hours = cleaned.loc[cleaned["ten"] == "Minh", "gio_hoc"].iloc[0]
     ngoc_grade = cleaned.loc[cleaned["ten"] == "Ngoc", "diem"].iloc[0]
     assert minh_hours == pytest.approx(4.0)
     assert ngoc_grade == pytest.approx(8.0)
 
-    # OR-15: cùng raw luôn cho kết quả cleaned giống nhau
     pd.testing.assert_frame_equal(cleaned, clean_data(raw_snapshot))
 
 
-def test_numeric_stats_and_groupby_or04_or05_or06():
-    """OR-04/05/06: Thống kê NumPy dùng ddof=0 và trung bình nhóm A=8.0, B=7.6."""
+def test_numeric_stats_and_groupby():
+    """Thống kê NumPy dùng ddof=0 và trung bình nhóm A=8.0, B=7.6."""
     cleaned = clean_data(load_csv(SAMPLE_CSV_PATH))
     grade_stats = numeric_stats(cleaned, "diem")
     hours_stats = numeric_stats(cleaned, "gio_hoc")
@@ -87,8 +84,8 @@ def test_numeric_stats_and_groupby_or04_or05_or06():
     assert grouped["B"] == pytest.approx(7.6)
 
 
-def test_edge_all_na_and_singleton_or09_or10():
-    """OR-09/10: Cột số toàn NaN trả về None; cột 1 giá trị trả về std=0."""
+def test_edge_all_na_and_singleton():
+    """Cột số toàn NaN trả về None; cột chỉ có 1 giá trị trả về std=0."""
     df_all_na = pd.DataFrame({"x": [np.nan, np.nan]})
     cleaned_na = clean_data(df_all_na)
     assert cleaned_na["x"].isna().all()
@@ -111,8 +108,8 @@ def test_edge_all_na_and_singleton_or09_or10():
     assert stats_single["std"] == pytest.approx(0.0)
 
 
-def test_groupby_missing_keys_and_all_na_group_or11():
-    """OR-11: Bỏ nhóm có nhãn NA; nhóm không có giá trị số hợp lệ giữ NaN chứ không thành 0."""
+def test_groupby_missing_keys_and_all_na_group():
+    """Bỏ nhóm có nhãn NA; nhóm không có giá trị số hợp lệ giữ NaN chứ không thành 0."""
     df = pd.DataFrame(
         {
             "lop": ["A", "B", None, "C"],
@@ -127,8 +124,8 @@ def test_groupby_missing_keys_and_all_na_group_or11():
     assert math.isnan(grouped["C"])
 
 
-def test_imputation_creates_duplicate_no_second_drop_or12():
-    """OR-12: Điền trung vị có thể tạo dòng trùng mới; không drop trùng lần hai."""
+def test_imputation_creates_duplicate_no_second_drop():
+    """Điền trung vị có thể tạo dòng trùng mới; không xóa trùng lần thứ hai."""
     df = pd.DataFrame({"nhom": ["X", "X", "Y"], "val": [1.0, np.nan, 1.0]})
     cleaned = clean_data(df)
     profile = inspect_data(cleaned)
@@ -138,8 +135,8 @@ def test_imputation_creates_duplicate_no_second_drop_or12():
     assert profile["duplicate_rows"] == 1
 
 
-def test_reject_infinity_or13():
-    """OR-13: Từ chối giá trị vô cực (+inf/-inf) khi load, clean, tính stats và groupby."""
+def test_reject_infinity():
+    """Từ chối giá trị vô cực (+inf/-inf) khi đọc, làm sạch, tính stats và groupby."""
     csv_inf = io.StringIO("lop,diem\nA,inf\nB,8\n")
     with pytest.raises(ValueError):
         load_csv(csv_inf)
@@ -153,17 +150,14 @@ def test_reject_infinity_or13():
         mean_by_group(df_inf, "lop", "diem")
 
 
-def test_io_validation_and_roundtrip_io01_to_io10():
-    """IO-01..10: Kiểm tra file rỗng, BOM, lỗi UTF-8, dấu ';', header trùng/trống, >2MiB và roundtrip."""
-    # IO-01: file rỗng / chỉ có khoảng trắng
+def test_io_validation_and_roundtrip():
+    """Kiểm tra file rỗng, BOM, lỗi UTF-8, dấu ';', header trùng/trống, >2 MiB và roundtrip."""
     with pytest.raises(ValueError):
         load_csv(io.BytesIO(b"   \n  "))
 
-    # IO-02: chỉ có header, 0 dòng dữ liệu
     with pytest.raises(ValueError):
         load_csv(io.BytesIO(b"ten,lop,diem\n"))
 
-    # IO-03: thừa cột / không đều / lỗi quoting
     with pytest.raises(ValueError):
         load_csv(io.BytesIO(b"ten,diem\nAn,8,extra\n"))
     with pytest.raises(ValueError):
@@ -171,37 +165,30 @@ def test_io_validation_and_roundtrip_io01_to_io10():
     with pytest.raises(ValueError):
         load_csv(io.BytesIO(b'ten,diem\n"An,8\n'))
 
-    # IO-04: UTF-8 BOM được đọc sạch tên cột
     bom_bytes = "\ufefften,lop,diem\nAn,A,8\n".encode("utf-8")
     df_bom = load_csv(io.BytesIO(bom_bytes))
     assert list(df_bom.columns) == ["ten", "lop", "diem"]
 
-    # IO-05: sai mã hóa UTF-8
     with pytest.raises(ValueError):
         load_csv(io.BytesIO(b"\xff\xfe\x00\x00"))
 
-    # IO-06: dấu chấm phẩy không được tự đoán
     with pytest.raises(ValueError):
         load_csv(io.BytesIO(b"ten;lop;diem\nAn;A;8\n"))
 
-    # IO-07: header trống hoặc trùng tên cột
     with pytest.raises(ValueError):
         load_csv(io.BytesIO(b"ten,,diem\nAn,A,8\n"))
     with pytest.raises(ValueError):
         load_csv(io.BytesIO(b"ten,ten,diem\nAn,A,8\n"))
 
-    # IO-08: vượt quá giới hạn 2 MiB
     oversized = io.BytesIO(b"a,b\n" + b"1,2\n" * (MAX_CSV_BYTES // 3))
     with pytest.raises(ValueError):
         load_csv(oversized)
 
-    # IO-09: chữ giống số ("8a") giữ nguyên dạng chữ, không ép thành số
     df_mixed = load_csv(io.BytesIO(b"ten,diem\nAn,8a\nBinh,9\n"))
     assert "diem" not in df_mixed.select_dtypes(include="number").columns
     with pytest.raises(ValueError):
         numeric_stats(df_mixed, "diem")
 
-    # IO-10: roundtrip export CSV (index=False, utf-8-sig) giữ nguyên 10x4 của bảng đã clean
     cleaned = clean_data(load_csv(SAMPLE_CSV_PATH))
     exported_bytes = cleaned.to_csv(index=False).encode("utf-8-sig")
     reloaded = load_csv(io.BytesIO(exported_bytes))
@@ -209,12 +196,11 @@ def test_io_validation_and_roundtrip_io01_to_io10():
     assert list(reloaded.columns) == ["ten", "lop", "gio_hoc", "diem"]
 
 
-def test_charts_canonical_figures_or07_or08_or11():
-    """OR-07/08/11: Kiểm tra 3 Matplotlib Figure chuẩn trên sample raw/clean."""
+def test_charts_canonical_figures():
+    """Kiểm tra 3 biểu đồ Matplotlib chuẩn trên bộ dữ liệu mẫu gốc và đã làm sạch."""
     raw = load_csv(SAMPLE_CSV_PATH)
     cleaned = clean_data(raw)
 
-    # OR-07: Histogram 5 bins, tần suất [2, 2, 3, 2, 1], tổng 10
     fig_hist = histogram(cleaned, "diem")
     assert isinstance(fig_hist, Figure)
     ax_hist = fig_hist.axes[0]
@@ -224,7 +210,6 @@ def test_charts_canonical_figures_or07_or08_or11():
     assert ax_hist.get_ylabel() == "Số quan sát"
     assert ax_hist.get_xlabel() == "diem"
 
-    # OR-11: Bar group means A=8.0, B=7.6, trục Y bắt đầu từ 0
     means = mean_by_group(cleaned, "lop", "diem")
     fig_bar = group_bar(means)
     assert isinstance(fig_bar, Figure)
@@ -234,7 +219,6 @@ def test_charts_canonical_figures_or07_or08_or11():
     assert ax_bar.get_ylim()[0] == pytest.approx(0.0)
     assert ax_bar.get_ylabel() == "Trung bình"
 
-    # OR-08: Scatter ghép cặp cùng hàng cho 10 điểm hợp lệ ở cả raw và clean
     for df_case in (raw, cleaned):
         fig_scatter = scatter(df_case, "gio_hoc", "diem")
         assert isinstance(fig_scatter, Figure)
@@ -244,13 +228,11 @@ def test_charts_canonical_figures_or07_or08_or11():
         assert np.allclose(offsets, expected_pairs)
 
 
-def test_charts_edge_cases_and_app_import_or09_or11_or13_or14():
-    """OR-09/11/13/14: Loại nhóm NaN, chặn ±inf/all-NA/0-cặp/trùng cột và kiểm tra import app."""
-    # Nhóm có mean NaN bị loại khỏi group_bar
+def test_charts_edge_cases_and_app_import():
+    """Loại nhóm NaN, chặn ±inf/all-NA/0-cặp/trùng cột và kiểm tra import app."""
     fig_partial = group_bar(pd.Series([8.0, np.nan], index=["A", "C"]))
     assert len(fig_partial.axes[0].patches) == 1
 
-    # Cột all-NA, all-NA group means, 0 cặp cùng hàng và trùng cột X/Y đều báo lỗi rõ
     df_empty_num = pd.DataFrame({"x": [np.nan, np.nan], "y": [1.0, 2.0]})
     with pytest.raises(ValueError):
         histogram(df_empty_num, "x")
@@ -261,7 +243,6 @@ def test_charts_edge_cases_and_app_import_or09_or11_or13_or14():
     with pytest.raises(ValueError):
         scatter(pd.DataFrame({"x": [1.0, 2.0]}), "x", "x")
 
-    # Chặn ±inf trên các hàm vẽ
     df_inf = pd.DataFrame({"x": [1.0, np.inf], "y": [2.0, 3.0]})
     with pytest.raises(ValueError):
         histogram(df_inf, "x")
@@ -270,13 +251,12 @@ def test_charts_edge_cases_and_app_import_or09_or11_or13_or14():
     with pytest.raises(ValueError):
         group_bar(pd.Series([1.0, np.inf], index=["A", "B"]))
 
-    # App module import được và trỏ đúng sample_data.csv
     assert callable(app.main)
     assert app.SAMPLE_CSV_PATH.exists()
 
 
 class _FakeUpload(io.BytesIO):
-    """Stream giả lập UploadedFile có thuộc tính name và size để test UI-02/EV-12."""
+    """Stream giả lập file tải lên có thuộc tính name và size để kiểm thử giao diện."""
 
     def __init__(self, data: bytes, name: str = "custom.csv", size: int | None = None):
         super().__init__(data)
@@ -284,20 +264,18 @@ class _FakeUpload(io.BytesIO):
         self.size = len(data) if size is None else size
 
 
-def test_streamlit_ui_flows_ui01_to_ui06():
-    """UI-01..06 & EV-12: Smoke test toàn bộ luồng giao diện Streamlit và nạp file."""
+def test_streamlit_ui_flows():
+    """Kiểm thử các luồng tương tác chính của giao diện Streamlit."""
     app_path = Path(__file__).resolve().parent.parent / "app.py"
     at = AppTest.from_file(str(app_path)).run()
     assert not at.exception
 
-    # UI-01: Mặc định đọc sample_data.csv với 1 checkbox, tối đa 3 selectbox, nút tải CSV
     assert len(at.checkbox) == 1
     assert len(at.selectbox) == 3
     assert len(at.get("download_button")) == 1
     assert at.metric[0].value == "11"
     assert at.metric[3].value == "7.7273"
 
-    # UI-03: Bật làm sạch -> 12->10, điền Minh=4 / Ngoc=8, mean=7.8000, std=1.2490
     at.checkbox[0].check().run()
     assert not at.exception
     summary_rows = at.dataframe[0].value.to_dict(orient="records")
@@ -315,23 +293,19 @@ def test_streamlit_ui_flows_ui01_to_ui06():
     assert at.metric[3].value == "7.8000"
     assert at.metric[5].value == "1.2490"
 
-    # UI-06: Dữ liệu active xuất CSV không thêm cột index trong trạng thái clean
     reloaded_clean = load_csv(io.BytesIO(active_cleaned.to_csv(index=False).encode("utf-8-sig")))
     assert reloaded_clean.shape == (10, 4)
 
-    # UI-04: Đổi cột Y sang gio_hoc -> mean=4.4000, cột X tự đổi sang diem
     at.selectbox[0].select("gio_hoc").run()
     assert not at.exception
     assert at.metric[3].value == "4.4000"
     assert at.selectbox[2].value == "diem"
 
-    # Tắt checkbox -> quay lại trạng thái raw 12 dòng nguyên vẹn
     at.checkbox[0].uncheck().run()
     assert not at.exception
     assert at.dataframe[0].value.to_dict(orient="records")[1]["Số dòng"] == 12
     assert at.metric[0].value == "11"
 
-    # UI-02 & EV-12: Nạp CSV tải lên hợp lệ và chặn file vượt quá 2 MiB
     custom_df, custom_label = app._load_input_dataframe(
         _FakeUpload(b"ten,lop,gio_hoc,diem\nX,K,5,9\nY,K,7,10\n", name="lop_k.csv")
     )
@@ -342,5 +316,3 @@ def test_streamlit_ui_flows_ui01_to_ui06():
         app._load_input_dataframe(
             _FakeUpload(b"a,b\n1,2\n", name="huge.csv", size=MAX_CSV_BYTES + 1)
         )
-
-

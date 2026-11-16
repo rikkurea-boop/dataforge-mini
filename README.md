@@ -1,53 +1,55 @@
 # DataForge Mini
 
 **Đề tài:** Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python.  
-**Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
-**Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
+**Chủ đề học phần:** Chương 5.5 — Phân tích dữ liệu cơ bản với NumPy, Pandas và Matplotlib.
 
-**Trạng thái:** **Hoàn tất mã nguồn & gói chuẩn bị nộp bài (`S01–S05`)** trên nhánh `main` và `feat/implementation` (Code & Dataset Baseline SHA: `8f49332`). Toàn bộ 11/11 bài test ([tests/test_analysis.py](tests/test_analysis.py)) đã **PASS**, `pip check` sạch lỗi; đã hoàn thiện PDF báo cáo 18 trang, kịch bản video demo và nội dung tự đánh giá F06 ngoài repo (chờ chủ dự án quay video YouTube và tự nộp form).
+## 1. Giới thiệu & Chức năng chính
 
-## Môi trường đã kiểm chứng (T01 — macOS 26.6.2 / CPython 3.13.16)
+**DataForge Mini** là ứng dụng web một trang viết bằng Python (Streamlit), được thiết kế tối giản và dễ hiểu để minh họa quy trình phân tích dữ liệu bảng CSV:
 
-- `numpy==2.5.4`, `pandas==3.1.1`, `matplotlib==3.11.2`, `streamlit==1.67.0`, `pytest==9.2.0`
-- Khởi tạo và kiểm tra nhanh:
+- **Đọc & kiểm tra dữ liệu CSV:** Hỗ trợ tải lên file CSV (UTF-8, phân cách dấu phẩy `,`, tối đa 2 MiB) hoặc dùng sẵn bộ dữ liệu giả lập [`sample_data.csv`](sample_data.csv) (12 dòng × 4 cột gồm 2 dòng trùng toàn phần và 2 ô trống).
+- **Khám phá & làm sạch dữ liệu:** Hiển thị số dòng, số cột, ô thiếu và dòng trùng lặp. Khi bật công tắc làm sạch, ứng dụng luôn sao chép từ bảng gốc (không làm thay đổi dữ liệu gốc), **xóa dòng trùng toàn phần trước** (`12 → 10` dòng) rồi **điền trung vị theo từng cột số sau** (`Minh.gio_hoc = 4.0`, `Ngoc.diem = 8.0`).
+- **Thống kê mô tả (NumPy) & Phân tích nhóm (Pandas):** Tính `count`, `min`, `max`, `mean` (`7.80`), `median` (`8.00`) và độ lệch chuẩn tổng thể `ddof=0` (`≈ 1.2490`), đồng thời tính điểm trung bình theo nhóm bằng `groupby(..., dropna=True)` (Lớp A = `8.0`, Lớp B = `7.6`).
+- **Trực quan hóa dữ liệu (Matplotlib):** Vẽ 3 biểu đồ `Figure` độc lập gồm Histogram phân phối tần suất (5 bins), Biểu đồ cột trung bình nhóm (trục tung bắt đầu từ 0) và Biểu đồ phân tán ghép cặp cùng hàng.
+- **Xuất dữ liệu:** Tải về file CSV của bảng đang xem (gốc hoặc đã làm sạch) với định dạng UTF-8-SIG, không thêm cột index thừa.
 
-~~~bash
+## 2. Cấu trúc dự án
+
+```text
+dataforge-mini/
+├── app.py                  # Giao diện Streamlit một trang điều phối luồng chạy
+├── analysis.py             # Xử lý đọc, kiểm lỗi, làm sạch và thống kê (Pandas + NumPy)
+├── charts.py               # 3 hàm tạo biểu đồ độc lập (Matplotlib Figure)
+├── sample_data.csv         # Bộ dữ liệu mẫu giả lập (12 dòng × 4 cột)
+├── requirements.txt        # Phiên bản thư viện đã kiểm chứng
+└── tests/
+    └── test_analysis.py    # 11 bài kiểm thử tự động (dữ liệu, thống kê, biểu đồ & UI)
+```
+
+## 3. Hướng dẫn cài đặt và chạy ứng dụng
+
+Môi trường đã kiểm chứng trên **macOS (Python 3.13.16)** với các phiên bản thư viện khóa trong [`requirements.txt`](requirements.txt) (`numpy==2.5.4`, `pandas==3.1.1`, `matplotlib==3.11.2`, `streamlit==1.67.0`, `pytest==9.2.0`).
+
+### Bước 1: Tạo môi trường ảo và cài đặt thư viện
+
+```bash
 python3.13 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m pip check
-~~~
+```
 
-*(Sau khi các file code và test được tạo ở các bước tiếp theo, chạy kiểm thử bằng `.venv/bin/python -m pytest -q` và chạy ứng dụng bằng `.venv/bin/python -m streamlit run app.py`.)*
+*(Nếu trên máy bạn `python3` đã là Python 3.11–3.13, có thể thay `python3.13` bằng `python3`.)*
 
-## Bắt đầu / AI tiếp quản
+### Bước 2: Chạy ứng dụng Streamlit
 
-1. [AGENTS.md](AGENTS.md) — làm gì ngay khi tiếp quản, cổng quyền.
-2. [RULEBOOK.md](RULEBOOK.md) — quy tắc không được vi phạm.
-3. [docs/STATUS_HANDOFF.md](docs/STATUS_HANDOFF.md) — trạng thái mới nhất, nhiệm vụ duy nhất tiếp theo.
-4. [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) — yêu cầu giảng viên có bằng chứng.
-5. [PROJECT_SPEC.md](PROJECT_SPEC.md) — MVP, dữ liệu, hợp đồng hàm, oracle và test.
-6. [docs/PLAN.md](docs/PLAN.md) — roadmap và các task giao lập trình sau khi được phép.
-7. [docs/DELIVERABLES.md](docs/DELIVERABLES.md) — báo cáo PDF, video, tự chấm, minh chứng.
+```bash
+.venv/bin/python -m streamlit run app.py
+```
 
-**Nguồn sự thật hiện tại:** nhánh mặc định **`main`**. Đọc `AGENTS.md`, `docs/STATUS_HANDOFF.md` và các tài liệu tại đây; PR #1 đã merge và lưu lịch sử R01–R07/FINAL. Khi có nhánh triển khai mới, đọc trạng thái và các thay đổi mới nhất trước khi thao tác. Không coi thiết kế/test case là ứng dụng đã chạy.
+Sau khi chạy lệnh trên, trình duyệt sẽ tự mở địa chỉ `http://localhost:8501`.
 
-## Cấu trúc code tối thiểu
+### Bước 3: Chạy bộ kiểm thử tự động
 
-~~~text
-app.py                 # UI Streamlit một trang (đã tạo ở Bước 3)
-analysis.py            # Pandas + NumPy (đã tạo ở Bước 2)
-charts.py              # Matplotlib Figure (đã tạo ở Bước 3)
-sample_data.csv        # bộ dữ liệu tổng hợp 12×4 (đã tạo ở Bước 2)
-requirements.txt       # phiên bản khóa thực tế (đã tạo ở Bước 1)
-tests/test_analysis.py # unit test tập trung (10/10 PASS ở Bước 3)
-~~~
-
-Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm `src/`, `services/`, CI/Docker, database hoặc các hệ thống phức tạp.**
-
-## DataForge gốc
-
-[Data-Forge](https://github.com/rikkurea-boop/Data-Forge) là dự án xử lý dữ liệu huấn luyện AI độc lập. **Không import, sửa hoặc phụ thuộc vào Data-Forge gốc** để hoàn thành bài tập này.
-
-## Tiến độ triển khai hiện tại
-
-Toàn bộ lộ trình 5 bước tinh gọn trong [docs/PLAN.md](docs/PLAN.md) (**`S01–S05`**) đã hoàn tất phần mã nguồn, kiểm thử (**11/11 PASS** tại Code Baseline SHA `8f49332`), tạo báo cáo PDF 18 trang và chuẩn bị kịch bản demo + tự đánh giá. Chủ dự án chỉ cần kéo mã nguồn về máy chạy app thật (`.venv/bin/python -m streamlit run app.py`), quay video YouTube và tự nộp form. Không tự tạo framework bổ sung.
+```bash
+.venv/bin/python -m pytest -v
+```
