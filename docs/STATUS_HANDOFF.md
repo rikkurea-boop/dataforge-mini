@@ -1,14 +1,14 @@
-# STATUS_HANDOFF — DataForge Mini · Bước 2 (`S02`) DONE trên nhánh `feat/implementation`
+# STATUS_HANDOFF — DataForge Mini · Bước 3 (`S03`) DONE trên nhánh `feat/implementation`
 
-**CURRENT STATE: S02 (`T02–T05`) DONE ON `feat/implementation` — CHỜ LỆNH TIẾP TỤC BƯỚC 3 (`S03`: `charts.py` + `app.py`).** Đã cập nhật kế hoạch 5 bước tinh gọn vào `docs/PLAN.md`, tạo `sample_data.csv`, `analysis.py` (5 hàm chuẩn) và `tests/test_analysis.py` (8/8 PASS).
+**CURRENT STATE: S03 (`T06–T08`) DONE ON `feat/implementation` — CHỜ BƯỚC 4 (`S04`: QA CHẠY APP THẬT & THU MINH CHỨNG).** Đã hoàn thiện `charts.py` (3 biểu đồ Matplotlib), `app.py` (giao diện Streamlit 1 trang tích hợp bắt lỗi & xuất CSV) và mở rộng `tests/test_analysis.py` (10/10 PASS).
 
 ## Repository và phiên bản nguồn sự thật
 
 - Repository: https://github.com/rikkurea-boop/dataforge-mini (**private**, không đổi quyền).
 - Nhánh mặc định trên remote: `main` (PR #1 merge commit `c3d979c20a8a49493139d195130713097ae77b83`, baseline trước coding: `b47682db9705c2c5e279d4e0d79b9f862bbd478e`).
-- Nhánh làm việc hiện hành: **`feat/implementation`** (commit T01 trước đó: `011320cd5d754d4f1993c3425a0da061d8480cbc`).
-- **Đã có:** `requirements.txt`, `sample_data.csv`, `analysis.py`, `tests/test_analysis.py`.
-- **Chưa có:** `charts.py`, `app.py`, PDF, video hay bằng chứng chạy ứng dụng Streamlit. Không sửa Data-Forge gốc.
+- Nhánh làm việc hiện hành: **`feat/implementation`** (`S01`: `011320c`, `S02`: `ee9ccba`).
+- **Đã có:** `requirements.txt`, `sample_data.csv`, `analysis.py`, `charts.py`, `app.py`, `tests/test_analysis.py`.
+- **Chưa có:** bằng chứng chạy Streamlit UI thật (`UI-01..06`), PDF, video. Không sửa Data-Forge gốc.
 
 ## Tiến độ
 
@@ -16,9 +16,10 @@
 |---|---|---|
 | R01–R07 + FINAL | DONE | Hồ sơ đặc tả đã merge vào `main` qua PR #1 |
 | **S01** (T01 — Môi trường) | **DONE** (`011320c`) | `.venv` Python 3.13.16, `pip check` & smoke import PASS, khóa `requirements.txt` |
-| **S02** (T02–T05 — Dữ liệu & `analysis.py`) | **DONE** (hiện tại) | `sample_data.csv` (12×4), 5 hàm `analysis.py`, 8/8 tests `pytest` PASS |
-| **S03** (T06–T08 — `charts.py` & `app.py`) | **NEXT** | Chờ tiếp tục triển khai 3 Figure Matplotlib & UI Streamlit 1 trang |
-| **S04–S05** (T09–T10 — QA & Sản phẩm nộp) | **NOT STARTED** | QA toàn trình, baseline SHA, PDF 15–20 trang, video YouTube, tự chấm |
+| **S02** (T02–T05 — Dữ liệu & `analysis.py`) | **DONE** (`ee9ccba`) | `sample_data.csv` (12×4), 5 hàm `analysis.py`, 8/8 tests `pytest` PASS |
+| **S03** (T06–T08 — `charts.py` & `app.py`) | **DONE** (hiện tại) | 3 Figure (`OR-07/08/11/14`), UI Streamlit 1 trang, bắt lỗi & export CSV, 10/10 tests `pytest` PASS |
+| **S04** (T09 — QA & Thu minh chứng) | **NEXT** | Chạy toàn bộ test + `pip check` + smoke test giao diện Streamlit (`UI-01..06`), chốt SHA & thu `EV-01..13` |
+| **S05** (T10 — Sản phẩm nộp) | **NOT STARTED** | PDF 15–20 trang ≤100 MB, video YouTube, tự chấm 3+2+2+1+2 (`EV-14..16`) |
 
 ## Quyết định đã khóa
 
@@ -45,13 +46,20 @@
 - Lệnh & kết quả kiểm thử thực tế:
   - `PYTHONPATH=/Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/.venv/bin/python -m pytest -v /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/tests/test_analysis.py` → `8 passed in 0.75s` (exit 0), bao phủ `OR-01..06`, `OR-09..13`, `OR-15` và `IO-01..10`.
 
+## Bằng chứng thực thi S03 (2026-11-16)
+
+- Nhánh: `feat/implementation` (sau commit S02 `ee9ccbacb770ebacec345674491bfe3180e184fc`).
+- File tạo/sửa: `charts.py`, `app.py`, `tests/test_analysis.py`, `docs/PLAN.md`, `README.md`, `docs/STATUS_HANDOFF.md`.
+- Lệnh & kết quả kiểm thử thực tế:
+  - `MPLCONFIGDIR=/tmp/mpl PYTHONPATH=/Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/.venv/bin/python -m pytest -v /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/tests/test_analysis.py` → `10 passed in 1.67s` (exit 0), bao phủ `OR-01..15` và `IO-01..10`, cùng kiểm tra import `app.py`.
+
 ## Điều còn chưa xác minh
 
 Deadline, video length bắt buộc, việc phải làm PPT, PDF template chi tiết, chính sách xem private repo của thầy. Không đoán, kiểm lại trước thời điểm nộp.
 
 ## Hành động tiếp theo duy nhất
 
-**Thực hiện Bước 3 (`S03`: tạo `charts.py`, dựng giao diện 1 trang `app.py` và bổ sung test hình/kiểm thử UI).**
+**Thực hiện Bước 4 (`S04` / `T09`: kiểm thử tổng thể, chạy thử Streamlit app thật kiểm tra `UI-01..06`, chốt baseline commit SHA và thu bằng chứng `EV-01..13`).**
 
 ## Handoff template
 

@@ -4,10 +4,12 @@ import io
 import math
 from pathlib import Path
 
+from matplotlib.figure import Figure
 import numpy as np
 import pandas as pd
 import pytest
 
+import app
 from analysis import (
     MAX_CSV_BYTES,
     clean_data,
@@ -16,6 +18,7 @@ from analysis import (
     mean_by_group,
     numeric_stats,
 )
+from charts import group_bar, histogram, scatter
 
 SAMPLE_CSV_PATH = Path(__file__).resolve().parent.parent / "sample_data.csv"
 
@@ -203,3 +206,70 @@ def test_io_validation_and_roundtrip_io01_to_io10():
     reloaded = load_csv(io.BytesIO(exported_bytes))
     assert reloaded.shape == (10, 4)
     assert list(reloaded.columns) == ["ten", "lop", "gio_hoc", "diem"]
+
+
+def test_charts_canonical_figures_or07_or08_or11():
+    """OR-07/08/11: Kiểm tra 3 Matplotlib Figure chuẩn trên sample raw/clean."""
+    raw = load_csv(SAMPLE_CSV_PATH)
+    cleaned = clean_data(raw)
+
+    # OR-07: Histogram 5 bins, tần suất [2, 2, 3, 2, 1], tổng 10
+    fig_hist = histogram(cleaned, "diem")
+    assert isinstance(fig_hist, Figure)
+    ax_hist = fig_hist.axes[0]
+    counts = [patch.get_height() for patch in ax_hist.patches]
+    assert counts == pytest.approx([2.0, 2.0, 3.0, 2.0, 1.0])
+    assert sum(counts) == pytest.approx(10.0)
+    assert ax_hist.get_ylabel() == "Số quan sát"
+    assert ax_hist.get_xlabel() == "diem"
+
+    # OR-11: Bar group means A=8.0, B=7.6, trục Y bắt đầu từ 0
+    means = mean_by_group(cleaned, "lop", "diem")
+    fig_bar = group_bar(means)
+    assert isinstance(fig_bar, Figure)
+    ax_bar = fig_bar.axes[0]
+    bar_heights = [patch.get_height() for patch in ax_bar.patches]
+    assert bar_heights == pytest.approx([8.0, 7.6])
+    assert ax_bar.get_ylim()[0] == pytest.approx(0.0)
+    assert ax_bar.get_ylabel() == "Trung bình"
+
+    # OR-08: Scatter ghép cặp cùng hàng cho 10 điểm hợp lệ ở cả raw và clean
+    for df_case in (raw, cleaned):
+        fig_scatter = scatter(df_case, "gio_hoc", "diem")
+        assert isinstance(fig_scatter, Figure)
+        offsets = fig_scatter.axes[0].collections[0].get_offsets()
+        expected_pairs = df_case[["gio_hoc", "diem"]].dropna().to_numpy(dtype=float)
+        assert len(offsets) == 10
+        assert np.allclose(offsets, expected_pairs)
+
+
+def test_charts_edge_cases_and_app_import_or09_or11_or13_or14():
+    """OR-09/11/13/14: Loại nhóm NaN, chặn ±inf/all-NA/0-cặp/trùng cột và kiểm tra import app."""
+    # Nhóm có mean NaN bị loại khỏi group_bar
+    fig_partial = group_bar(pd.Series([8.0, np.nan], index=["A", "C"]))
+    assert len(fig_partial.axes[0].patches) == 1
+
+    # Cột all-NA, all-NA group means, 0 cặp cùng hàng và trùng cột X/Y đều báo lỗi rõ
+    df_empty_num = pd.DataFrame({"x": [np.nan, np.nan], "y": [1.0, 2.0]})
+    with pytest.raises(ValueError):
+        histogram(df_empty_num, "x")
+    with pytest.raises(ValueError):
+        group_bar(pd.Series([np.nan, np.nan], index=["A", "B"]))
+    with pytest.raises(ValueError):
+        scatter(pd.DataFrame({"x": [1.0, np.nan], "y": [np.nan, 2.0]}), "x", "y")
+    with pytest.raises(ValueError):
+        scatter(pd.DataFrame({"x": [1.0, 2.0]}), "x", "x")
+
+    # Chặn ±inf trên các hàm vẽ
+    df_inf = pd.DataFrame({"x": [1.0, np.inf], "y": [2.0, 3.0]})
+    with pytest.raises(ValueError):
+        histogram(df_inf, "x")
+    with pytest.raises(ValueError):
+        scatter(df_inf, "x", "y")
+    with pytest.raises(ValueError):
+        group_bar(pd.Series([1.0, np.inf], index=["A", "B"]))
+
+    # App module import được và trỏ đúng sample_data.csv
+    assert callable(app.main)
+    assert app.SAMPLE_CSV_PATH.exists()
+

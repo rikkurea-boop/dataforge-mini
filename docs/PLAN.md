@@ -34,9 +34,9 @@ Theo yêu cầu tối giản hóa của chủ dự án (`AGENTS.md` §0 mục 5:
 | Bước | Gộp từ | Trạng thái | File / đầu ra | Cổng nghiệm thu |
 |---|---|---|---|---|
 | **S01** | T01 | **DONE** (`011320c`) | `.venv/`, `requirements.txt`, `README.md`, `docs/STATUS_HANDOFF.md` | Python 3.13.16, `pip check` PASS, smoke import PASS |
-| **S02** | T02 + T03 + T04 + T05 | **DONE** (hiện tại) | `sample_data.csv`, `analysis.py`, `tests/test_analysis.py` | 12×4 chuẩn + 5 hàm `analysis.py` + `pytest` PASS `OR-01..06, 09..13, 15` & `IO-01..10` |
-| **S03** | T06 + T07 + T08 | **NEXT** | `charts.py`, `app.py`, cập nhật `tests/` | 3 Figure (`OR-07/08/11/14`), UI Streamlit 1 trang, bắt lỗi ≤2 MiB, export CSV (`UI-01..06`) |
-| **S04** | T09 | NOT STARTED | `README.md`, `docs/STATUS_HANDOFF.md`, rà soát code | Toàn bộ `pytest` + `pip check` + chạy thử Streamlit thật, đóng băng baseline SHA, thu `EV-01..13` |
+| **S02** | T02 + T03 + T04 + T05 | **DONE** (`ee9ccba`) | `sample_data.csv`, `analysis.py`, `tests/test_analysis.py` | 12×4 chuẩn + 5 hàm `analysis.py` + `pytest` PASS `OR-01..06, 09..13, 15` & `IO-01..10` |
+| **S03** | T06 + T07 + T08 | **DONE** (hiện tại) | `charts.py`, `app.py`, `tests/test_analysis.py` | 3 Figure (`OR-07/08/11/14`), UI Streamlit 1 trang, bắt lỗi ≤2 MiB, export CSV (`10 passed`) |
+| **S04** | T09 | **NEXT** | `README.md`, `docs/STATUS_HANDOFF.md`, rà soát code | Toàn bộ `pytest` + `pip check` + chạy thử Streamlit thật (`UI-01..06`), đóng băng baseline SHA, thu `EV-01..13` |
 | **S05** | T10 | NOT STARTED | PDF 15–20 trang ≤100 MB, YouTube demo, tự chấm F06 | Kiểm đủ `EV-14..16`, link người chấm mở được, không tự gửi form |
 
 ### Bảng đối chiếu 10 task gốc (tham chiếu chi tiết từng gate)

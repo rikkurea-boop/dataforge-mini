@@ -4,7 +4,7 @@
 **Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
 **Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
 
-**Trạng thái:** **Bước 2 (`S02`: `T02–T05`) đã hoàn thành** trên nhánh `feat/implementation` — đã tạo bộ dữ liệu mẫu [sample_data.csv](sample_data.csv), module lõi [analysis.py](analysis.py) và bộ test [tests/test_analysis.py](tests/test_analysis.py) (8/8 bài test `pytest` PASS). **Chưa có `charts.py`, `app.py`, PDF hay video.**
+**Trạng thái:** **Bước 3 (`S03`: `T06–T08`) đã hoàn thành** trên nhánh `feat/implementation` — toàn bộ mã nguồn ứng dụng ([sample_data.csv](sample_data.csv), [analysis.py](analysis.py), [charts.py](charts.py), [app.py](app.py)) và bộ kiểm thử ([tests/test_analysis.py](tests/test_analysis.py)) đã hoàn thiện và đạt **10/10 bài test `pytest` PASS**. Đang sẵn sàng bước vào **Bước 4 (`S04` — chạy thử UI thực tế & thu minh chứng)** trước khi hoàn thiện PDF/video ở **Bước 5 (`S05`)**.
 
 ## Môi trường đã kiểm chứng (T01 — macOS 26.6.2 / CPython 3.13.16)
 
@@ -34,12 +34,12 @@ python3.13 -m venv .venv
 ## Cấu trúc code tối thiểu
 
 ~~~text
-app.py                 # UI Streamlit một trang (sắp làm ở Bước 3)
+app.py                 # UI Streamlit một trang (đã tạo ở Bước 3)
 analysis.py            # Pandas + NumPy (đã tạo ở Bước 2)
-charts.py              # Matplotlib Figure (sắp làm ở Bước 3)
+charts.py              # Matplotlib Figure (đã tạo ở Bước 3)
 sample_data.csv        # bộ dữ liệu tổng hợp 12×4 (đã tạo ở Bước 2)
 requirements.txt       # phiên bản khóa thực tế (đã tạo ở Bước 1)
-tests/test_analysis.py # unit test tập trung (đã tạo và PASS ở Bước 2)
+tests/test_analysis.py # unit test tập trung (10/10 PASS ở Bước 3)
 ~~~
 
 Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm `src/`, `services/`, CI/Docker, database hoặc các hệ thống phức tạp.**
@@ -50,4 +50,4 @@ Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm 
 
 ## Tiến độ triển khai hiện tại
 
-Theo lộ trình 5 bước tinh gọn trong [docs/PLAN.md](docs/PLAN.md): **Bước 1 (`S01`)** và **Bước 2 (`S02`: `sample_data.csv` + `analysis.py` + `tests/test_analysis.py`)** đã hoàn tất. Nhiệm vụ tiếp theo là **Bước 3 (`S03`: viết `charts.py` và `app.py`)**. Không tự tạo framework bổ sung.
+Theo lộ trình 5 bước tinh gọn trong [docs/PLAN.md](docs/PLAN.md): **Bước 1 (`S01`)**, **Bước 2 (`S02`)** và **Bước 3 (`S03`: `charts.py` + `app.py`)** đã hoàn tất. Nhiệm vụ tiếp theo là **Bước 4 (`S04`: QA toàn trình, chạy thử giao diện Streamlit `UI-01..06`, chốt commit SHA và thu minh chứng)**. Không tự tạo framework bổ sung.
