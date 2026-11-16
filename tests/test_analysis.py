@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 import numpy as np
 import pandas as pd
 import pytest
+from streamlit.testing.v1 import AppTest
 
 import app
 from analysis import (
@@ -272,4 +273,74 @@ def test_charts_edge_cases_and_app_import_or09_or11_or13_or14():
     # App module import được và trỏ đúng sample_data.csv
     assert callable(app.main)
     assert app.SAMPLE_CSV_PATH.exists()
+
+
+class _FakeUpload(io.BytesIO):
+    """Stream giả lập UploadedFile có thuộc tính name và size để test UI-02/EV-12."""
+
+    def __init__(self, data: bytes, name: str = "custom.csv", size: int | None = None):
+        super().__init__(data)
+        self.name = name
+        self.size = len(data) if size is None else size
+
+
+def test_streamlit_ui_flows_ui01_to_ui06():
+    """UI-01..06 & EV-12: Smoke test toàn bộ luồng giao diện Streamlit và nạp file."""
+    app_path = Path(__file__).resolve().parent.parent / "app.py"
+    at = AppTest.from_file(str(app_path)).run()
+    assert not at.exception
+
+    # UI-01: Mặc định đọc sample_data.csv với 1 checkbox, tối đa 3 selectbox, nút tải CSV
+    assert len(at.checkbox) == 1
+    assert len(at.selectbox) == 3
+    assert len(at.get("download_button")) == 1
+    assert at.metric[0].value == "11"
+    assert at.metric[3].value == "7.7273"
+
+    # UI-03: Bật làm sạch -> 12->10, điền Minh=4 / Ngoc=8, mean=7.8000, std=1.2490
+    at.checkbox[0].check().run()
+    assert not at.exception
+    summary_rows = at.dataframe[0].value.to_dict(orient="records")
+    assert summary_rows[0]["Số dòng"] == 12
+    assert summary_rows[0]["Ô thiếu"] == 2
+    assert summary_rows[0]["Dòng trùng"] == 2
+    assert summary_rows[1]["Số dòng"] == 10
+    assert summary_rows[1]["Ô thiếu"] == 0
+    assert summary_rows[1]["Dòng trùng"] == 0
+
+    active_cleaned = at.dataframe[1].value
+    assert active_cleaned.loc[active_cleaned["ten"] == "Minh", "gio_hoc"].iloc[0] == pytest.approx(4.0)
+    assert active_cleaned.loc[active_cleaned["ten"] == "Ngoc", "diem"].iloc[0] == pytest.approx(8.0)
+    assert at.metric[0].value == "10"
+    assert at.metric[3].value == "7.8000"
+    assert at.metric[5].value == "1.2490"
+
+    # UI-06: Dữ liệu active xuất CSV không thêm cột index trong trạng thái clean
+    reloaded_clean = load_csv(io.BytesIO(active_cleaned.to_csv(index=False).encode("utf-8-sig")))
+    assert reloaded_clean.shape == (10, 4)
+
+    # UI-04: Đổi cột Y sang gio_hoc -> mean=4.4000, cột X tự đổi sang diem
+    at.selectbox[0].select("gio_hoc").run()
+    assert not at.exception
+    assert at.metric[3].value == "4.4000"
+    assert at.selectbox[2].value == "diem"
+
+    # Tắt checkbox -> quay lại trạng thái raw 12 dòng nguyên vẹn
+    at.checkbox[0].uncheck().run()
+    assert not at.exception
+    assert at.dataframe[0].value.to_dict(orient="records")[1]["Số dòng"] == 12
+    assert at.metric[0].value == "11"
+
+    # UI-02 & EV-12: Nạp CSV tải lên hợp lệ và chặn file vượt quá 2 MiB
+    custom_df, custom_label = app._load_input_dataframe(
+        _FakeUpload(b"ten,lop,gio_hoc,diem\nX,K,5,9\nY,K,7,10\n", name="lop_k.csv")
+    )
+    assert custom_df.shape == (2, 4)
+    assert "lop_k.csv" in custom_label
+
+    with pytest.raises(ValueError):
+        app._load_input_dataframe(
+            _FakeUpload(b"a,b\n1,2\n", name="huge.csv", size=MAX_CSV_BYTES + 1)
+        )
+
 

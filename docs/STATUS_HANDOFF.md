@@ -1,14 +1,14 @@
-# STATUS_HANDOFF — DataForge Mini · Bước 3 (`S03`) DONE trên nhánh `feat/implementation`
+# STATUS_HANDOFF — DataForge Mini · Bước 4 (`S04`) DONE trên nhánh `feat/implementation`
 
-**CURRENT STATE: S03 (`T06–T08`) DONE ON `feat/implementation` — CHỜ BƯỚC 4 (`S04`: QA CHẠY APP THẬT & THU MINH CHỨNG).** Đã hoàn thiện `charts.py` (3 biểu đồ Matplotlib), `app.py` (giao diện Streamlit 1 trang tích hợp bắt lỗi & xuất CSV) và mở rộng `tests/test_analysis.py` (10/10 PASS).
+**CURRENT STATE: S04 (`T09` — QA & BASELINE FROZEN) DONE ON `feat/implementation` — SẴN SÀNG BƯỚC 5 (`S05`: PDF/VIDEO/TỰ ĐÁNH GIÁ).** Toàn bộ 11/11 bài test `pytest` (gồm `OR-01..15`, `IO-01..10`, `UI-01..06`), `pip check`, và trích xuất minh chứng `EV-01..13` từ mã nguồn đóng băng đã hoàn tất.
 
 ## Repository và phiên bản nguồn sự thật
 
-- Repository: https://github.com/rikkurea-boop/dataforge-mini (**private**, không đổi quyền).
+- Repository: https://github.com/rikkurea-boop/dataforge-mini (**private**, chưa đổi quyền — chủ dự án xác nhận quyền người chấm ở `S05`).
 - Nhánh mặc định trên remote: `main` (PR #1 merge commit `c3d979c20a8a49493139d195130713097ae77b83`, baseline trước coding: `b47682db9705c2c5e279d4e0d79b9f862bbd478e`).
-- Nhánh làm việc hiện hành: **`feat/implementation`** (`S01`: `011320c`, `S02`: `ee9ccba`).
-- **Đã có:** `requirements.txt`, `sample_data.csv`, `analysis.py`, `charts.py`, `app.py`, `tests/test_analysis.py`.
-- **Chưa có:** bằng chứng chạy Streamlit UI thật (`UI-01..06`), PDF, video. Không sửa Data-Forge gốc.
+- Nhánh làm việc hiện hành: **`feat/implementation`** (`S01`: `011320c`, `S02`: `ee9ccba`, `S03`: `1911d34`).
+- **Đã có:** `requirements.txt`, `sample_data.csv`, `analysis.py`, `charts.py`, `app.py`, `tests/test_analysis.py`, cùng bộ ảnh biểu đồ & minh chứng thực tế `EV-01..13` (lưu ngoài repo tại thư mục scratch để chèn báo cáo).
+- **Chưa có:** PDF báo cáo 15–20 trang, link video YouTube demo, phần điền form cuối (`S05`). Không sửa Data-Forge gốc.
 
 ## Tiến độ
 
@@ -17,9 +17,9 @@
 | R01–R07 + FINAL | DONE | Hồ sơ đặc tả đã merge vào `main` qua PR #1 |
 | **S01** (T01 — Môi trường) | **DONE** (`011320c`) | `.venv` Python 3.13.16, `pip check` & smoke import PASS, khóa `requirements.txt` |
 | **S02** (T02–T05 — Dữ liệu & `analysis.py`) | **DONE** (`ee9ccba`) | `sample_data.csv` (12×4), 5 hàm `analysis.py`, 8/8 tests `pytest` PASS |
-| **S03** (T06–T08 — `charts.py` & `app.py`) | **DONE** (hiện tại) | 3 Figure (`OR-07/08/11/14`), UI Streamlit 1 trang, bắt lỗi & export CSV, 10/10 tests `pytest` PASS |
-| **S04** (T09 — QA & Thu minh chứng) | **NEXT** | Chạy toàn bộ test + `pip check` + smoke test giao diện Streamlit (`UI-01..06`), chốt SHA & thu `EV-01..13` |
-| **S05** (T10 — Sản phẩm nộp) | **NOT STARTED** | PDF 15–20 trang ≤100 MB, video YouTube, tự chấm 3+2+2+1+2 (`EV-14..16`) |
+| **S03** (T06–T08 — `charts.py` & `app.py`) | **DONE** (`1911d34`) | 3 Figure (`OR-07/08/11/14`), UI Streamlit 1 trang, bắt lỗi & export CSV, 10/10 tests `pytest` PASS |
+| **S04** (T09 — QA & Thu minh chứng) | **DONE** (hiện tại) | Bổ sung UI smoke `AppTest` (`UI-01..06`), `pytest` 11/11 PASS, `pip check` PASS, trích `EV-01..13` |
+| **S05** (T10 — Sản phẩm nộp) | **NEXT** | Tạo PDF 15–20 trang ≤100 MB, chuẩn bị kịch bản/quay YouTube demo, soạn tự chấm 3+2+2+1+2 (`EV-14..16`) |
 
 ## Quyết định đã khóa
 
@@ -53,13 +53,22 @@
 - Lệnh & kết quả kiểm thử thực tế:
   - `MPLCONFIGDIR=/tmp/mpl PYTHONPATH=/Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/.venv/bin/python -m pytest -v /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/tests/test_analysis.py` → `10 passed in 1.67s` (exit 0), bao phủ `OR-01..15` và `IO-01..10`, cùng kiểm tra import `app.py`.
 
+## Bằng chứng thực thi S04 (2026-11-16)
+
+- Nhánh: `feat/implementation` (sau commit S03 `1911d3455fe1ace3fb7ecb517a93344e1c75fbfc`).
+- File cập nhật: `tests/test_analysis.py`, `docs/PLAN.md`, `README.md`, `docs/STATUS_HANDOFF.md`.
+- Lệnh & kết quả kiểm thử thực tế:
+  - `MPLCONFIGDIR=/tmp/mpl PYTHONPATH=/Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/.venv/bin/python -m pytest -v /Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/tests/test_analysis.py` → `11 passed in 2.39s` (exit 0), bao phủ `OR-01..15`, `IO-01..10`, `UI-01..06` và `EV-12`.
+  - `/Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/.venv/bin/python -m pip check` → `No broken requirements found.` (exit 0).
+- Minh chứng `EV-01..13`: xuất 3 biểu đồ PNG chuẩn (`ev07_histogram.png`, `ev08_group_bar.png`, `ev09_scatter.png`) và hồ sơ số liệu `evidence_summary.json` từ commit đóng băng vào thư mục scratch ngoài repo để phục vụ soạn báo cáo PDF ở `S05`.
+
 ## Điều còn chưa xác minh
 
 Deadline, video length bắt buộc, việc phải làm PPT, PDF template chi tiết, chính sách xem private repo của thầy. Không đoán, kiểm lại trước thời điểm nộp.
 
 ## Hành động tiếp theo duy nhất
 
-**Thực hiện Bước 4 (`S04` / `T09`: kiểm thử tổng thể, chạy thử Streamlit app thật kiểm tra `UI-01..06`, chốt baseline commit SHA và thu bằng chứng `EV-01..13`).**
+**Thực hiện Bước 5 (`S05` / `T10`): tạo báo cáo PDF 15–20 trang (≤100 MB), chuẩn bị kịch bản demo YouTube và đoạn tự đánh giá 5 tiêu chí (3+2+2+1+2).**
 
 ## Handoff template
 

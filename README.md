@@ -4,7 +4,7 @@
 **Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
 **Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
 
-**Trạng thái:** **Bước 3 (`S03`: `T06–T08`) đã hoàn thành** trên nhánh `feat/implementation` — toàn bộ mã nguồn ứng dụng ([sample_data.csv](sample_data.csv), [analysis.py](analysis.py), [charts.py](charts.py), [app.py](app.py)) và bộ kiểm thử ([tests/test_analysis.py](tests/test_analysis.py)) đã hoàn thiện và đạt **10/10 bài test `pytest` PASS**. Đang sẵn sàng bước vào **Bước 4 (`S04` — chạy thử UI thực tế & thu minh chứng)** trước khi hoàn thiện PDF/video ở **Bước 5 (`S05`)**.
+**Trạng thái:** **Bước 4 (`S04`: QA & Chốt mã nguồn) đã hoàn thành** trên nhánh `feat/implementation` — toàn bộ mã nguồn ứng dụng ([sample_data.csv](sample_data.csv), [analysis.py](analysis.py), [charts.py](charts.py), [app.py](app.py)) và 11/11 bài test ([tests/test_analysis.py](tests/test_analysis.py), bao gồm kiểm thử UI Streamlit `UI-01..06`) đều đã **PASS**, `pip check` sạch lỗi. Sẵn sàng sang **Bước 5 (`S05` — hoàn thiện PDF báo cáo, video demo và tự đánh giá)**.
 
 ## Môi trường đã kiểm chứng (T01 — macOS 26.6.2 / CPython 3.13.16)
 
@@ -50,4 +50,4 @@ Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm 
 
 ## Tiến độ triển khai hiện tại
 
-Theo lộ trình 5 bước tinh gọn trong [docs/PLAN.md](docs/PLAN.md): **Bước 1 (`S01`)**, **Bước 2 (`S02`)** và **Bước 3 (`S03`: `charts.py` + `app.py`)** đã hoàn tất. Nhiệm vụ tiếp theo là **Bước 4 (`S04`: QA toàn trình, chạy thử giao diện Streamlit `UI-01..06`, chốt commit SHA và thu minh chứng)**. Không tự tạo framework bổ sung.
+Theo lộ trình 5 bước tinh gọn trong [docs/PLAN.md](docs/PLAN.md): **Bước 1–4 (`S01–S04`)** đã hoàn tất và đóng băng mã nguồn sau kiểm thử **11/11 PASS**. Nhiệm vụ cuối cùng là **Bước 5 (`S05`: hoàn thiện báo cáo PDF 15–20 trang, quay video YouTube demo, viết tự đánh giá 3+2+2+1+2 và kiểm tra quyền mở link nộp bài)**. Không tự tạo framework bổ sung.
