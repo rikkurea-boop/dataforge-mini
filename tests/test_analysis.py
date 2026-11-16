@@ -3,6 +3,7 @@
 import io
 import math
 from pathlib import Path
+from unittest.mock import patch
 
 from matplotlib.figure import Figure
 import numpy as np
@@ -252,7 +253,7 @@ def test_charts_edge_cases_and_app_import():
         group_bar(pd.Series([1.0, np.inf], index=["A", "B"]))
 
     assert callable(app.main)
-    assert app.SAMPLE_CSV_PATH.exists()
+    assert SAMPLE_CSV_PATH.exists()
 
 
 class _FakeUpload(io.BytesIO):
@@ -265,47 +266,70 @@ class _FakeUpload(io.BytesIO):
 
 
 def test_streamlit_ui_flows():
-    """Kiểm thử các luồng tương tác chính của giao diện Streamlit."""
+    """Kiểm thử giao diện ẩn trước khi tải file, cần bấm xác nhận xử lý và chạy đúng các luồng."""
     app_path = Path(__file__).resolve().parent.parent / "app.py"
-    at = AppTest.from_file(str(app_path)).run()
-    assert not at.exception
 
-    assert len(at.checkbox) == 1
-    assert len(at.selectbox) == 3
-    assert len(at.get("download_button")) == 1
-    assert at.metric[0].value == "11"
-    assert at.metric[3].value == "7.7273"
+    # 1. Chưa tải file: ẩn hoàn toàn bảng, checkbox, selectbox, chỉ hiện khung upload + thông báo
+    at_empty = AppTest.from_file(str(app_path)).run()
+    assert not at_empty.exception
+    assert len(at_empty.checkbox) == 0
+    assert len(at_empty.button) == 0
+    assert len(at_empty.dataframe) == 0
+    assert len(at_empty.metric) == 0
+    assert len(at_empty.info) == 1
 
-    at.checkbox[0].check().run()
-    assert not at.exception
-    summary_rows = at.dataframe[0].value.to_dict(orient="records")
-    assert summary_rows[0]["Số dòng"] == 12
-    assert summary_rows[0]["Ô thiếu"] == 2
-    assert summary_rows[0]["Dòng trùng"] == 2
-    assert summary_rows[1]["Số dòng"] == 10
-    assert summary_rows[1]["Ô thiếu"] == 0
-    assert summary_rows[1]["Dòng trùng"] == 0
+    # 2. Đã tải file sample_data.csv lên nhưng chưa bấm xác nhận: chưa hiện dữ liệu & thống kê
+    sample_bytes = SAMPLE_CSV_PATH.read_bytes()
+    with patch(
+        "streamlit.file_uploader",
+        side_effect=lambda *args, **kwargs: _FakeUpload(sample_bytes, name="sample_data.csv"),
+    ):
+        at = AppTest.from_file(str(app_path)).run()
+        assert not at.exception
+        assert len(at.checkbox) == 1
+        assert len(at.button) == 1
+        assert len(at.dataframe) == 0
+        assert len(at.metric) == 0
 
-    active_cleaned = at.dataframe[1].value
-    assert active_cleaned.loc[active_cleaned["ten"] == "Minh", "gio_hoc"].iloc[0] == pytest.approx(4.0)
-    assert active_cleaned.loc[active_cleaned["ten"] == "Ngoc", "diem"].iloc[0] == pytest.approx(8.0)
-    assert at.metric[0].value == "10"
-    assert at.metric[3].value == "7.8000"
-    assert at.metric[5].value == "1.2490"
+        # 3. Bấm xác nhận ở chế độ Raw (12 dòng)
+        at.button[0].click().run()
+        assert not at.exception
+        assert len(at.selectbox) == 3
+        assert len(at.get("download_button")) == 1
+        assert at.metric[0].value == "11"
+        assert at.metric[3].value == "7.7273"
 
-    reloaded_clean = load_csv(io.BytesIO(active_cleaned.to_csv(index=False).encode("utf-8-sig")))
-    assert reloaded_clean.shape == (10, 4)
+        # 4. Tích chọn làm sạch -> bấm xác nhận -> 12->10, Minh=4 / Ngoc=8, mean=7.8000, std=1.2490
+        at.checkbox[0].check().run()
+        assert len(at.dataframe) == 0
+        at.button[0].click().run()
+        assert not at.exception
 
-    at.selectbox[0].select("gio_hoc").run()
-    assert not at.exception
-    assert at.metric[3].value == "4.4000"
-    assert at.selectbox[2].value == "diem"
+        summary_rows = at.dataframe[0].value.to_dict(orient="records")
+        assert summary_rows[0]["Số dòng"] == 12
+        assert summary_rows[0]["Ô thiếu"] == 2
+        assert summary_rows[0]["Dòng trùng"] == 2
+        assert summary_rows[1]["Số dòng"] == 10
+        assert summary_rows[1]["Ô thiếu"] == 0
+        assert summary_rows[1]["Dòng trùng"] == 0
 
-    at.checkbox[0].uncheck().run()
-    assert not at.exception
-    assert at.dataframe[0].value.to_dict(orient="records")[1]["Số dòng"] == 12
-    assert at.metric[0].value == "11"
+        active_cleaned = at.dataframe[1].value
+        assert active_cleaned.loc[active_cleaned["ten"] == "Minh", "gio_hoc"].iloc[0] == pytest.approx(4.0)
+        assert active_cleaned.loc[active_cleaned["ten"] == "Ngoc", "diem"].iloc[0] == pytest.approx(8.0)
+        assert at.metric[0].value == "10"
+        assert at.metric[3].value == "7.8000"
+        assert at.metric[5].value == "1.2490"
 
+        reloaded_clean = load_csv(io.BytesIO(active_cleaned.to_csv(index=False).encode("utf-8-sig")))
+        assert reloaded_clean.shape == (10, 4)
+
+        # 5. Đổi cột Y trên selectbox vẫn giữ kết quả hiển thị mà không cần bấm lại nút
+        at.selectbox[0].select("gio_hoc").run()
+        assert not at.exception
+        assert at.metric[3].value == "4.4000"
+        assert at.selectbox[2].value == "diem"
+
+    # 6. Kiểm tra đọc file tải lên hợp lệ và chặn file vượt 2 MiB
     custom_df, custom_label = app._load_input_dataframe(
         _FakeUpload(b"ten,lop,gio_hoc,diem\nX,K,5,9\nY,K,7,10\n", name="lop_k.csv")
     )
@@ -316,3 +340,5 @@ def test_streamlit_ui_flows():
         app._load_input_dataframe(
             _FakeUpload(b"a,b\n1,2\n", name="huge.csv", size=MAX_CSV_BYTES + 1)
         )
+    with pytest.raises(ValueError):
+        app._load_input_dataframe(None)

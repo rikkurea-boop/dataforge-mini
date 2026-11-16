@@ -7,7 +7,7 @@
 
 **DataForge Mini** là ứng dụng web một trang viết bằng Python (Streamlit), được thiết kế tối giản và dễ hiểu để minh họa quy trình phân tích dữ liệu bảng CSV:
 
-- **Đọc & kiểm tra dữ liệu CSV:** Hỗ trợ tải lên file CSV (UTF-8, phân cách dấu phẩy `,`, tối đa 2 MiB) hoặc dùng sẵn bộ dữ liệu giả lập [`sample_data.csv`](sample_data.csv) (12 dòng × 4 cột gồm 2 dòng trùng toàn phần và 2 ô trống).
+- **Đọc & kiểm tra dữ liệu CSV:** Giao diện chỉ hiện phần tải file ban đầu; sau khi người dùng tải lên file CSV (UTF-8, phân cách dấu phẩy `,`, tối đa 2 MiB — ví dụ [`sample_data.csv`](sample_data.csv) có sẵn trong thư mục dự án), chọn tùy chọn làm sạch và nhấn nút **Xác nhận xử lý dữ liệu**, ứng dụng mới tiến hành xử lý và hiển thị kết quả.
 - **Khám phá & làm sạch dữ liệu:** Hiển thị số dòng, số cột, ô thiếu và dòng trùng lặp. Khi bật công tắc làm sạch, ứng dụng luôn sao chép từ bảng gốc (không làm thay đổi dữ liệu gốc), **xóa dòng trùng toàn phần trước** (`12 → 10` dòng) rồi **điền trung vị theo từng cột số sau** (`Minh.gio_hoc = 4.0`, `Ngoc.diem = 8.0`).
 - **Thống kê mô tả (NumPy) & Phân tích nhóm (Pandas):** Tính `count`, `min`, `max`, `mean` (`7.80`), `median` (`8.00`) và độ lệch chuẩn tổng thể `ddof=0` (`≈ 1.2490`), đồng thời tính điểm trung bình theo nhóm bằng `groupby(..., dropna=True)` (Lớp A = `8.0`, Lớp B = `7.6`).
 - **Trực quan hóa dữ liệu (Matplotlib):** Vẽ 3 biểu đồ `Figure` độc lập gồm Histogram phân phối tần suất (5 bins), Biểu đồ cột trung bình nhóm (trục tung bắt đầu từ 0) và Biểu đồ phân tán ghép cặp cùng hàng.

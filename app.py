@@ -1,7 +1,5 @@
 """Giao diện Streamlit một trang cho ứng dụng DataForge Mini."""
 
-from pathlib import Path
-
 import pandas as pd
 import streamlit as st
 
@@ -15,8 +13,6 @@ from analysis import (
 )
 from charts import group_bar, histogram, scatter
 
-SAMPLE_CSV_PATH = Path(__file__).resolve().parent / "sample_data.csv"
-
 
 def _default_index(options: list[str], preferred: str) -> int:
     """Chọn vị trí mặc định nếu tên cột ưu tiên có mặt trong danh sách."""
@@ -24,13 +20,12 @@ def _default_index(options: list[str], preferred: str) -> int:
 
 
 def _load_input_dataframe(uploaded_file) -> tuple[pd.DataFrame, str]:
-    """Đọc dữ liệu từ file tải lên hoặc bộ dữ liệu mẫu cạnh app.py."""
-    if uploaded_file is not None:
-        if uploaded_file.size > MAX_CSV_BYTES:
-            raise ValueError("File tải lên vượt quá giới hạn cho phép 2 MiB.")
-        return load_csv(uploaded_file), f"File tải lên: `{uploaded_file.name}`"
-
-    return load_csv(SAMPLE_CSV_PATH), "Bộ dữ liệu mẫu mặc định (`sample_data.csv` — dữ liệu giả lập)"
+    """Đọc dữ liệu từ file CSV người dùng đã tải lên."""
+    if uploaded_file is None:
+        raise ValueError("Chưa có file CSV nào được tải lên.")
+    if uploaded_file.size > MAX_CSV_BYTES:
+        raise ValueError("File tải lên vượt quá giới hạn cho phép 2 MiB.")
+    return load_csv(uploaded_file), f"File tải lên: `{uploaded_file.name}`"
 
 
 def main() -> None:
@@ -43,27 +38,40 @@ def main() -> None:
     )
 
     uploaded = st.file_uploader(
-        "Tải lên file CSV (hoặc để trống để dùng sample_data.csv)",
+        "Tải lên file CSV để bắt đầu phân tích",
         type=["csv"],
     )
 
-    try:
-        raw_df, source_label = _load_input_dataframe(uploaded)
-    except (ValueError, pd.errors.EmptyDataError, pd.errors.ParserError, UnicodeDecodeError, OSError) as exc:
-        st.error(f"Không thể đọc dữ liệu CSV: {exc}")
-        st.stop()
-
-    st.info(f"Nguồn dữ liệu đang dùng: {source_label}")
+    if uploaded is None:
+        st.session_state.pop("confirmed_key", None)
+        st.info(
+            "Vui lòng tải lên một file CSV (ví dụ: `sample_data.csv` trong thư mục dự án) "
+            "để mở tùy chọn xử lý, thống kê và biểu đồ."
+        )
+        return
 
     use_clean = st.checkbox(
         "Làm sạch dữ liệu (xóa dòng trùng toàn phần trước, sau đó điền trung vị cột số)"
     )
 
+    file_token = getattr(uploaded, "file_id", f"{uploaded.name}:{uploaded.size}")
+    current_key = (file_token, use_clean)
+
+    if st.button("Xác nhận xử lý dữ liệu", type="primary"):
+        st.session_state["confirmed_key"] = current_key
+
+    if st.session_state.get("confirmed_key") != current_key:
+        st.info("Nhấn nút **Xác nhận xử lý dữ liệu** để bắt đầu đọc file, tính thống kê và vẽ biểu đồ.")
+        return
+
     try:
+        raw_df, source_label = _load_input_dataframe(uploaded)
         active_df = clean_data(raw_df) if use_clean else raw_df
-    except ValueError as exc:
-        st.error(f"Không thể xử lý dữ liệu: {exc}")
+    except (ValueError, pd.errors.EmptyDataError, pd.errors.ParserError, UnicodeDecodeError, OSError) as exc:
+        st.error(f"Không thể xử lý dữ liệu CSV: {exc}")
         st.stop()
+
+    st.success(f"Đã xử lý xong — {source_label}")
 
     raw_info = inspect_data(raw_df)
     active_info = inspect_data(active_df)
