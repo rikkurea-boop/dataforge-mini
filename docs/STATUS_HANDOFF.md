@@ -1,14 +1,15 @@
-# STATUS_HANDOFF — DataForge Mini · Bước 4 (`S04`) DONE trên nhánh `feat/implementation`
+# STATUS_HANDOFF — DataForge Mini · Hoàn tất S01–S05 (Chờ chủ dự án demo & nộp form)
 
-**CURRENT STATE: S04 (`T09` — QA & BASELINE FROZEN) DONE ON `feat/implementation` — SẴN SÀNG BƯỚC 5 (`S05`: PDF/VIDEO/TỰ ĐÁNH GIÁ).** Toàn bộ 11/11 bài test `pytest` (gồm `OR-01..15`, `IO-01..10`, `UI-01..06`), `pip check`, và trích xuất minh chứng `EV-01..13` từ mã nguồn đóng băng đã hoàn tất.
+**CURRENT STATE: CODE FROZEN AT `8f49332` & S05 DELIVERABLES PREPARED — AWAITING OWNER'S VIDEO RECORDING & FORM SUBMISSION.** Toàn bộ mã nguồn ứng dụng, kiểm thử (11/11 PASS), báo cáo PDF 18 trang (kiểm định render đủ 18 trang, 373 KB), kịch bản video và đoạn tự đánh giá F06 đã sẵn sàng.
 
 ## Repository và phiên bản nguồn sự thật
 
-- Repository: https://github.com/rikkurea-boop/dataforge-mini (**private**, chưa đổi quyền — chủ dự án xác nhận quyền người chấm ở `S05`).
-- Nhánh mặc định trên remote: `main` (PR #1 merge commit `c3d979c20a8a49493139d195130713097ae77b83`, baseline trước coding: `b47682db9705c2c5e279d4e0d79b9f862bbd478e`).
-- Nhánh làm việc hiện hành: **`feat/implementation`** (`S01`: `011320c`, `S02`: `ee9ccba`, `S03`: `1911d34`).
-- **Đã có:** `requirements.txt`, `sample_data.csv`, `analysis.py`, `charts.py`, `app.py`, `tests/test_analysis.py`, cùng bộ ảnh biểu đồ & minh chứng thực tế `EV-01..13` (lưu ngoài repo tại thư mục scratch để chèn báo cáo).
-- **Chưa có:** PDF báo cáo 15–20 trang, link video YouTube demo, phần điền form cuối (`S05`). Không sửa Data-Forge gốc.
+- Repository: https://github.com/rikkurea-boop/dataforge-mini (**private**, chủ dự án kiểm tra/chỉnh quyền người chấm trước khi nộp form).
+- Nhánh đồng bộ trên GitHub: **`main`** và **`feat/implementation`** (PR #1 merge commit cũ: `c3d979c20a8a49493139d195130713097ae77b83`).
+- **Code & Dataset Baseline SHA:** **`8f49332b69dc8eeddfc902b098d120cfef74e15a`** (mọi số liệu, ảnh biểu đồ và kết quả kiểm thử `EV-01..13` gắn với commit này; các commit sau nếu có chỉ cập nhật tài liệu hướng dẫn).
+- **Đã có trong repo:** `requirements.txt`, `sample_data.csv`, `analysis.py`, `charts.py`, `app.py`, `tests/test_analysis.py`.
+- **Đã có ngoài repo (thư mục scratch/brain):** `DataForge_Mini_Bao_Cao_18_Trang.pdf` (18 trang, 382.252 bytes), 3 ảnh biểu đồ chuẩn (`ev07_histogram.png`, `ev08_group_bar.png`, `ev09_scatter.png`), kịch bản video và nội dung tự chấm F06.
+- **Chưa có (do chủ dự án tự thực hiện):** chạy app quay video YouTube (F04), điền họ tên/MSSV/link YouTube vào trang 1 & 18 PDF (nếu cần), mở quyền repo (F03) và bấm nộp Google Form. Không sửa Data-Forge gốc.
 
 ## Tiến độ
 
@@ -18,8 +19,8 @@
 | **S01** (T01 — Môi trường) | **DONE** (`011320c`) | `.venv` Python 3.13.16, `pip check` & smoke import PASS, khóa `requirements.txt` |
 | **S02** (T02–T05 — Dữ liệu & `analysis.py`) | **DONE** (`ee9ccba`) | `sample_data.csv` (12×4), 5 hàm `analysis.py`, 8/8 tests `pytest` PASS |
 | **S03** (T06–T08 — `charts.py` & `app.py`) | **DONE** (`1911d34`) | 3 Figure (`OR-07/08/11/14`), UI Streamlit 1 trang, bắt lỗi & export CSV, 10/10 tests `pytest` PASS |
-| **S04** (T09 — QA & Thu minh chứng) | **DONE** (hiện tại) | Bổ sung UI smoke `AppTest` (`UI-01..06`), `pytest` 11/11 PASS, `pip check` PASS, trích `EV-01..13` |
-| **S05** (T10 — Sản phẩm nộp) | **NEXT** | Tạo PDF 15–20 trang ≤100 MB, chuẩn bị kịch bản/quay YouTube demo, soạn tự chấm 3+2+2+1+2 (`EV-14..16`) |
+| **S04** (T09 — QA & Thu minh chứng) | **DONE** (`8f49332`) | UI smoke `AppTest` (`UI-01..06`), `pytest` 11/11 PASS, `pip check` PASS, trích `EV-01..13` |
+| **S05** (T10 — Sản phẩm nộp) | **DONE (gói chuẩn bị)** | Đã tạo & kiểm định PDF 18 trang (373 KB), soạn tự chấm F06 (9.5/10) & kịch bản video; chờ user quay & nộp form |
 
 ## Quyết định đã khóa
 
@@ -62,13 +63,18 @@
   - `/Users/hoanglamtung/.gemini/antigravity/scratch/dataforge-mini/.venv/bin/python -m pip check` → `No broken requirements found.` (exit 0).
 - Minh chứng `EV-01..13`: xuất 3 biểu đồ PNG chuẩn (`ev07_histogram.png`, `ev08_group_bar.png`, `ev09_scatter.png`) và hồ sơ số liệu `evidence_summary.json` từ commit đóng băng vào thư mục scratch ngoài repo để phục vụ soạn báo cáo PDF ở `S05`.
 
+## Bằng chứng thực thi S05 (2026-11-16)
+
+- File tạo ngoài repo: `DataForge_Mini_Bao_Cao_18_Trang.pdf` (382.252 bytes, 18 trang vật lý đã kiểm tra trực quan từng trang PNG) và tài liệu hướng dẫn nộp bài `GOI_NOP_BAI_DATAFORGE_MINI.md`.
+- Tài liệu repo cập nhật: `docs/PLAN.md`, `README.md`, `docs/STATUS_HANDOFF.md` (giữ nguyên Code & Dataset Baseline SHA `8f49332b69dc8eeddfc902b098d120cfef74e15a`).
+
 ## Điều còn chưa xác minh
 
 Deadline, video length bắt buộc, việc phải làm PPT, PDF template chi tiết, chính sách xem private repo của thầy. Không đoán, kiểm lại trước thời điểm nộp.
 
 ## Hành động tiếp theo duy nhất
 
-**Thực hiện Bước 5 (`S05` / `T10`): tạo báo cáo PDF 15–20 trang (≤100 MB), chuẩn bị kịch bản demo YouTube và đoạn tự đánh giá 5 tiêu chí (3+2+2+1+2).**
+**Chủ dự án tải/kéo repo từ GitHub về máy chạy thử (`.venv/bin/python -m streamlit run app.py`), quay video YouTube demo, bổ sung thông tin cá nhân/link YouTube vào PDF (nếu muốn) và tự bấm nộp Google Form.**
 
 ## Handoff template
 

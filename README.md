@@ -4,7 +4,7 @@
 **Bài học:** Chương 5.5 — NumPy, Pandas, Matplotlib.  
 **Mục tiêu:** một ứng dụng nhỏ, đúng trọng tâm, dễ demo; sinh viên giải thích được **toàn bộ code**.
 
-**Trạng thái:** **Bước 4 (`S04`: QA & Chốt mã nguồn) đã hoàn thành** trên nhánh `feat/implementation` — toàn bộ mã nguồn ứng dụng ([sample_data.csv](sample_data.csv), [analysis.py](analysis.py), [charts.py](charts.py), [app.py](app.py)) và 11/11 bài test ([tests/test_analysis.py](tests/test_analysis.py), bao gồm kiểm thử UI Streamlit `UI-01..06`) đều đã **PASS**, `pip check` sạch lỗi. Sẵn sàng sang **Bước 5 (`S05` — hoàn thiện PDF báo cáo, video demo và tự đánh giá)**.
+**Trạng thái:** **Hoàn tất mã nguồn & gói chuẩn bị nộp bài (`S01–S05`)** trên nhánh `main` và `feat/implementation` (Code & Dataset Baseline SHA: `8f49332`). Toàn bộ 11/11 bài test ([tests/test_analysis.py](tests/test_analysis.py)) đã **PASS**, `pip check` sạch lỗi; đã hoàn thiện PDF báo cáo 18 trang, kịch bản video demo và nội dung tự đánh giá F06 ngoài repo (chờ chủ dự án quay video YouTube và tự nộp form).
 
 ## Môi trường đã kiểm chứng (T01 — macOS 26.6.2 / CPython 3.13.16)
 
@@ -50,4 +50,4 @@ Tài liệu quản lý hiện nằm ngay root và trong `docs/`. **Không thêm 
 
 ## Tiến độ triển khai hiện tại
 
-Theo lộ trình 5 bước tinh gọn trong [docs/PLAN.md](docs/PLAN.md): **Bước 1–4 (`S01–S04`)** đã hoàn tất và đóng băng mã nguồn sau kiểm thử **11/11 PASS**. Nhiệm vụ cuối cùng là **Bước 5 (`S05`: hoàn thiện báo cáo PDF 15–20 trang, quay video YouTube demo, viết tự đánh giá 3+2+2+1+2 và kiểm tra quyền mở link nộp bài)**. Không tự tạo framework bổ sung.
+Toàn bộ lộ trình 5 bước tinh gọn trong [docs/PLAN.md](docs/PLAN.md) (**`S01–S05`**) đã hoàn tất phần mã nguồn, kiểm thử (**11/11 PASS** tại Code Baseline SHA `8f49332`), tạo báo cáo PDF 18 trang và chuẩn bị kịch bản demo + tự đánh giá. Chủ dự án chỉ cần kéo mã nguồn về máy chạy app thật (`.venv/bin/python -m streamlit run app.py`), quay video YouTube và tự nộp form. Không tự tạo framework bổ sung.

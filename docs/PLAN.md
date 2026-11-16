@@ -36,8 +36,8 @@ Theo yêu cầu tối giản hóa của chủ dự án (`AGENTS.md` §0 mục 5:
 | **S01** | T01 | **DONE** (`011320c`) | `.venv/`, `requirements.txt`, `README.md`, `docs/STATUS_HANDOFF.md` | Python 3.13.16, `pip check` PASS, smoke import PASS |
 | **S02** | T02 + T03 + T04 + T05 | **DONE** (`ee9ccba`) | `sample_data.csv`, `analysis.py`, `tests/test_analysis.py` | 12×4 chuẩn + 5 hàm `analysis.py` + `pytest` PASS `OR-01..06, 09..13, 15` & `IO-01..10` |
 | **S03** | T06 + T07 + T08 | **DONE** (`1911d34`) | `charts.py`, `app.py`, `tests/test_analysis.py` | 3 Figure (`OR-07/08/11/14`), UI Streamlit 1 trang, bắt lỗi ≤2 MiB, export CSV (`10 passed`) |
-| **S04** | T09 | **DONE** (hiện tại) | `tests/test_analysis.py`, `README.md`, `docs/STATUS_HANDOFF.md` | `pytest` 11/11 PASS (`OR/IO/UI-01..06`), `pip check` PASS, đóng băng baseline SHA & thu `EV-01..13` |
-| **S05** | T10 | **NEXT** | PDF 15–20 trang ≤100 MB, YouTube demo, tự chấm F06 | Kiểm đủ `EV-14..16`, link người chấm mở được, không tự gửi form |
+| **S04** | T09 | **DONE** (`8f49332`) | `tests/test_analysis.py`, `README.md`, `docs/STATUS_HANDOFF.md` | `pytest` 11/11 PASS (`OR/IO/UI-01..06`), `pip check` PASS, đóng băng baseline SHA & thu `EV-01..13` |
+| **S05** | T10 | **DONE (chờ user quay video & điền form)** | PDF 18 trang (ngoài repo), gói hướng dẫn nộp bài, đồng bộ GitHub | Đã tạo & kiểm định PDF 18/18 trang (373 KB), soạn tự chấm F06 (9.5/10) & kịch bản video; đẩy lên `main` & `feat/implementation` |
 
 ### Bảng đối chiếu 10 task gốc (tham chiếu chi tiết từng gate)
 
