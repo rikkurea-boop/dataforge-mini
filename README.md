@@ -20,6 +20,7 @@ dataforge-mini/
 ├── app.py                  # Giao diện Streamlit một trang điều phối luồng chạy
 ├── analysis.py             # Xử lý đọc, kiểm lỗi, làm sạch và thống kê (Pandas + NumPy)
 ├── charts.py               # 3 hàm tạo biểu đồ độc lập (Matplotlib Figure)
+├── run_app.bat             # Tệp nhấp đúp khởi động nhanh ứng dụng trên Windows
 ├── run_app.command         # Tệp nhấp đúp khởi động nhanh ứng dụng trên macOS
 ├── sample_data.csv         # Bộ dữ liệu mẫu giả lập (12 dòng × 4 cột)
 ├── requirements.txt        # Phiên bản thư viện đã kiểm chứng
@@ -31,34 +32,39 @@ dataforge-mini/
 
 Môi trường đã kiểm chứng trên **macOS (Python 3.13.16)** với các phiên bản thư viện khóa trong [`requirements.txt`](requirements.txt) (`numpy==2.5.4`, `pandas==3.1.1`, `matplotlib==3.11.2`, `streamlit==1.67.0`, `pytest==9.2.0`).
 
-### Cách 1 (Khuyên dùng trên macOS — Không cần gõ lệnh)
+### Cách 1 (Khuyên dùng — Nhấp đúp không cần gõ lệnh)
 
-1. Mở thư mục dự án trong Finder và **nhấp đúp chuột vào tệp `run_app.command`**.
-2. *(Nếu bạn tải file `.zip` từ GitHub và macOS cảnh báo lần đầu, hãy nhấp chuột phải vào `run_app.command` → chọn **Open / Mở**).*
-3. Tệp sẽ tự tạo môi trường ảo `.venv`, cài thư viện (nếu chưa có) và tự mở trình duyệt tại `http://localhost:8501`.
+- **Trên Windows:** Mở thư mục dự án và **nhấp đúp vào tệp `run_app.bat`**.
+- **Trên macOS:** Mở thư mục dự án trong Finder và **nhấp đúp vào tệp `run_app.command`** *(nếu tải `.zip` từ GitHub và macOS hỏi xác nhận lần đầu, nhấp chuột phải vào tệp → chọn **Open / Mở**)*.
 
-### Cách 2 (Chạy thủ công qua Terminal)
+Tệp sẽ tự tạo môi trường ảo `.venv`, cài thư viện (nếu chưa có) và tự mở trình duyệt tại `http://localhost:8501`.
+
+### Cách 2 (Chạy thủ công qua Terminal / PowerShell)
 
 #### Bước 1: Tạo môi trường ảo và cài đặt thư viện
 
+- **Windows (Command Prompt / PowerShell):**
+```powershell
+py -3.13 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m pip check
+```
+
+- **macOS / Linux:**
 ```bash
 python3.13 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m pip check
 ```
 
-*(Nếu trên máy bạn `python3` đã là Python 3.11–3.13, có thể thay `python3.13` bằng `python3`.)*
-
 #### Bước 2: Chạy ứng dụng Streamlit
 
-```bash
-.venv/bin/python -m streamlit run app.py
-```
+- **Windows:** `.venv\Scripts\python.exe -m streamlit run app.py`
+- **macOS / Linux:** `.venv/bin/python -m streamlit run app.py`
 
 Sau khi chạy lệnh trên, trình duyệt sẽ tự mở địa chỉ `http://localhost:8501`.
 
 #### Bước 3: Chạy bộ kiểm thử tự động
 
-```bash
-.venv/bin/python -m pytest -v
-```
+- **Windows:** `.venv\Scripts\python.exe -m pytest -v`
+- **macOS / Linux:** `.venv/bin/python -m pytest -v`
