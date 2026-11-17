@@ -26,7 +26,7 @@ dataforge-mini/
 ├── samples/                # 10 file CSV mẫu đa dạng (8 bộ hợp lệ/biên + 2 file test báo lỗi)
 ├── requirements.txt        # Phiên bản thư viện đã kiểm chứng
 ├── DataForge_Mini_Bao_Cao_18_Trang.docx # Báo cáo tổng hợp bản Word (chỉnh sửa được)
-├── DataForge_Mini_Bao_Cao_18_Trang.pdf  # Báo cáo tổng hợp 18 trang
+├── Bao_Cao.pdf                          # Báo cáo tổng hợp 18 trang
 └── tests/
     └── test_analysis.py    # 11 bài kiểm thử tự động (dữ liệu, thống kê, biểu đồ & UI)
 ```
