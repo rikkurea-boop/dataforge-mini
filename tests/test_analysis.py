@@ -253,6 +253,7 @@ def test_charts_canonical_figures():
     counts = [patch.get_height() for patch in ax_hist.patches]
     assert counts == pytest.approx([2.0, 2.0, 3.0, 2.0, 1.0])
     assert sum(counts) == pytest.approx(10.0)
+    assert [txt.get_text() for txt in ax_hist.texts] == ["2", "2", "3", "2", "1"]
     assert ax_hist.get_ylabel() == "Số quan sát"
     assert ax_hist.get_xlabel() == "diem"
 
@@ -273,6 +274,8 @@ def test_charts_canonical_figures():
         expected_pairs = df_case[["gio_hoc", "diem"]].dropna().to_numpy(dtype=float)
         assert len(offsets) == 10
         assert np.allclose(offsets, expected_pairs)
+        assert len(fig_scatter.axes[0].lines) == 1
+        assert "→" in fig_scatter.axes[0].get_title()
 
     fig_box = boxplot(cleaned, "diem", "lop")
     assert isinstance(fig_box, Figure)

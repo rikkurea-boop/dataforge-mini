@@ -5,6 +5,7 @@ import pandas as pd
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+from matplotlib.ticker import MaxNLocator
 
 
 def _format_compact(value: float) -> str:
@@ -13,6 +14,14 @@ def _format_compact(value: float) -> str:
     if rounded == 0:
         rounded = 0.0
     return f"{rounded:.2f}".rstrip("0").rstrip(".")
+
+
+def _style_axes(ax, axis: str = "y") -> None:
+    """Chuẩn hóa khung biểu đồ: ẩn viền trên/phải và bật lưới nét đứt nhẹ."""
+    ax.set_axisbelow(True)
+    ax.grid(axis=axis, linestyle="--", alpha=0.4)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
 
 
 def _prepare_numeric_frame(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
@@ -32,15 +41,45 @@ def _prepare_numeric_frame(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame
 
 
 def histogram(df: pd.DataFrame, column: str) -> Figure:
-    """Vẽ biểu đồ tần suất 5 khoảng (bins=5) cho một cột số sau khi bỏ ô trống."""
+    """Vẽ biểu đồ tần suất 5 khoảng (bins=5) đồng bộ phong cách với biểu đồ cột."""
     valid = _prepare_numeric_frame(df, [column])
     if valid.empty:
         raise ValueError(f"Cột '{column}' không có giá trị số hợp lệ để vẽ histogram.")
 
     values = valid[column].to_numpy(dtype=float)
+    palette = ["#4C78A8", "#59A14F", "#F28E2B", "#E15759", "#76B7B2"]
+
     fig = Figure(figsize=(6, 4))
     ax = fig.subplots()
-    ax.hist(values, bins=5, density=False, color="#4C78A8", edgecolor="black")
+    counts, edges, patches = ax.hist(
+        values,
+        bins=5,
+        density=False,
+        edgecolor="#1E293B",
+        linewidth=0.9,
+    )
+    for idx, patch in enumerate(patches):
+        patch.set_facecolor(palette[idx % len(palette)])
+
+    max_count = float(np.max(counts)) if len(counts) > 0 else 0.0
+    if max_count > 0:
+        ax.set_ylim(0, max_count * 1.18)
+    else:
+        ax.set_ylim(bottom=0)
+
+    _style_axes(ax, axis="y")
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.set_xticks(edges)
+    ax.set_xticklabels([_format_compact(edge) for edge in edges])
+    ax.bar_label(
+        patches,
+        labels=[str(int(round(c))) for c in counts],
+        padding=4,
+        fontsize=10,
+        fontweight="bold",
+        color="#1E293B",
+    )
+
     ax.set_title(f"Phân phối tần suất của {column}")
     ax.set_xlabel(column)
     ax.set_ylabel("Số quan sát")
@@ -74,10 +113,7 @@ def group_bar(means: pd.Series) -> Figure:
     else:
         ax.set_ylim(bottom=0)
 
-    ax.set_axisbelow(True)
-    ax.grid(axis="y", linestyle="--", alpha=0.4)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
+    _style_axes(ax, axis="y")
 
     # Hiển thị giá trị cụ thể trên đỉnh mỗi cột để dễ so sánh khi các cột gần bằng nhau
     bar_labels = [_format_compact(h) for h in heights]
@@ -91,7 +127,7 @@ def group_bar(means: pd.Series) -> Figure:
 
 
 def scatter(df: pd.DataFrame, x_column: str, y_column: str) -> Figure:
-    """Vẽ biểu đồ phân tán giữa hai cột số khác nhau, ghép cặp theo cùng hàng."""
+    """Vẽ biểu đồ phân tán kèm đường xu hướng và tiêu đề diễn giải quy luật."""
     if x_column == y_column:
         raise ValueError("Hai cột X và Y của biểu đồ phân tán phải khác nhau.")
 
@@ -102,14 +138,42 @@ def scatter(df: pd.DataFrame, x_column: str, y_column: str) -> Figure:
     x_vals = paired[x_column].to_numpy(dtype=float)
     y_vals = paired[y_column].to_numpy(dtype=float)
 
-    title = f"Biểu đồ phân tán: {x_column} và {y_column}"
-    if len(x_vals) >= 2 and np.std(x_vals) > 0 and np.std(y_vals) > 0:
-        r_val = float(np.corrcoef(x_vals, y_vals)[0, 1])
-        title = f"{title} (r = {r_val:.2f})"
-
     fig = Figure(figsize=(6, 4))
     ax = fig.subplots()
-    ax.scatter(x_vals, y_vals, color="#E15759", edgecolor="black", alpha=0.85)
+    ax.scatter(
+        x_vals,
+        y_vals,
+        s=58,
+        color="#E15759",
+        edgecolor="#7F1D1D",
+        alpha=0.85,
+        label="Mỗi dòng dữ liệu",
+    )
+    _style_axes(ax, axis="both")
+
+    title = f"{x_column} và {y_column}"
+    if len(x_vals) >= 2 and np.std(x_vals) > 0:
+        slope, intercept = np.polyfit(x_vals, y_vals, 1)
+        x_line = np.array([float(np.min(x_vals)), float(np.max(x_vals))])
+        ax.plot(
+            x_line,
+            slope * x_line + intercept,
+            linestyle="--",
+            linewidth=1.8,
+            color="#1E3A5F",
+            label="Đường xu hướng",
+        )
+        if np.std(y_vals) > 0:
+            r_val = float(np.corrcoef(x_vals, y_vals)[0, 1])
+            if r_val >= 0.3:
+                trend = f"{x_column} tăng → {y_column} tăng"
+            elif r_val <= -0.3:
+                trend = f"{x_column} tăng → {y_column} giảm"
+            else:
+                trend = "Ít xu hướng rõ rệt"
+            title = f"{trend} (r = {r_val:.2f})"
+
+    ax.legend(loc="upper left", frameon=True, facecolor="white", edgecolor="#CBD5E1", fontsize=8.5)
     ax.set_title(title)
     ax.set_xlabel(x_column)
     ax.set_ylabel(y_column)
@@ -154,10 +218,7 @@ def boxplot(df: pd.DataFrame, column: str, group_column: str | None = None) -> F
     for median in bp["medians"]:
         median.set(color="#D95F02", linewidth=2.2)
 
-    ax.set_axisbelow(True)
-    ax.grid(axis="y", linestyle="--", alpha=0.4)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
+    _style_axes(ax, axis="y")
 
     # Ghi nhãn Trung vị cạnh từng hộp khi số nhóm gọn (<= 4) và nới trục X/Y để không đè chữ
     if len(groups_data) <= 4:

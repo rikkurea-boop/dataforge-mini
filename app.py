@@ -560,8 +560,8 @@ def main() -> None:
                         else ""
                     )
                     st.caption(
-                        f"**Mối liên hệ cặp số (Scatter):** Đang vẽ **{n_pairs} cặp** (`{x_col}`, `{y_col}`){overlap_note}; "
-                        "hệ số `r` thể hiện xu hướng tuyến tính, không kết luận nhân quả."
+                        f"**Cách đọc Scatter (`{x_col}` → `{y_col}`):** Đang vẽ **{n_pairs} cặp**{overlap_note}. "
+                        "Đường nét đứt hướng lên nghĩa là khi X tăng thì Y thường tăng (chỉ mô tả xu hướng, không kết luận nhân quả)."
                     )
                 except ValueError as exc:
                     st.info(str(exc))
