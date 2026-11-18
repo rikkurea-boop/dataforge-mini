@@ -5,30 +5,36 @@
 
 ## 1. Giới thiệu & Chức năng chính
 
-**DataForge Mini** là ứng dụng web một trang viết bằng Python (Streamlit), được thiết kế tối giản và dễ hiểu để minh họa quy trình phân tích dữ liệu bảng CSV:
+**DataForge Mini** là ứng dụng web một trang viết bằng Python (Streamlit), được thiết kế tối giản và dễ hiểu để minh họa quy trình phân tích dữ liệu bảng CSV — đồng thời học hỏi các tính năng hữu ích từ những công cụ EDA phổ biến như `ydata-profiling`, `Sweetviz` và `PyGWalker`:
 
-- **Đọc & kiểm tra dữ liệu CSV:** Giao diện chỉ hiện phần tải file ban đầu; sau khi người dùng tải lên file CSV (UTF-8, phân cách dấu phẩy `,`, tối đa 2 MiB — ví dụ [`sample_data.csv`](sample_data.csv) có sẵn trong thư mục dự án), chọn tùy chọn làm sạch và nhấn nút **Xác nhận xử lý dữ liệu**, ứng dụng mới tiến hành xử lý và hiển thị kết quả.
-- **Khám phá & làm sạch dữ liệu:** Hiển thị số dòng, số cột, ô thiếu và dòng trùng lặp. Khi bật công tắc làm sạch, ứng dụng luôn sao chép từ bảng gốc (không làm thay đổi dữ liệu gốc), **xóa dòng trùng toàn phần trước** (`12 → 10` dòng) rồi **điền trung vị theo từng cột số sau** (`Minh.gio_hoc = 4.0`, `Ngoc.diem = 8.0`).
-- **Thống kê mô tả (NumPy) & Phân tích nhóm (Pandas):** Tính `count`, `min`, `max`, `mean` (`7.80`), `median` (`8.00`) và độ lệch chuẩn tổng thể `ddof=0` (`≈ 1.2490`), đồng thời tính điểm trung bình theo nhóm bằng `groupby(..., dropna=True)` (Lớp A = `8.0`, Lớp B = `7.6`).
-- **Trực quan hóa dữ liệu (Matplotlib):** Vẽ 3 biểu đồ `Figure` độc lập gồm Histogram phân phối tần suất (5 bins), Biểu đồ cột trung bình nhóm (trục tung bắt đầu từ 0) và Biểu đồ phân tán ghép cặp cùng hàng.
-- **Xuất dữ liệu:** Tải về file CSV của bảng đang xem (gốc hoặc đã làm sạch) với định dạng UTF-8-SIG, không thêm cột index thừa.
+- **Đọc & kiểm tra chất lượng dữ liệu CSV:** Giao diện ẩn kết quả trước khi tải file; sau khi tải lên file CSV (UTF-8, phân cách dấu phẩy `,`, tối đa 2 MiB — ví dụ [`sample_data.csv`](sample_data.csv) hoặc các file trong [`samples/`](samples)), ứng dụng kiểm tra lỗi cấu trúc/giá trị vô cực (`±inf`) và cung cấp bảng hồ sơ chi tiết từng cột (`Kiểu dữ liệu`, `Hợp lệ`, `Ô thiếu`, `Tỷ lệ thiếu %`, `Giá trị duy nhất`).
+- **Làm sạch dữ liệu có nút xác nhận:** Hỗ trợ tùy chọn xóa dòng trùng toàn phần (`keep="first"`) và chọn chiến lược xử lý ô số thiếu (**Giữ nguyên**, **Điền trung vị (Median)**, **Điền trung bình (Mean)** hoặc **Xóa dòng bị thiếu (`dropna`)**), chỉ thực thi khi người dùng nhấn **Xác nhận xử lý dữ liệu**. Luôn tạo bản sao độc lập nên không làm thay đổi bảng gốc.
+- **Lọc tương tác, sắp xếp & Top 5:** Lọc trực tiếp theo nhiều nhóm (`multiselect`), thanh trượt khoảng giá trị số (`slider`), sắp xếp tăng/giảm dần và xem nhanh **Top 5 cao nhất / thấp nhất** theo cột đang phân tích.
+- **Thống kê mô tả (NumPy) & Phân tích nhóm (Pandas):** Tính `count`, `min`, `max`, `mean` (`7.80`), `median` (`8.00`), độ lệch chuẩn tổng thể `ddof=0` (`≈ 1.2490`), các tứ phân vị **Q1 (25%), Q3 (75%), IQR** và số **ngoại lai (Outliers)** theo quy tắc `1.5 × IQR`, cùng điểm trung bình theo nhóm qua `groupby(..., dropna=True)`.
+- **Trực quan hóa dữ liệu (5 biểu đồ Matplotlib `Figure` độc lập):**
+  1. **Histogram** (5 khoảng tần suất).
+  2. **Biểu đồ cột** trung bình theo nhóm (trục tung bắt đầu từ 0).
+  3. **Biểu đồ phân tán (Scatter)** ghép cặp cùng hàng kèm hệ số tương quan Pearson `r`.
+  4. **Biểu đồ hộp (Boxplot)** quan sát phân vị và điểm ngoại lai theo nhóm.
+  5. **Heatmap ma trận tương quan** Pearson giữa các cột số.
+- **Xuất dữ liệu & báo cáo:** Tải về file CSV đang xem (UTF-8-SIG, `index=False`) và tệp báo cáo tóm tắt `.txt` chứa các chỉ số thống kê hiện tại.
 
 ## 2. Cấu trúc dự án
 
 ```text
 dataforge-mini/
-├── app.py                  # Giao diện Streamlit một trang điều phối luồng chạy
-├── analysis.py             # Xử lý đọc, kiểm lỗi, làm sạch và thống kê (Pandas + NumPy)
-├── charts.py               # 3 hàm tạo biểu đồ độc lập (Matplotlib Figure)
-├── run_app.bat             # Tệp nhấp đúp khởi động nhanh ứng dụng trên Windows
-├── run_app.command         # Tệp nhấp đúp khởi động nhanh ứng dụng trên macOS
-├── sample_data.csv         # Bộ dữ liệu mẫu giả lập (12 dòng × 4 cột)
-├── samples/                # 10 file CSV mẫu đa dạng (8 bộ hợp lệ/biên + 2 file test báo lỗi)
-├── requirements.txt        # Phiên bản thư viện đã kiểm chứng
+├── app.py                               # Giao diện Streamlit một trang điều phối luồng chạy
+├── analysis.py                          # Xử lý đọc, kiểm lỗi, làm sạch, lọc và thống kê (Pandas + NumPy)
+├── charts.py                            # 5 hàm tạo biểu đồ độc lập (Matplotlib Figure)
+├── run_app.bat                          # Tệp nhấp đúp khởi động nhanh ứng dụng trên Windows
+├── run_app.command                      # Tệp nhấp đúp khởi động nhanh ứng dụng trên macOS
+├── sample_data.csv                      # Bộ dữ liệu mẫu giả lập (12 dòng × 4 cột)
+├── samples/                             # 10 file CSV mẫu đa dạng (8 bộ hợp lệ/biên + 2 file test báo lỗi)
+├── requirements.txt                     # Phiên bản thư viện đã kiểm chứng
 ├── DataForge_Mini_Bao_Cao_18_Trang.docx # Báo cáo tổng hợp bản Word (chỉnh sửa được)
 ├── Bao_Cao.pdf                          # Báo cáo tổng hợp 18 trang
 └── tests/
-    └── test_analysis.py    # 11 bài kiểm thử tự động (dữ liệu, thống kê, biểu đồ & UI)
+    └── test_analysis.py                 # 12 bài kiểm thử tự động (dữ liệu, thống kê, biểu đồ & UI)
 ```
 
 ## 3. Hướng dẫn cài đặt và chạy ứng dụng

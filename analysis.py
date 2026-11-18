@@ -1,4 +1,4 @@
-"""Module xử lý và phân tích dữ liệu tối giản dùng Pandas và NumPy."""
+"""Module xử lý, kiểm tra chất lượng và phân tích dữ liệu dùng Pandas và NumPy."""
 
 import csv
 import io
@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 MAX_CSV_BYTES = 2 * 1024 * 1024  # Giới hạn 2 MiB cho file CSV đầu vào
+VALID_MISSING_STRATEGIES = {"median", "mean", "drop", "keep"}
 
 
 def _read_csv_bytes(source: str | Path | BinaryIO) -> bytes:
@@ -38,7 +39,6 @@ def _validate_csv_text(text: str) -> None:
         raise ValueError("File CSV rỗng, không có dòng tiêu đề.")
 
     header = rows[0]
-    # Từ chối file dùng dấu chấm phẩy làm phân cách chính
     if len(header) == 1 and ";" in header[0]:
         raise ValueError("Định dạng chưa hỗ trợ: chỉ nhận CSV phân cách bằng dấu phẩy (,).")
 
@@ -75,7 +75,6 @@ def load_csv(source: str | Path | BinaryIO) -> pd.DataFrame:
     """Đọc CSV UTF-8 dấu phẩy thành DataFrame và kiểm tra các lỗi đầu vào cơ bản."""
     raw_bytes = _read_csv_bytes(source)
     try:
-        # utf-8-sig tự động loại bỏ UTF-8 BOM nếu có ở đầu file
         text = raw_bytes.decode("utf-8-sig")
     except UnicodeDecodeError as exc:
         raise ValueError("File không đúng bảng mã UTF-8.") from exc
@@ -107,26 +106,81 @@ def inspect_data(df: pd.DataFrame) -> dict[str, int]:
     }
 
 
-def clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Tạo bản sao sạch: xóa dòng trùng toàn phần trước, điền trung vị cột số sau."""
+def column_profile(df: pd.DataFrame) -> pd.DataFrame:
+    """Tạo bảng kiểm tra chất lượng từng cột (kiểu dữ liệu, số ô thiếu, tỷ lệ thiếu, giá trị duy nhất)."""
+    total_rows = max(len(df), 1)
+    records = []
+    for col in df.columns:
+        missing = int(df[col].isna().sum())
+        records.append(
+            {
+                "Cột": str(col),
+                "Kiểu dữ liệu": str(df[col].dtype),
+                "Hợp lệ": int(df[col].notna().sum()),
+                "Ô thiếu": missing,
+                "Tỷ lệ thiếu (%)": round(missing * 100.0 / total_rows, 1),
+                "Giá trị duy nhất": int(df[col].nunique(dropna=True)),
+            }
+        )
+    return pd.DataFrame(records)
+
+
+def clean_data(
+    df: pd.DataFrame,
+    remove_duplicates: bool = True,
+    missing_strategy: str = "median",
+) -> pd.DataFrame:
+    """Tạo bản sao sạch: tùy chọn bỏ dòng trùng toàn phần và xử lý ô thiếu cột số."""
+    if missing_strategy not in VALID_MISSING_STRATEGIES:
+        raise ValueError(f"Chiến lược xử lý ô thiếu không hợp lệ: '{missing_strategy}'.")
+
     _check_no_infinity(df)
     cleaned = df.copy(deep=True)
-    # Bước 1: bỏ trùng toàn dòng trước khi tính trung vị
-    cleaned = cleaned.drop_duplicates(keep="first").copy()
 
-    # Bước 2: điền trung vị cho từng cột số còn thiếu (không điền cột chữ, không xóa trùng lần 2)
-    for col in cleaned.select_dtypes(include="number").columns:
-        if cleaned[col].isna().any():
-            valid = cleaned[col].dropna()
-            if len(valid) > 0:
-                median_val = float(np.median(valid.to_numpy(dtype=float)))
-                cleaned[col] = cleaned[col].astype(float).fillna(median_val)
+    # Bước 1: bỏ trùng toàn dòng trước khi tính trung vị/trung bình
+    if remove_duplicates:
+        cleaned = cleaned.drop_duplicates(keep="first").copy()
+
+    # Bước 2: xử lý ô thiếu theo chiến lược đã chọn
+    if missing_strategy == "drop":
+        return cleaned.dropna().copy()
+
+    if missing_strategy in {"median", "mean"}:
+        reducer = np.median if missing_strategy == "median" else np.mean
+        for col in cleaned.select_dtypes(include="number").columns:
+            if cleaned[col].isna().any():
+                valid = cleaned[col].dropna()
+                if len(valid) > 0:
+                    fill_val = float(reducer(valid.to_numpy(dtype=float)))
+                    cleaned[col] = cleaned[col].astype(float).fillna(fill_val)
 
     return cleaned
 
 
+def filter_data(
+    df: pd.DataFrame,
+    group_column: str | None = None,
+    selected_groups: list[str] | None = None,
+    numeric_column: str | None = None,
+    value_range: tuple[float, float] | None = None,
+) -> pd.DataFrame:
+    """Lọc bảng dữ liệu theo danh sách nhóm và khoảng giá trị số (Pandas boolean indexing)."""
+    filtered = df.copy()
+    if group_column and selected_groups is not None and group_column in filtered.columns:
+        filtered = filtered[filtered[group_column].astype(str).isin(selected_groups)]
+
+    if numeric_column and value_range is not None and numeric_column in filtered.columns:
+        _require_numeric_column(filtered, numeric_column)
+        low, high = value_range
+        # Giữ lại cả dòng có giá trị nằm trong [low, high] hoặc đang trống (nếu chưa clean)
+        col_series = filtered[numeric_column]
+        filtered = filtered[col_series.isna() | col_series.between(low, high)]
+
+    return filtered
+
+
 def numeric_stats(df: pd.DataFrame, column: str) -> dict[str, int | float | None]:
-    """Tính các chỉ số thống kê mô tả bằng NumPy với độ lệch chuẩn tổng thể (ddof=0)."""
+    """Tính thống kê mô tả bằng NumPy (ddof=0, Q1/Q3/IQR và số ngoại lai theo quy tắc 1.5*IQR)."""
     _require_numeric_column(df, column)
     _check_no_infinity(df[[column]])
 
@@ -140,7 +194,17 @@ def numeric_stats(df: pd.DataFrame, column: str) -> dict[str, int | float | None
             "mean": None,
             "median": None,
             "std": None,
+            "q1": None,
+            "q3": None,
+            "iqr": None,
+            "outliers": 0,
         }
+
+    q1, q3 = (float(v) for v in np.percentile(values, [25, 75]))
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+    outlier_count = int(np.sum((values < lower_bound) | (values > upper_bound)))
 
     return {
         "count": count,
@@ -149,6 +213,10 @@ def numeric_stats(df: pd.DataFrame, column: str) -> dict[str, int | float | None
         "mean": float(np.mean(values)),
         "median": float(np.median(values)),
         "std": float(np.std(values, ddof=0)),
+        "q1": q1,
+        "q3": q3,
+        "iqr": iqr,
+        "outliers": outlier_count,
     }
 
 
@@ -156,7 +224,6 @@ def mean_by_group(df: pd.DataFrame, group_column: str, value_column: str) -> pd.
     """Tính giá trị trung bình của cột số theo từng nhóm bằng Pandas GroupBy."""
     if group_column not in df.columns:
         raise ValueError(f"Không tìm thấy cột nhóm '{group_column}'.")
-    # Hỗ trợ cả dtype object, string (Pandas 3.x) và category
     text_cols = df.select_dtypes(include=["object", "string", "category"]).columns
     if group_column not in text_cols:
         raise ValueError(f"Cột '{group_column}' không phải cột nhóm dạng chữ hoặc phân loại.")
@@ -165,3 +232,12 @@ def mean_by_group(df: pd.DataFrame, group_column: str, value_column: str) -> pd.
     _check_no_infinity(df[[value_column]])
 
     return df.groupby(group_column, dropna=True, observed=True)[value_column].mean().astype(float)
+
+
+def correlation_matrix(df: pd.DataFrame) -> pd.DataFrame:
+    """Tính ma trận tương quan Pearson cho các cột dữ liệu số."""
+    _check_no_infinity(df)
+    num_df = df.select_dtypes(include="number")
+    if num_df.shape[1] < 2:
+        return pd.DataFrame()
+    return num_df.corr(method="pearson")

@@ -15,12 +15,15 @@ import app
 from analysis import (
     MAX_CSV_BYTES,
     clean_data,
+    column_profile,
+    correlation_matrix,
+    filter_data,
     inspect_data,
     load_csv,
     mean_by_group,
     numeric_stats,
 )
-from charts import group_bar, histogram, scatter
+from charts import boxplot, correlation_heatmap, group_bar, histogram, scatter
 
 SAMPLE_CSV_PATH = Path(__file__).resolve().parent.parent / "sample_data.csv"
 
@@ -36,21 +39,23 @@ def test_sample_raw_profile():
         "missing_cells": 2,
         "duplicate_rows": 2,
     }
+    col_table = column_profile(raw)
+    assert list(col_table["Cột"]) == ["ten", "lop", "gio_hoc", "diem"]
+    assert col_table.loc[col_table["Cột"] == "diem", "Ô thiếu"].iloc[0] == 1
+
     num_cols = list(raw.select_dtypes(include="number").columns)
     text_cols = list(raw.select_dtypes(include=["object", "string", "category"]).columns)
     assert set(num_cols) == {"gio_hoc", "diem"}
     assert set(text_cols) == {"ten", "lop"}
 
 
-def test_clean_data_canonical():
-    """Xóa dòng trùng trước rồi điền trung vị (4 và 8), giữ nguyên bảng gốc."""
+def test_clean_data_canonical_and_strategies():
+    """Xóa dòng trùng trước rồi điền trung vị/trung bình/xóa thiếu, giữ nguyên bảng gốc."""
     raw = load_csv(SAMPLE_CSV_PATH)
     raw_snapshot = raw.copy(deep=True)
 
     cleaned = clean_data(raw)
-    cleaned_profile = inspect_data(cleaned)
-
-    assert cleaned_profile == {
+    assert inspect_data(cleaned) == {
         "rows": 10,
         "columns": 4,
         "missing_cells": 0,
@@ -58,16 +63,29 @@ def test_clean_data_canonical():
     }
     pd.testing.assert_frame_equal(raw, raw_snapshot)
 
-    minh_hours = cleaned.loc[cleaned["ten"] == "Minh", "gio_hoc"].iloc[0]
-    ngoc_grade = cleaned.loc[cleaned["ten"] == "Ngoc", "diem"].iloc[0]
-    assert minh_hours == pytest.approx(4.0)
-    assert ngoc_grade == pytest.approx(8.0)
-
+    assert cleaned.loc[cleaned["ten"] == "Minh", "gio_hoc"].iloc[0] == pytest.approx(4.0)
+    assert cleaned.loc[cleaned["ten"] == "Ngoc", "diem"].iloc[0] == pytest.approx(8.0)
     pd.testing.assert_frame_equal(cleaned, clean_data(raw_snapshot))
+
+    # Chiến lược điền trung bình (mean) và xóa dòng thiếu (drop)
+    cleaned_mean = clean_data(raw, remove_duplicates=True, missing_strategy="mean")
+    assert inspect_data(cleaned_mean)["rows"] == 10
+    assert cleaned_mean.loc[cleaned_mean["ten"] == "Ngoc", "diem"].iloc[0] == pytest.approx(70.0 / 9.0)
+
+    cleaned_drop = clean_data(raw, remove_duplicates=True, missing_strategy="drop")
+    assert inspect_data(cleaned_drop) == {
+        "rows": 8,
+        "columns": 4,
+        "missing_cells": 0,
+        "duplicate_rows": 0,
+    }
+
+    with pytest.raises(ValueError):
+        clean_data(raw, missing_strategy="unknown")
 
 
 def test_numeric_stats_and_groupby():
-    """Thống kê NumPy dùng ddof=0 và trung bình nhóm A=8.0, B=7.6."""
+    """Thống kê NumPy dùng ddof=0, Q1/Q3/IQR/outliers và trung bình nhóm A=8.0, B=7.6."""
     cleaned = clean_data(load_csv(SAMPLE_CSV_PATH))
     grade_stats = numeric_stats(cleaned, "diem")
     hours_stats = numeric_stats(cleaned, "gio_hoc")
@@ -78,11 +96,34 @@ def test_numeric_stats_and_groupby():
     assert grade_stats["mean"] == pytest.approx(7.8)
     assert grade_stats["median"] == pytest.approx(8.0)
     assert grade_stats["std"] == pytest.approx(math.sqrt(1.56))
+    assert grade_stats["q1"] == pytest.approx(7.0)
+    assert grade_stats["q3"] == pytest.approx(8.75)
+    assert grade_stats["iqr"] == pytest.approx(1.75)
+    assert grade_stats["outliers"] == 0
     assert hours_stats["mean"] == pytest.approx(4.4)
 
     grouped = mean_by_group(cleaned, "lop", "diem")
     assert grouped["A"] == pytest.approx(8.0)
     assert grouped["B"] == pytest.approx(7.6)
+
+    corr = correlation_matrix(cleaned)
+    assert corr.shape == (2, 2)
+    assert corr.loc["gio_hoc", "diem"] > 0.9
+
+
+def test_filter_data_and_outliers():
+    """Lọc theo nhóm, lọc theo khoảng số và đếm ngoại lai IQR."""
+    cleaned = clean_data(load_csv(SAMPLE_CSV_PATH))
+    only_a = filter_data(cleaned, group_column="lop", selected_groups=["A"])
+    assert len(only_a) == 5
+    assert set(only_a["lop"]) == {"A"}
+
+    high_scores = filter_data(cleaned, numeric_column="diem", value_range=(8.0, 10.0))
+    assert len(high_scores) == 6
+    assert high_scores["diem"].min() >= 8.0
+
+    df_out = pd.DataFrame({"val": [10, 11, 12, 11, 10, 12, 50]})
+    assert numeric_stats(df_out, "val")["outliers"] == 1
 
 
 def test_edge_all_na_and_singleton():
@@ -97,6 +138,10 @@ def test_edge_all_na_and_singleton():
         "mean": None,
         "median": None,
         "std": None,
+        "q1": None,
+        "q3": None,
+        "iqr": None,
+        "outliers": 0,
     }
 
     df_single = pd.DataFrame({"x": [7.5, np.nan]})
@@ -107,6 +152,8 @@ def test_edge_all_na_and_singleton():
     assert stats_single["mean"] == pytest.approx(7.5)
     assert stats_single["median"] == pytest.approx(7.5)
     assert stats_single["std"] == pytest.approx(0.0)
+    assert stats_single["iqr"] == pytest.approx(0.0)
+    assert stats_single["outliers"] == 0
 
 
 def test_groupby_missing_keys_and_all_na_group():
@@ -137,7 +184,7 @@ def test_imputation_creates_duplicate_no_second_drop():
 
 
 def test_reject_infinity():
-    """Từ chối giá trị vô cực (+inf/-inf) khi đọc, làm sạch, tính stats và groupby."""
+    """Từ chối giá trị vô cực (+inf/-inf) khi đọc, làm sạch, tính stats, groupby và corr."""
     csv_inf = io.StringIO("lop,diem\nA,inf\nB,8\n")
     with pytest.raises(ValueError):
         load_csv(csv_inf)
@@ -149,6 +196,8 @@ def test_reject_infinity():
         numeric_stats(df_inf, "diem")
     with pytest.raises(ValueError):
         mean_by_group(df_inf, "lop", "diem")
+    with pytest.raises(ValueError):
+        correlation_matrix(df_inf)
 
 
 def test_io_validation_and_roundtrip():
@@ -198,7 +247,7 @@ def test_io_validation_and_roundtrip():
 
 
 def test_charts_canonical_figures():
-    """Kiểm tra 3 biểu đồ Matplotlib chuẩn trên bộ dữ liệu mẫu gốc và đã làm sạch."""
+    """Kiểm tra 5 biểu đồ Matplotlib (histogram, bar, scatter, boxplot, heatmap) trên mẫu chuẩn."""
     raw = load_csv(SAMPLE_CSV_PATH)
     cleaned = clean_data(raw)
 
@@ -228,6 +277,14 @@ def test_charts_canonical_figures():
         assert len(offsets) == 10
         assert np.allclose(offsets, expected_pairs)
 
+    fig_box = boxplot(cleaned, "diem", "lop")
+    assert isinstance(fig_box, Figure)
+    assert [t.get_text() for t in fig_box.axes[0].get_xticklabels()] == ["A", "B"]
+
+    fig_heat = correlation_heatmap(correlation_matrix(cleaned))
+    assert isinstance(fig_heat, Figure)
+    assert len(fig_heat.axes[0].texts) == 4
+
 
 def test_charts_edge_cases_and_app_import():
     """Loại nhóm NaN, chặn ±inf/all-NA/0-cặp/trùng cột và kiểm tra import app."""
@@ -238,17 +295,23 @@ def test_charts_edge_cases_and_app_import():
     with pytest.raises(ValueError):
         histogram(df_empty_num, "x")
     with pytest.raises(ValueError):
+        boxplot(df_empty_num, "x")
+    with pytest.raises(ValueError):
         group_bar(pd.Series([np.nan, np.nan], index=["A", "B"]))
     with pytest.raises(ValueError):
         scatter(pd.DataFrame({"x": [1.0, np.nan], "y": [np.nan, 2.0]}), "x", "y")
     with pytest.raises(ValueError):
         scatter(pd.DataFrame({"x": [1.0, 2.0]}), "x", "x")
+    with pytest.raises(ValueError):
+        correlation_heatmap(pd.DataFrame({"x": [1.0]}))
 
     df_inf = pd.DataFrame({"x": [1.0, np.inf], "y": [2.0, 3.0]})
     with pytest.raises(ValueError):
         histogram(df_inf, "x")
     with pytest.raises(ValueError):
         scatter(df_inf, "x", "y")
+    with pytest.raises(ValueError):
+        boxplot(df_inf, "x")
     with pytest.raises(ValueError):
         group_bar(pd.Series([1.0, np.inf], index=["A", "B"]))
 
@@ -266,7 +329,7 @@ class _FakeUpload(io.BytesIO):
 
 
 def test_streamlit_ui_flows():
-    """Kiểm thử giao diện ẩn trước khi tải file, cần bấm xác nhận xử lý và chạy đúng các luồng."""
+    """Kiểm thử toàn bộ luồng giao diện mới: ẩn ban đầu, làm sạch, xác nhận, lọc & xuất báo cáo."""
     app_path = Path(__file__).resolve().parent.parent / "app.py"
 
     # 1. Chưa tải file: ẩn hoàn toàn bảng, checkbox, selectbox, chỉ hiện khung upload + thông báo
@@ -278,7 +341,7 @@ def test_streamlit_ui_flows():
     assert len(at_empty.metric) == 0
     assert len(at_empty.info) == 1
 
-    # 2. Đã tải file sample_data.csv lên nhưng chưa bấm xác nhận: chưa hiện dữ liệu & thống kê
+    # 2. Đã tải sample_data.csv lên nhưng chưa bấm xác nhận
     sample_bytes = SAMPLE_CSV_PATH.read_bytes()
     with patch(
         "streamlit.file_uploader",
@@ -287,47 +350,42 @@ def test_streamlit_ui_flows():
         at = AppTest.from_file(str(app_path)).run()
         assert not at.exception
         assert len(at.checkbox) == 1
+        assert len(at.selectbox) == 1  # chọn chiến lược điền thiếu
         assert len(at.button) == 1
         assert len(at.dataframe) == 0
-        assert len(at.metric) == 0
 
-        # 3. Bấm xác nhận ở chế độ Raw (12 dòng)
+        # 3. Bấm xác nhận với mặc định Raw (không xóa trùng, giữ ô thiếu)
         at.button[0].click().run()
         assert not at.exception
-        assert len(at.selectbox) == 3
-        assert len(at.get("download_button")) == 1
+        assert len(at.get("download_button")) == 2  # CSV + báo cáo .txt
         assert at.metric[0].value == "11"
-        assert at.metric[3].value == "7.7273"
+        assert at.metric[2].value == "7.7273"
 
-        # 4. Tích chọn làm sạch -> bấm xác nhận -> 12->10, Minh=4 / Ngoc=8, mean=7.8000, std=1.2490
+        # 4. Bật xóa trùng + chọn Điền trung vị (Median) -> bấm xác nhận
         at.checkbox[0].check().run()
-        assert len(at.dataframe) == 0
+        at.selectbox[0].select("Điền trung vị (Median)").run()
+        assert len(at.dataframe) == 0  # chờ bấm xác nhận lại
         at.button[0].click().run()
         assert not at.exception
 
         summary_rows = at.dataframe[0].value.to_dict(orient="records")
         assert summary_rows[0]["Số dòng"] == 12
-        assert summary_rows[0]["Ô thiếu"] == 2
-        assert summary_rows[0]["Dòng trùng"] == 2
         assert summary_rows[1]["Số dòng"] == 10
         assert summary_rows[1]["Ô thiếu"] == 0
         assert summary_rows[1]["Dòng trùng"] == 0
 
-        active_cleaned = at.dataframe[1].value
-        assert active_cleaned.loc[active_cleaned["ten"] == "Minh", "gio_hoc"].iloc[0] == pytest.approx(4.0)
-        assert active_cleaned.loc[active_cleaned["ten"] == "Ngoc", "diem"].iloc[0] == pytest.approx(8.0)
         assert at.metric[0].value == "10"
-        assert at.metric[3].value == "7.8000"
+        assert at.metric[2].value == "7.8000"
         assert at.metric[5].value == "1.2490"
 
-        reloaded_clean = load_csv(io.BytesIO(active_cleaned.to_csv(index=False).encode("utf-8-sig")))
-        assert reloaded_clean.shape == (10, 4)
-
-        # 5. Đổi cột Y trên selectbox vẫn giữ kết quả hiển thị mà không cần bấm lại nút
-        at.selectbox[0].select("gio_hoc").run()
+        # 5. Đổi cột Y trên selectbox và lọc riêng nhóm A
+        at.selectbox[1].select("gio_hoc").run()
         assert not at.exception
-        assert at.metric[3].value == "4.4000"
-        assert at.selectbox[2].value == "diem"
+        assert at.metric[2].value == "4.4000"
+
+        at.multiselect[0].unselect("B").run()
+        assert not at.exception
+        assert at.metric[0].value == "5"
 
     # 6. Kiểm tra đọc file tải lên hợp lệ và chặn file vượt 2 MiB
     custom_df, custom_label = app._load_input_dataframe(

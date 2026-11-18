@@ -73,17 +73,89 @@ def scatter(df: pd.DataFrame, x_column: str, y_column: str) -> Figure:
     if paired.empty:
         raise ValueError("Không có cặp giá trị (X, Y) hợp lệ cùng hàng để vẽ scatter.")
 
+    x_vals = paired[x_column].to_numpy(dtype=float)
+    y_vals = paired[y_column].to_numpy(dtype=float)
+
+    title = f"Biểu đồ phân tán: {x_column} và {y_column}"
+    if len(x_vals) >= 2 and np.std(x_vals) > 0 and np.std(y_vals) > 0:
+        r_val = float(np.corrcoef(x_vals, y_vals)[0, 1])
+        title = f"{title} (r = {r_val:.2f})"
+
     fig = Figure(figsize=(6, 4))
     ax = fig.subplots()
-    ax.scatter(
-        paired[x_column].to_numpy(dtype=float),
-        paired[y_column].to_numpy(dtype=float),
-        color="#E15759",
-        edgecolor="black",
-        alpha=0.85,
-    )
-    ax.set_title(f"Biểu đồ phân tán: {x_column} và {y_column}")
+    ax.scatter(x_vals, y_vals, color="#E15759", edgecolor="black", alpha=0.85)
+    ax.set_title(title)
     ax.set_xlabel(x_column)
     ax.set_ylabel(y_column)
+    fig.tight_layout()
+    return fig
+
+
+def boxplot(df: pd.DataFrame, column: str, group_column: str | None = None) -> Figure:
+    """Vẽ biểu đồ hộp (Boxplot) để quan sát phân vị và phát hiện giá trị ngoại lai."""
+    _prepare_numeric_frame(df, [column])
+
+    groups_data: list[np.ndarray] = []
+    labels: list[str] = []
+
+    if group_column and group_column in df.columns:
+        grouped = df[[group_column, column]].dropna()
+        for name, sub in grouped.groupby(group_column, observed=True):
+            vals = sub[column].to_numpy(dtype=float)
+            if vals.size > 0:
+                groups_data.append(vals)
+                labels.append(str(name))
+    else:
+        vals = df[column].dropna().to_numpy(dtype=float)
+        if vals.size > 0:
+            groups_data = [vals]
+            labels = [column]
+
+    if not groups_data:
+        raise ValueError(f"Không có đủ dữ liệu số hợp lệ ở '{column}' để vẽ boxplot.")
+
+    fig = Figure(figsize=(6, 4))
+    ax = fig.subplots()
+    bp = ax.boxplot(groups_data, tick_labels=labels, patch_artist=True)
+    for box in bp["boxes"]:
+        box.set(facecolor="#9ECAE1", edgecolor="#1E3A5F", linewidth=1.2)
+    for median in bp["medians"]:
+        median.set(color="#D95F02", linewidth=1.8)
+
+    ax.set_title(f"Phân phối & Ngoại lai (Boxplot): {column}")
+    ax.set_xlabel(group_column if (group_column and group_column in df.columns) else "Cột số")
+    ax.set_ylabel(column)
+    fig.tight_layout()
+    return fig
+
+
+def correlation_heatmap(corr_df: pd.DataFrame) -> Figure:
+    """Vẽ bản đồ nhiệt (Heatmap) ma trận tương quan Pearson giữa các cột số."""
+    if corr_df.empty or corr_df.shape[0] < 2:
+        raise ValueError("Cần ít nhất 2 cột số hợp lệ để vẽ ma trận tương quan.")
+
+    matrix = corr_df.to_numpy(dtype=float)
+    if np.isnan(matrix).all():
+        raise ValueError("Không đủ dữ liệu hữu hạn để tính ma trận tương quan.")
+
+    labels = [str(col) for col in corr_df.columns]
+    fig = Figure(figsize=(6, 4))
+    ax = fig.subplots()
+    im = ax.imshow(matrix, vmin=-1.0, vmax=1.0, cmap="RdBu_r")
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+
+    ax.set_xticks(range(len(labels)))
+    ax.set_yticks(range(len(labels)))
+    ax.set_xticklabels(labels, rotation=25, ha="right")
+    ax.set_yticklabels(labels)
+    ax.set_title("Ma trận tương quan (Pearson)")
+
+    for i in range(len(labels)):
+        for j in range(len(labels)):
+            val = matrix[i, j]
+            text = f"{val:.2f}" if not np.isnan(val) else "NA"
+            txt_color = "white" if (not np.isnan(val) and abs(val) > 0.6) else "#1E293B"
+            ax.text(j, i, text, ha="center", va="center", color=txt_color, fontsize=9)
+
     fig.tight_layout()
     return fig
