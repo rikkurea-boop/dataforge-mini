@@ -358,8 +358,9 @@ def test_streamlit_ui_flows():
         at.button[0].click().run()
         assert not at.exception
         assert len(at.get("download_button")) == 2  # CSV + báo cáo .txt
+        assert len(at.metric) == 10
         assert at.metric[0].value == "11"
-        assert at.metric[2].value == "7.7273"
+        assert at.metric[2].value == "7.73"
 
         # 4. Bật xóa trùng + chọn Điền trung vị (Median) -> bấm xác nhận
         at.checkbox[0].check().run()
@@ -375,17 +376,22 @@ def test_streamlit_ui_flows():
         assert summary_rows[1]["Dòng trùng"] == 0
 
         assert at.metric[0].value == "10"
-        assert at.metric[2].value == "7.8000"
-        assert at.metric[5].value == "1.2490"
+        assert at.metric[2].value == "7.8"
+        assert at.metric[5].value == "1.25"
 
         # 5. Đổi cột Y trên selectbox và lọc riêng nhóm A
         at.selectbox[1].select("gio_hoc").run()
         assert not at.exception
-        assert at.metric[2].value == "4.4000"
+        assert at.metric[2].value == "4.4"
 
         at.multiselect[0].unselect("B").run()
         assert not at.exception
         assert at.metric[0].value == "5"
+
+    assert app._format_num(40.0) == "40"
+    assert app._format_num(7.8000) == "7.8"
+    assert app._format_num(39.4444) == "39.44"
+    assert app._format_num(-0.001) == "0"
 
     # 6. Kiểm tra đọc file tải lên hợp lệ và chặn file vượt 2 MiB
     custom_df, custom_label = app._load_input_dataframe(

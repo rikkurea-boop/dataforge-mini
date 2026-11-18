@@ -38,6 +38,16 @@ def _load_input_dataframe(uploaded_file) -> tuple[pd.DataFrame, str]:
     return load_csv(uploaded_file), f"File tải lên: `{uploaded_file.name}`"
 
 
+def _format_num(value: int | float | None) -> str:
+    """Làm tròn số tối đa 2 chữ số thập phân và bỏ đuôi .0/.00 nếu là số tròn."""
+    if value is None:
+        return "-"
+    rounded = round(float(value), 2)
+    if rounded == 0:
+        rounded = 0.0
+    return f"{rounded:.2f}".rstrip("0").rstrip(".")
+
+
 def _build_summary_text(
     source_label: str,
     raw_info: dict[str, int],
@@ -61,10 +71,10 @@ def _build_summary_text(
             [
                 f"--- Thống kê cột số: {y_col} ---",
                 f"Số quan sát: {stats['count']}",
-                f"Nhỏ nhất / Lớn nhất: {stats['min']:.4f} / {stats['max']:.4f}",
-                f"Trung bình / Trung vị: {stats['mean']:.4f} / {stats['median']:.4f}",
-                f"Độ lệch chuẩn (ddof=0): {stats['std']:.4f}",
-                f"Q1 / Q3 / IQR: {stats['q1']:.4f} / {stats['q3']:.4f} / {stats['iqr']:.4f}",
+                f"Nhỏ nhất / Lớn nhất: {_format_num(stats['min'])} / {_format_num(stats['max'])}",
+                f"Trung bình / Trung vị: {_format_num(stats['mean'])} / {_format_num(stats['median'])}",
+                f"Độ lệch chuẩn (ddof=0): {_format_num(stats['std'])}",
+                f"Q1 / Q3 / IQR: {_format_num(stats['q1'])} / {_format_num(stats['q3'])} / {_format_num(stats['iqr'])}",
                 f"Số giá trị ngoại lai (1.5*IQR): {stats['outliers']}",
                 "",
             ]
@@ -72,7 +82,7 @@ def _build_summary_text(
     if group_col and group_means is not None and not group_means.dropna().empty:
         lines.append(f"--- Trung bình {y_col} theo {group_col} ---")
         for name, val in group_means.dropna().items():
-            lines.append(f"  - {name}: {val:.4f}")
+            lines.append(f"  - {name}: {_format_num(val)}")
     return "\n".join(lines).encode("utf-8-sig")
 
 
@@ -267,19 +277,21 @@ def main() -> None:
     if stats["count"] == 0:
         st.info(f"Cột '{y_col}' chưa có giá trị số hợp lệ (toàn ô trống).")
     else:
-        m1, m2, m3, m4, m5, m6 = st.columns(6)
-        m1.metric("Số quan sát", stats["count"])
-        m2.metric("Nhỏ nhất", f"{stats['min']:.2f}")
-        m3.metric("Trung bình", f"{stats['mean']:.4f}")
-        m4.metric("Trung vị", f"{stats['median']:.4f}")
-        m5.metric("Lớn nhất", f"{stats['max']:.2f}")
-        m6.metric("Độ lệch chuẩn (ddof=0)", f"{stats['std']:.4f}")
+        r1 = st.columns(4)
+        r1[0].metric("Số quan sát", stats["count"], border=True)
+        r1[1].metric("Nhỏ nhất", _format_num(stats["min"]), border=True)
+        r1[2].metric("Trung bình", _format_num(stats["mean"]), border=True)
+        r1[3].metric("Trung vị", _format_num(stats["median"]), border=True)
 
-        q1, q2, q3, q4 = st.columns(4)
-        q1.metric("Q1 (25%)", f"{stats['q1']:.2f}")
-        q2.metric("Q3 (75%)", f"{stats['q3']:.2f}")
-        q3.metric("Khoảng tứ phân vị (IQR)", f"{stats['iqr']:.2f}")
-        q4.metric("Số ngoại lai (Outliers)", stats["outliers"])
+        r2 = st.columns(4)
+        r2[0].metric("Lớn nhất", _format_num(stats["max"]), border=True)
+        r2[1].metric("Độ lệch chuẩn (ddof=0)", _format_num(stats["std"]), border=True)
+        r2[2].metric("Q1 (25%)", _format_num(stats["q1"]), border=True)
+        r2[3].metric("Q3 (75%)", _format_num(stats["q3"]), border=True)
+
+        r3 = st.columns(4)
+        r3[0].metric("Khoảng tứ phân vị (IQR)", _format_num(stats["iqr"]), border=True)
+        r3[1].metric("Số ngoại lai (Outliers)", stats["outliers"], border=True)
 
     group_means: pd.Series | None = None
     if group_col is not None:
@@ -289,7 +301,10 @@ def main() -> None:
             st.info(f"Không có nhóm hợp lệ trong '{group_col}' có giá trị số ở '{y_col}'.")
         else:
             st.write(f"Trung bình `{y_col}` theo `{group_col}`:")
-            st.dataframe(valid_means.rename("Trung bình").reset_index(), hide_index=True)
+            st.dataframe(
+                valid_means.map(_format_num).rename("Trung bình").reset_index(),
+                hide_index=True,
+            )
 
     # Hai nút tải về (CSV đang xem & Báo cáo tóm tắt TXT)
     dl1, dl2 = st.columns(2)
@@ -320,7 +335,7 @@ def main() -> None:
         )
 
     st.subheader("4. Trực quan hóa dữ liệu (Matplotlib)")
-    c1, c2, c3 = st.columns(3)
+    c1, c2 = st.columns(2)
 
     with c1:
         try:
@@ -337,6 +352,7 @@ def main() -> None:
             except ValueError as exc:
                 st.info(str(exc))
 
+    c3, c4 = st.columns(2)
     with c3:
         if x_col is None:
             st.info("Ẩn biểu đồ phân tán vì cần tối thiểu 2 cột số.")
@@ -347,13 +363,13 @@ def main() -> None:
             except ValueError as exc:
                 st.info(str(exc))
 
-    c4, c5 = st.columns(2)
     with c4:
         try:
             st.pyplot(boxplot(filtered_df, y_col, group_col))
         except ValueError as exc:
             st.info(str(exc))
 
+    c5, _ = st.columns(2)
     with c5:
         corr_df = correlation_matrix(filtered_df)
         if corr_df.empty:
