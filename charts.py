@@ -52,11 +52,30 @@ def group_bar(means: pd.Series) -> Figure:
 
     labels = [str(label) for label in valid.index]
     heights = valid.to_numpy(dtype=float)
+    palette = ["#4C78A8", "#59A14F", "#F28E2B", "#E15759", "#76B7B2", "#B07AA1"]
+    colors = [palette[i % len(palette)] for i in range(len(labels))]
 
     fig = Figure(figsize=(6, 4))
     ax = fig.subplots()
-    ax.bar(labels, heights, color="#59A14F", edgecolor="black")
-    ax.set_ylim(bottom=0)
+    bars = ax.bar(labels, heights, color=colors, edgecolor="#1E293B", linewidth=0.9)
+    max_h = float(np.max(heights))
+    if max_h > 0:
+        ax.set_ylim(0, max_h * 1.16)
+    else:
+        ax.set_ylim(bottom=0)
+
+    ax.set_axisbelow(True)
+    ax.grid(axis="y", linestyle="--", alpha=0.4)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # Hiển thị giá trị cụ thể trên đỉnh mỗi cột để dễ so sánh khi các cột gần bằng nhau
+    bar_labels = [
+        f"{(0.0 if round(float(h), 2) == 0 else round(float(h), 2)):.2f}".rstrip("0").rstrip(".")
+        for h in heights
+    ]
+    ax.bar_label(bars, labels=bar_labels, padding=4, fontsize=10, fontweight="bold", color="#1E293B")
+
     ax.set_title("Giá trị trung bình theo nhóm")
     ax.set_xlabel(str(means.index.name) if means.index.name else "Nhóm")
     ax.set_ylabel("Trung bình")

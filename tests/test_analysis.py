@@ -263,6 +263,7 @@ def test_charts_canonical_figures():
     bar_heights = [patch.get_height() for patch in ax_bar.patches]
     assert bar_heights == pytest.approx([8.0, 7.6])
     assert ax_bar.get_ylim()[0] == pytest.approx(0.0)
+    assert [txt.get_text() for txt in ax_bar.texts] == ["8", "7.6"]
     assert ax_bar.get_ylabel() == "Trung bình"
 
     for df_case in (raw, cleaned):
