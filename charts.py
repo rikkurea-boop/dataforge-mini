@@ -7,13 +7,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from matplotlib.ticker import MaxNLocator
 
-
-def _format_compact(value: float) -> str:
-    """Làm tròn tối đa 2 chữ số thập phân và bỏ đuôi .0/.00 để nhãn gọn gàng."""
-    rounded = round(float(value), 2)
-    if rounded == 0:
-        rounded = 0.0
-    return f"{rounded:.2f}".rstrip("0").rstrip(".")
+from analysis import format_number
 
 
 def _style_axes(ax, axis: str = "y") -> None:
@@ -72,7 +66,7 @@ def histogram(df: pd.DataFrame, column: str) -> Figure:
     _style_axes(ax, axis="y")
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_xticks(edges)
-    ax.set_xticklabels([_format_compact(edge) for edge in edges])
+    ax.set_xticklabels([format_number(edge) for edge in edges])
     ax.bar_label(
         patches,
         labels=[str(int(round(c))) for c in counts],
@@ -103,8 +97,8 @@ def group_bar(means: pd.Series) -> Figure:
 
     labels = [str(label) for label in valid.index]
     heights = valid.to_numpy(dtype=float)
-    group_tones = ("#4C78A8", "#6B9AC4", "#3B6998", "#8AB4D8", "#2E547A")
-    colors = [group_tones[i % len(group_tones)] for i in range(len(labels))]
+    group_order = (2, 1, 3, 0, 4)
+    colors = [HARMONIOUS_BLUE_PALETTE[group_order[i % len(group_order)]] for i in range(len(labels))]
 
     fig = Figure(figsize=(6, 4))
     ax = fig.subplots()
@@ -118,7 +112,7 @@ def group_bar(means: pd.Series) -> Figure:
     _style_axes(ax, axis="y")
 
     # Hiển thị giá trị cụ thể trên đỉnh mỗi cột để dễ so sánh khi các cột gần bằng nhau
-    bar_labels = [_format_compact(h) for h in heights]
+    bar_labels = [format_number(h) for h in heights]
     ax.bar_label(bars, labels=bar_labels, padding=4, fontsize=10, fontweight="bold", color="#1E293B")
 
     ax.set_title("Giá trị trung bình theo nhóm")
@@ -230,7 +224,7 @@ def boxplot(df: pd.DataFrame, column: str, group_column: str | None = None) -> F
             ax.text(
                 idx + 0.22,
                 med_val,
-                f"TB vị: {_format_compact(med_val)}",
+                f"TB vị: {format_number(med_val)}",
                 va="center",
                 ha="left",
                 fontsize=8.5,

@@ -12,6 +12,16 @@ MAX_CSV_BYTES = 2 * 1024 * 1024  # Giới hạn 2 MiB cho file CSV đầu vào
 VALID_MISSING_STRATEGIES = {"median", "mean", "drop", "keep"}
 
 
+def format_number(value: int | float | None) -> str:
+    """Làm tròn số tối đa 2 chữ số thập phân và bỏ đuôi .0/.00 nếu là số tròn."""
+    if value is None:
+        return "-"
+    rounded = round(float(value), 2)
+    if rounded == 0:
+        rounded = 0.0
+    return f"{rounded:.2f}".rstrip("0").rstrip(".")
+
+
 def _read_csv_bytes(source: str | Path | BinaryIO) -> bytes:
     """Đọc dữ liệu byte từ đường dẫn file hoặc đối tượng stream, kiểm tra giới hạn 2 MiB."""
     if isinstance(source, (str, Path)):
