@@ -19,14 +19,13 @@ from analysis import (
     MAX_CSV_BYTES,
     clean_data,
     column_profile,
-    correlation_matrix,
     filter_data,
     inspect_data,
     load_csv,
     mean_by_group,
     numeric_stats,
 )
-from charts import boxplot, correlation_heatmap, group_bar, histogram, scatter
+from charts import boxplot, group_bar, histogram, scatter
 
 SAMPLE_CSV_PATH = Path(__file__).resolve().parent.parent / "sample_data.csv"
 
@@ -108,10 +107,6 @@ def test_numeric_stats_and_groupby():
     grouped = mean_by_group(cleaned, "lop", "diem")
     assert grouped["A"] == pytest.approx(8.0)
     assert grouped["B"] == pytest.approx(7.6)
-
-    corr = correlation_matrix(cleaned)
-    assert corr.shape == (2, 2)
-    assert corr.loc["gio_hoc", "diem"] > 0.9
 
 
 def test_filter_data_and_outliers():
@@ -199,8 +194,6 @@ def test_reject_infinity():
         numeric_stats(df_inf, "diem")
     with pytest.raises(ValueError):
         mean_by_group(df_inf, "lop", "diem")
-    with pytest.raises(ValueError):
-        correlation_matrix(df_inf)
 
 
 def test_io_validation_and_roundtrip():
@@ -250,7 +243,7 @@ def test_io_validation_and_roundtrip():
 
 
 def test_charts_canonical_figures():
-    """Kiểm tra 5 biểu đồ Matplotlib (histogram, bar, scatter, boxplot, heatmap) trên mẫu chuẩn."""
+    """Kiểm tra 4 biểu đồ Matplotlib (histogram, bar, scatter, boxplot) trên mẫu chuẩn."""
     raw = load_csv(SAMPLE_CSV_PATH)
     cleaned = clean_data(raw)
 
@@ -284,10 +277,6 @@ def test_charts_canonical_figures():
     assert isinstance(fig_box, Figure)
     assert [t.get_text() for t in fig_box.axes[0].get_xticklabels()] == ["A", "B"]
 
-    fig_heat = correlation_heatmap(correlation_matrix(cleaned))
-    assert isinstance(fig_heat, Figure)
-    assert len(fig_heat.axes[0].texts) == 4
-
 
 def test_charts_edge_cases_and_app_import():
     """Loại nhóm NaN, chặn ±inf/all-NA/0-cặp/trùng cột và kiểm tra import app."""
@@ -305,8 +294,6 @@ def test_charts_edge_cases_and_app_import():
         scatter(pd.DataFrame({"x": [1.0, np.nan], "y": [np.nan, 2.0]}), "x", "y")
     with pytest.raises(ValueError):
         scatter(pd.DataFrame({"x": [1.0, 2.0]}), "x", "x")
-    with pytest.raises(ValueError):
-        correlation_heatmap(pd.DataFrame({"x": [1.0]}))
 
     df_inf = pd.DataFrame({"x": [1.0, np.inf], "y": [2.0, 3.0]})
     with pytest.raises(ValueError):

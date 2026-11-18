@@ -232,12 +232,3 @@ def mean_by_group(df: pd.DataFrame, group_column: str, value_column: str) -> pd.
     _check_no_infinity(df[[value_column]])
 
     return df.groupby(group_column, dropna=True, observed=True)[value_column].mean().astype(float)
-
-
-def correlation_matrix(df: pd.DataFrame) -> pd.DataFrame:
-    """Tính ma trận tương quan Pearson cho các cột dữ liệu số."""
-    _check_no_infinity(df)
-    num_df = df.select_dtypes(include="number")
-    if num_df.shape[1] < 2:
-        return pd.DataFrame()
-    return num_df.corr(method="pearson")

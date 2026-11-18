@@ -127,35 +127,3 @@ def boxplot(df: pd.DataFrame, column: str, group_column: str | None = None) -> F
     ax.set_ylabel(column)
     fig.tight_layout()
     return fig
-
-
-def correlation_heatmap(corr_df: pd.DataFrame) -> Figure:
-    """Vẽ bản đồ nhiệt (Heatmap) ma trận tương quan Pearson giữa các cột số."""
-    if corr_df.empty or corr_df.shape[0] < 2:
-        raise ValueError("Cần ít nhất 2 cột số hợp lệ để vẽ ma trận tương quan.")
-
-    matrix = corr_df.to_numpy(dtype=float)
-    if np.isnan(matrix).all():
-        raise ValueError("Không đủ dữ liệu hữu hạn để tính ma trận tương quan.")
-
-    labels = [str(col) for col in corr_df.columns]
-    fig = Figure(figsize=(6, 4))
-    ax = fig.subplots()
-    im = ax.imshow(matrix, vmin=-1.0, vmax=1.0, cmap="RdBu_r")
-    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-
-    ax.set_xticks(range(len(labels)))
-    ax.set_yticks(range(len(labels)))
-    ax.set_xticklabels(labels, rotation=25, ha="right")
-    ax.set_yticklabels(labels)
-    ax.set_title("Ma trận tương quan (Pearson)")
-
-    for i in range(len(labels)):
-        for j in range(len(labels)):
-            val = matrix[i, j]
-            text = f"{val:.2f}" if not np.isnan(val) else "NA"
-            txt_color = "white" if (not np.isnan(val) and abs(val) > 0.6) else "#1E293B"
-            ax.text(j, i, text, ha="center", va="center", color=txt_color, fontsize=9)
-
-    fig.tight_layout()
-    return fig

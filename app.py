@@ -18,14 +18,13 @@ from analysis import (
     MAX_CSV_BYTES,
     clean_data,
     column_profile,
-    correlation_matrix,
     filter_data,
     inspect_data,
     load_csv,
     mean_by_group,
     numeric_stats,
 )
-from charts import boxplot, correlation_heatmap, group_bar, histogram, scatter
+from charts import boxplot, group_bar, histogram, scatter
 
 GITHUB_REPO = "rikkurea-boop/dataforge-mini"
 GITHUB_BRANCH = "main"
@@ -546,17 +545,6 @@ def main() -> None:
                 st.pyplot(boxplot(filtered_df, y_col, group_col))
             except ValueError as exc:
                 st.info(str(exc))
-
-        c5, _ = st.columns(2)
-        with c5:
-            corr_df = correlation_matrix(filtered_df)
-            if corr_df.empty:
-                st.info("Cần ít nhất 2 cột số để vẽ ma trận tương quan (Heatmap).")
-            else:
-                try:
-                    st.pyplot(correlation_heatmap(corr_df))
-                except ValueError as exc:
-                    st.info(str(exc))
 
 
 if __name__ == "__main__":
