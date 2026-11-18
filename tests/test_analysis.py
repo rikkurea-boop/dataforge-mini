@@ -1,7 +1,10 @@
 """Kiểm thử tự động cho xử lý dữ liệu (analysis), biểu đồ (charts) và giao diện (app)."""
 
 import io
+import json
 import math
+import subprocess
+import zipfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -332,11 +335,12 @@ def test_streamlit_ui_flows():
     """Kiểm thử toàn bộ luồng giao diện mới: ẩn ban đầu, làm sạch, xác nhận, lọc & xuất báo cáo."""
     app_path = Path(__file__).resolve().parent.parent / "app.py"
 
-    # 1. Chưa tải file: ẩn hoàn toàn bảng, checkbox, selectbox, chỉ hiện khung upload + thông báo
+    # 1. Chưa tải file: ẩn hoàn toàn bảng, checkbox, selectbox, chỉ hiện nút cập nhật + thông báo
     at_empty = AppTest.from_file(str(app_path)).run()
     assert not at_empty.exception
     assert len(at_empty.checkbox) == 0
-    assert len(at_empty.button) == 0
+    assert len(at_empty.button) == 1
+    assert at_empty.button[0].label == "↻ Cập nhật"
     assert len(at_empty.dataframe) == 0
     assert len(at_empty.metric) == 0
     assert len(at_empty.info) == 1
@@ -351,11 +355,11 @@ def test_streamlit_ui_flows():
         assert not at.exception
         assert len(at.checkbox) == 1
         assert len(at.selectbox) == 1  # chọn chiến lược điền thiếu
-        assert len(at.button) == 1
+        assert len(at.button) == 2
         assert len(at.dataframe) == 0
 
         # 3. Bấm xác nhận với mặc định Raw (không xóa trùng, giữ ô thiếu)
-        at.button[0].click().run()
+        at.button[1].click().run()
         assert not at.exception
         assert len(at.get("download_button")) == 2  # CSV + báo cáo .txt
         assert len(at.metric) == 10
@@ -366,7 +370,7 @@ def test_streamlit_ui_flows():
         at.checkbox[0].check().run()
         at.selectbox[0].select("Điền trung vị (Median)").run()
         assert len(at.dataframe) == 0  # chờ bấm xác nhận lại
-        at.button[0].click().run()
+        at.button[1].click().run()
         assert not at.exception
 
         summary_rows = at.dataframe[0].value.to_dict(orient="records")
@@ -406,3 +410,85 @@ def test_streamlit_ui_flows():
         )
     with pytest.raises(ValueError):
         app._load_input_dataframe(None)
+
+
+def test_auto_update_git_and_zip(tmp_path: Path):
+    """Kiểm tra cơ chế tự động cập nhật từ GitHub qua Git và fallback tải ZIP."""
+    # 1. Trường hợp dùng Git: chưa có bản mới -> không pull
+    git_dir = tmp_path / "repo_git"
+    (git_dir / ".git").mkdir(parents=True)
+
+    calls: list[list[str]] = []
+
+    def fake_git_same(cmd, **kwargs):
+        calls.append(cmd)
+        if "rev-parse" in cmd:
+            return subprocess.CompletedProcess(cmd, 0, stdout="abc1234567890\n", stderr="")
+        return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+    with patch("app.shutil.which", return_value="/usr/bin/git"), patch(
+        "app.subprocess.run", side_effect=fake_git_same
+    ):
+        updated, msg = app._check_and_update(git_dir)
+    assert updated is False
+    assert "abc1234" in msg
+    assert not any("pull" in c for c in calls)
+
+    # 2. Trường hợp dùng Git: có commit mới -> thực hiện pull --ff-only
+    calls.clear()
+
+    def fake_git_new(cmd, **kwargs):
+        calls.append(cmd)
+        if cmd[-1] == "HEAD":
+            return subprocess.CompletedProcess(cmd, 0, stdout="1111111aaaa\n", stderr="")
+        if "origin/main" in cmd and "rev-parse" in cmd:
+            return subprocess.CompletedProcess(cmd, 0, stdout="2222222bbbb\n", stderr="")
+        return subprocess.CompletedProcess(cmd, 0, stdout="Updating...", stderr="")
+
+    with patch("app.shutil.which", return_value="/usr/bin/git"), patch(
+        "app.subprocess.run", side_effect=fake_git_new
+    ):
+        updated, msg = app._check_and_update(git_dir)
+    assert updated is True
+    assert "2222222" in msg
+    assert any("pull" in c and "--ff-only" in c for c in calls)
+
+    # 3. Trường hợp tải ZIP (không có .git): tải bản mới, giải nén đè & bỏ qua lần kiểm tra sau
+    zip_dir = tmp_path / "repo_zip"
+    zip_dir.mkdir()
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr("dataforge-mini-main/README.md", "updated content")
+        zf.writestr("dataforge-mini-main/../evil.txt", "blocked")
+    zip_bytes = buf.getvalue()
+
+    class _FakeResponse:
+        def __init__(self, payload: bytes):
+            self._payload = payload
+
+        def read(self) -> bytes:
+            return self._payload
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+    def fake_urlopen(req, timeout=10):
+        url = req.full_url
+        if "api.github.com" in url:
+            return _FakeResponse(json.dumps({"sha": "9999999cccc"}).encode("utf-8"))
+        return _FakeResponse(zip_bytes)
+
+    with patch("app.urllib.request.urlopen", side_effect=fake_urlopen):
+        updated, msg = app._check_and_update(zip_dir)
+        assert updated is True
+        assert "9999999" in msg
+        assert (zip_dir / "README.md").read_text(encoding="utf-8") == "updated content"
+        assert not (tmp_path / "evil.txt").exists()
+
+        # Lần 2 SHA trùng nhau -> báo đang ở bản mới nhất, không tải ZIP nữa
+        updated_again, msg_again = app._check_and_update(zip_dir)
+        assert updated_again is False
+        assert "9999999" in msg_again

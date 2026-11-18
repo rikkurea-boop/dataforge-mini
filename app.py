@@ -1,5 +1,16 @@
 """Giao diện Streamlit một trang cho ứng dụng DataForge Mini."""
 
+import importlib
+import io
+import json
+import shutil
+import subprocess
+import sys
+import urllib.error
+import urllib.request
+import zipfile
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
 
@@ -15,6 +26,9 @@ from analysis import (
     numeric_stats,
 )
 from charts import boxplot, correlation_heatmap, group_bar, histogram, scatter
+
+GITHUB_REPO = "rikkurea-boop/dataforge-mini"
+GITHUB_BRANCH = "main"
 
 MISSING_OPTIONS = {
     "Giữ nguyên ô thiếu (Raw)": "keep",
@@ -86,10 +100,114 @@ def _build_summary_text(
     return "\n".join(lines).encode("utf-8-sig")
 
 
+def _check_and_update(app_dir: Path | None = None) -> tuple[bool, str]:
+    """Kiểm tra bản mới trên GitHub và tự động cập nhật (hỗ trợ cả Git lẫn bản tải ZIP)."""
+    root = (Path(app_dir) if app_dir is not None else Path(__file__).resolve().parent).resolve()
+
+    try:
+        if (root / ".git").exists() and shutil.which("git"):
+            def _git(*args: str, timeout: int = 15) -> str:
+                res = subprocess.run(
+                    ["git", "-C", str(root), *args],
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout,
+                    check=True,
+                )
+                return res.stdout.strip()
+
+            _git("fetch", "--quiet", "origin", GITHUB_BRANCH)
+            local_sha = _git("rev-parse", "HEAD")
+            remote_sha = _git("rev-parse", f"origin/{GITHUB_BRANCH}")
+            if local_sha == remote_sha:
+                return False, f"Đang ở bản mới nhất ({local_sha[:7]})."
+            _git("pull", "--ff-only", "origin", GITHUB_BRANCH, timeout=30)
+            return True, f"Đã cập nhật từ `{local_sha[:7]}` lên `{remote_sha[:7]}`."
+
+        req = urllib.request.Request(
+            f"https://api.github.com/repos/{GITHUB_REPO}/commits/{GITHUB_BRANCH}",
+            headers={"User-Agent": "DataForge-Mini"},
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            remote_sha = json.loads(resp.read().decode("utf-8"))["sha"]
+
+        marker = root / ".update_sha"
+        local_sha = marker.read_text(encoding="utf-8").strip() if marker.exists() else ""
+        if local_sha == remote_sha:
+            return False, f"Đang ở bản mới nhất ({remote_sha[:7]})."
+
+        zip_req = urllib.request.Request(
+            f"https://github.com/{GITHUB_REPO}/archive/refs/heads/{GITHUB_BRANCH}.zip",
+            headers={"User-Agent": "DataForge-Mini"},
+        )
+        with urllib.request.urlopen(zip_req, timeout=30) as resp:
+            zip_bytes = resp.read()
+
+        with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+            for info in zf.infolist():
+                if info.is_dir():
+                    continue
+                parts = Path(info.filename).parts
+                if len(parts) < 2:
+                    continue
+                rel = Path(*parts[1:])
+                if any(part in {".git", ".venv", "__pycache__"} for part in rel.parts):
+                    continue
+                dest = (root / rel).resolve()
+                if not dest.is_relative_to(root):
+                    continue
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                dest.write_bytes(zf.read(info.filename))
+                if dest.suffix == ".command":
+                    dest.chmod(0o755)
+
+        marker.write_text(remote_sha, encoding="utf-8")
+        return True, f"Đã tải và cập nhật bản mới nhất (`{remote_sha[:7]}`)."
+    except (
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+        urllib.error.URLError,
+        zipfile.BadZipFile,
+        OSError,
+        KeyError,
+        json.JSONDecodeError,
+    ) as exc:
+        detail = getattr(exc, "stderr", None) or str(exc)
+        raise RuntimeError(f"Không thể cập nhật tự động: {detail.strip()}") from exc
+
+
 def main() -> None:
     """Điều phối luồng xử lý và hiển thị ứng dụng một trang."""
     st.set_page_config(page_title="DataForge Mini", layout="wide")
-    st.title("DataForge Mini — Xử lý, Phân tích & Trực quan hóa Dữ liệu")
+    head_col, update_col = st.columns([5.5, 1.2], vertical_alignment="center")
+    with head_col:
+        st.title("DataForge Mini — Xử lý, Phân tích & Trực quan hóa Dữ liệu")
+    with update_col:
+        update_clicked = st.button(
+            "↻ Cập nhật",
+            key="btn_update",
+            help="Kiểm tra và tự động cập nhật bản mới từ GitHub",
+            width="stretch",
+        )
+
+    if notice := st.session_state.pop("update_notice", None):
+        st.success(notice)
+
+    if update_clicked:
+        with st.spinner("Đang kiểm tra cập nhật trên GitHub..."):
+            try:
+                updated, msg = _check_and_update()
+            except RuntimeError as exc:
+                st.error(str(exc))
+            else:
+                if updated:
+                    for mod_name in ("analysis", "charts"):
+                        if mod_name in sys.modules:
+                            importlib.reload(sys.modules[mod_name])
+                    st.session_state["update_notice"] = msg
+                    st.rerun()
+                st.info(msg)
+
     st.caption(
         "Ứng dụng minh họa Chương 5.5 (Pandas, NumPy, Matplotlib). "
         "Chỉ hỗ trợ file CSV UTF-8 phân cách bằng dấu phẩy (≤ 2 MiB)."
