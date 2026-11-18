@@ -553,10 +553,7 @@ def main() -> None:
         with c1:
             try:
                 st.pyplot(histogram(filtered_df, y_col))
-                st.caption(
-                    f"**Phân phối tần suất (Histogram):** Chia `{y_col}` thành 5 khoảng; "
-                    "cột càng cao nghĩa là có càng nhiều dữ liệu rơi vào khoảng đó."
-                )
+                st.caption("**Biểu đồ tần suất (Histogram)** — Xem mức độ tập trung dữ liệu theo 5 khoảng giá trị.")
             except ValueError as exc:
                 st.info(str(exc))
 
@@ -566,10 +563,7 @@ def main() -> None:
             else:
                 try:
                     st.pyplot(group_bar(group_means))
-                    st.caption(
-                        f"**So sánh nhóm (Biểu đồ cột):** Hiển thị trung bình `{y_col}` theo từng nhóm `{group_col}`; "
-                        "trục dọc bắt đầu từ 0 để so sánh chính xác."
-                    )
+                    st.caption("**Biểu đồ cột (Bar Chart)** — So sánh giá trị trung bình giữa các nhóm.")
                 except ValueError as exc:
                     st.info(str(exc))
 
@@ -580,31 +574,14 @@ def main() -> None:
             else:
                 try:
                     st.pyplot(scatter(filtered_df, x_col, y_col))
-                    valid_pairs = filtered_df[[x_col, y_col]].dropna()
-                    n_pairs = len(valid_pairs)
-                    n_overlap = n_pairs - len(valid_pairs.drop_duplicates())
-                    overlap_note = (
-                        f" (có {n_overlap} cặp trùng tọa độ chồng khít lên nhau)"
-                        if n_overlap > 0
-                        else ""
-                    )
-                    st.caption(
-                        f"**Cách đọc Scatter (`{x_col}` → `{y_col}`):** Đang vẽ **{n_pairs} cặp**{overlap_note}. "
-                        "Đường nét đứt hướng lên nghĩa là khi X tăng thì Y thường tăng (chỉ mô tả xu hướng, không kết luận nhân quả)."
-                    )
+                    st.caption("**Biểu đồ phân tán (Scatter Plot)** — Quan sát xu hướng liên hệ giữa hai cột số.")
                 except ValueError as exc:
                     st.info(str(exc))
 
         with c4:
             try:
                 st.pyplot(boxplot(filtered_df, y_col, group_col))
-                if stats["count"]:
-                    st.caption(
-                        f"**Cách đọc đơn giản (`{y_col}`):** Phần lớn dữ liệu tập trung trong hộp xanh "
-                        f"(từ **{_format_num(stats['q1'])}** đến **{_format_num(stats['q3'])}**), "
-                        f"vạch cam là trung vị (**{_format_num(stats['median'])}**), hộp càng gọn dữ liệu càng đều; "
-                        f"hiện có **{stats['outliers']}** điểm bất thường (nếu có sẽ hiện chấm đỏ ngoài hai đầu râu)."
-                    )
+                st.caption("**Biểu đồ hộp (Boxplot)** — Quan sát phân bố dữ liệu và phát hiện giá trị ngoại lai.")
             except ValueError as exc:
                 st.info(str(exc))
 
