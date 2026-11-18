@@ -358,10 +358,10 @@ def main() -> None:
         )
         return
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3, vertical_alignment="bottom")
     with col1:
         y_col = st.selectbox(
-            "Cột số chính (Thống kê & trục Y)",
+            "Cột số chính (trục Y)",
             options=num_cols,
             index=_default_index(num_cols, "diem"),
         )
@@ -369,7 +369,7 @@ def main() -> None:
         group_col: str | None = None
         if group_cols:
             group_col = st.selectbox(
-                "Cột phân nhóm (Bar, Boxplot & GroupBy)",
+                "Cột phân nhóm (Nhóm & Boxplot)",
                 options=group_cols,
                 index=_default_index(group_cols, "lop"),
             )
@@ -380,7 +380,7 @@ def main() -> None:
         x_col: str | None = None
         if x_options:
             x_col = st.selectbox(
-                "Cột số trục X (Biểu đồ phân tán)",
+                "Cột số trục X (Scatter)",
                 options=x_options,
                 index=_default_index(x_options, "gio_hoc"),
             )
@@ -391,7 +391,7 @@ def main() -> None:
     selected_groups_filter: list[str] | None = None
     val_range_filter: tuple[float, float] | None = None
     with st.expander("Tùy chọn lọc dữ liệu & sắp xếp (áp dụng cho cả 3 tab)", expanded=False):
-        f_col1, f_col2, f_col3 = st.columns(3)
+        f_col1, f_col2, f_col3 = st.columns(3, vertical_alignment="bottom")
         with f_col1:
             if group_col is not None:
                 all_groups = sorted(active_df[group_col].dropna().astype(str).unique().tolist())
