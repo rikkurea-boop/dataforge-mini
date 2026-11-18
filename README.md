@@ -10,31 +10,30 @@
 - **Đọc & kiểm tra chất lượng dữ liệu CSV:** Giao diện ẩn kết quả trước khi tải file; sau khi tải lên file CSV (UTF-8, phân cách dấu phẩy `,`, tối đa 2 MiB — ví dụ [`sample_data.csv`](sample_data.csv) hoặc các file trong [`samples/`](samples)), ứng dụng kiểm tra lỗi cấu trúc/giá trị vô cực (`±inf`) và cung cấp bảng hồ sơ chi tiết từng cột (`Kiểu dữ liệu`, `Hợp lệ`, `Ô thiếu`, `Tỷ lệ thiếu %`, `Giá trị duy nhất`).
 - **Làm sạch dữ liệu có nút xác nhận:** Hỗ trợ tùy chọn xóa dòng trùng toàn phần (`keep="first"`) và chọn chiến lược xử lý ô số thiếu (**Giữ nguyên**, **Điền trung vị (Median)**, **Điền trung bình (Mean)** hoặc **Xóa dòng bị thiếu (`dropna`)**), chỉ thực thi khi người dùng nhấn **Xác nhận xử lý dữ liệu**. Luôn tạo bản sao độc lập nên không làm thay đổi bảng gốc.
 - **Lọc tương tác, sắp xếp & Top 5:** Lọc trực tiếp theo nhiều nhóm (`multiselect`), thanh trượt khoảng giá trị số (`slider`), sắp xếp tăng/giảm dần và xem nhanh **Top 5 cao nhất / thấp nhất** theo cột đang phân tích.
-- **Thống kê mô tả (NumPy) & Phân tích nhóm (Pandas):** Tính `count`, `min`, `max`, `mean` (`7.80`), `median` (`8.00`), độ lệch chuẩn tổng thể `ddof=0` (`≈ 1.2490`), các tứ phân vị **Q1 (25%), Q3 (75%), IQR** và số **ngoại lai (Outliers)** theo quy tắc `1.5 × IQR`, cùng điểm trung bình theo nhóm qua `groupby(..., dropna=True)`.
+- **Thống kê mô tả (NumPy) & Phân tích nhóm (Pandas):** Tính `count`, `min`, `max`, `mean` (`7.8`), `median` (`8`), độ lệch chuẩn tổng thể `ddof=0` (`≈ 1.25`), các tứ phân vị **Q1 (25%), Q3 (75%), IQR** và số **ngoại lai (Outliers)** theo quy tắc `1.5 × IQR`, cùng điểm trung bình theo nhóm qua `groupby(..., dropna=True)`.
 - **Trực quan hóa dữ liệu (5 biểu đồ Matplotlib `Figure` độc lập):**
   1. **Histogram** (5 khoảng tần suất).
   2. **Biểu đồ cột** trung bình theo nhóm (trục tung bắt đầu từ 0).
   3. **Biểu đồ phân tán (Scatter)** ghép cặp cùng hàng kèm hệ số tương quan Pearson `r`.
   4. **Biểu đồ hộp (Boxplot)** quan sát phân vị và điểm ngoại lai theo nhóm.
   5. **Heatmap ma trận tương quan** Pearson giữa các cột số.
-- **Xuất dữ liệu & báo cáo:** Tải về file CSV đang xem (UTF-8-SIG, `index=False`) và tệp báo cáo tóm tắt `.txt` chứa các chỉ số thống kê hiện tại.
+- **Xuất dữ liệu, giao diện nửa màn hình & Tự động cập nhật:** Bố cục thẻ `3×4` và lưới biểu đồ 2 cột hiển thị rõ trên cửa sổ nửa màn hình; tải về file CSV (UTF-8-SIG, `index=False`) và tệp báo cáo `.txt`; nút **↻ Cập nhật** ở góc trên bên phải cạnh **Deploy** tự kiểm tra và cập nhật bản mới từ GitHub.
 
 ## 2. Cấu trúc dự án
 
 ```text
 dataforge-mini/
-├── app.py                               # Giao diện Streamlit một trang điều phối luồng chạy
-├── analysis.py                          # Xử lý đọc, kiểm lỗi, làm sạch, lọc và thống kê (Pandas + NumPy)
-├── charts.py                            # 5 hàm tạo biểu đồ độc lập (Matplotlib Figure)
-├── run_app.bat                          # Tệp nhấp đúp khởi động nhanh ứng dụng trên Windows
-├── run_app.command                      # Tệp nhấp đúp khởi động nhanh ứng dụng trên macOS
-├── sample_data.csv                      # Bộ dữ liệu mẫu giả lập (12 dòng × 4 cột)
-├── samples/                             # 10 file CSV mẫu đa dạng (8 bộ hợp lệ/biên + 2 file test báo lỗi)
-├── requirements.txt                     # Phiên bản thư viện đã kiểm chứng
-├── DataForge_Mini_Bao_Cao_18_Trang.docx # Báo cáo tổng hợp bản Word (chỉnh sửa được)
-├── Bao_Cao.pdf                          # Báo cáo tổng hợp 18 trang
+├── app.py              # Giao diện Streamlit một trang điều phối luồng chạy
+├── analysis.py         # Xử lý đọc, kiểm lỗi, làm sạch, lọc và thống kê (Pandas + NumPy)
+├── charts.py           # 5 hàm tạo biểu đồ độc lập (Matplotlib Figure)
+├── run_app.bat         # Tệp nhấp đúp khởi động nhanh ứng dụng trên Windows
+├── run_app.command     # Tệp nhấp đúp khởi động nhanh ứng dụng trên macOS
+├── sample_data.csv     # Bộ dữ liệu mẫu giả lập (12 dòng × 4 cột)
+├── samples/            # 10 file CSV mẫu đa dạng (8 bộ hợp lệ/biên + 2 file test báo lỗi)
+├── requirements.txt    # Phiên bản thư viện đã kiểm chứng
+├── Bao_Cao.docx        # Báo cáo tổng hợp bản Word (chỉnh sửa được)
 └── tests/
-    └── test_analysis.py                 # 12 bài kiểm thử tự động (dữ liệu, thống kê, biểu đồ & UI)
+    └── test_analysis.py  # 13 bài kiểm thử tự động (dữ liệu, thống kê, biểu đồ, UI & auto-update)
 ```
 
 ## 3. Hướng dẫn cài đặt và chạy ứng dụng

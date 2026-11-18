@@ -179,16 +179,42 @@ def _check_and_update(app_dir: Path | None = None) -> tuple[bool, str]:
 def main() -> None:
     """Điều phối luồng xử lý và hiển thị ứng dụng một trang."""
     st.set_page_config(page_title="DataForge Mini", layout="wide")
-    head_col, update_col = st.columns([5.5, 1.2], vertical_alignment="center")
-    with head_col:
-        st.title("DataForge Mini — Xử lý, Phân tích & Trực quan hóa Dữ liệu")
-    with update_col:
-        update_clicked = st.button(
-            "↻ Cập nhật",
-            key="btn_update",
-            help="Kiểm tra và tự động cập nhật bản mới từ GitHub",
-            width="stretch",
-        )
+    st.markdown(
+        """
+        <style>
+        .st-key-btn_update {
+            position: fixed;
+            top: 0;
+            right: 6.75rem;
+            height: 3.75rem;
+            display: flex;
+            align-items: center;
+            width: auto !important;
+            z-index: 999995;
+        }
+        .st-key-btn_update button {
+            min-height: unset;
+            height: 2rem;
+            padding: 0 0.6rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        .st-key-btn_update button p {
+            margin: 0;
+            font-size: 0.875rem;
+            line-height: 1.2;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    update_clicked = st.button(
+        "↻ Cập nhật",
+        key="btn_update",
+        type="tertiary",
+        help="Kiểm tra và tự động cập nhật bản mới từ GitHub",
+    )
+    st.title("DataForge Mini — Xử lý, Phân tích & Trực quan hóa Dữ liệu")
 
     if notice := st.session_state.pop("update_notice", None):
         st.success(notice)
