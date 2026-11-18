@@ -40,6 +40,9 @@ def _prepare_numeric_frame(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame
     return df[columns].dropna()
 
 
+HARMONIOUS_BLUE_PALETTE = ("#8AB4D8", "#6B9AC4", "#4C78A8", "#3B6998", "#2E547A")
+
+
 def histogram(df: pd.DataFrame, column: str) -> Figure:
     """Vẽ biểu đồ tần suất 5 khoảng (bins=5) đồng bộ phong cách với biểu đồ cột."""
     valid = _prepare_numeric_frame(df, [column])
@@ -47,7 +50,6 @@ def histogram(df: pd.DataFrame, column: str) -> Figure:
         raise ValueError(f"Cột '{column}' không có giá trị số hợp lệ để vẽ histogram.")
 
     values = valid[column].to_numpy(dtype=float)
-    palette = ["#4C78A8", "#59A14F", "#F28E2B", "#E15759", "#76B7B2"]
 
     fig = Figure(figsize=(6, 4))
     ax = fig.subplots()
@@ -59,7 +61,7 @@ def histogram(df: pd.DataFrame, column: str) -> Figure:
         linewidth=0.9,
     )
     for idx, patch in enumerate(patches):
-        patch.set_facecolor(palette[idx % len(palette)])
+        patch.set_facecolor(HARMONIOUS_BLUE_PALETTE[idx % len(HARMONIOUS_BLUE_PALETTE)])
 
     max_count = float(np.max(counts)) if len(counts) > 0 else 0.0
     if max_count > 0:
@@ -101,8 +103,8 @@ def group_bar(means: pd.Series) -> Figure:
 
     labels = [str(label) for label in valid.index]
     heights = valid.to_numpy(dtype=float)
-    palette = ["#4C78A8", "#59A14F", "#F28E2B", "#E15759", "#76B7B2", "#B07AA1"]
-    colors = [palette[i % len(palette)] for i in range(len(labels))]
+    group_tones = ("#4C78A8", "#6B9AC4", "#3B6998", "#8AB4D8", "#2E547A")
+    colors = [group_tones[i % len(group_tones)] for i in range(len(labels))]
 
     fig = Figure(figsize=(6, 4))
     ax = fig.subplots()

@@ -364,6 +364,9 @@ def test_streamlit_ui_flows():
         assert len(at.metric) == 10
         assert at.metric[0].value == "11"
         assert at.metric[2].value == "7.73"
+        raw_notes = list(at.dataframe[1].value["Ghi chú biểu đồ"])
+        assert any("Bỏ ở Scatter" in note for note in raw_notes)
+        assert any("Bỏ biểu đồ" in note for note in raw_notes)
 
         # 4. Bật xóa trùng + chọn Điền trung vị (Median) -> bấm xác nhận
         at.checkbox[0].check().run()
@@ -378,6 +381,7 @@ def test_streamlit_ui_flows():
         assert summary_rows[1]["Ô thiếu"] == 0
         assert summary_rows[1]["Dòng trùng"] == 0
         assert list(at.dataframe[1].value.index) == list(range(1, 11))
+        assert all(note == "✓ Hợp lệ" for note in at.dataframe[1].value["Ghi chú biểu đồ"])
 
         assert at.metric[0].value == "10"
         assert at.metric[2].value == "7.8"

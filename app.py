@@ -42,9 +42,27 @@ def _default_index(options: list[str], preferred: str) -> int:
     return options.index(preferred) if preferred in options else 0
 
 
-def _with_one_based_index(df: pd.DataFrame) -> pd.DataFrame:
-    """Tạo bản hiển thị với số thứ tự dòng bắt đầu từ 1 thay vì 0."""
+def _with_one_based_index(
+    df: pd.DataFrame,
+    y_col: str | None = None,
+    x_col: str | None = None,
+    group_col: str | None = None,
+) -> pd.DataFrame:
+    """Tạo bản hiển thị đánh số từ 1, kèm cột ghi chú dữ liệu đưa vào biểu đồ."""
     view = df.copy()
+    if y_col is not None:
+        notes: list[str] = []
+        for _, row in view.iterrows():
+            if pd.isna(row[y_col]):
+                notes.append(f"− Bỏ biểu đồ (thiếu {y_col})")
+            else:
+                skipped = []
+                if x_col is not None and pd.isna(row[x_col]):
+                    skipped.append(f"Scatter: thiếu {x_col}")
+                if group_col is not None and pd.isna(row[group_col]):
+                    skipped.append(f"Nhóm: thiếu {group_col}")
+                notes.append(f"− Bỏ ở {'; '.join(skipped)}" if skipped else "✓ Hợp lệ")
+        view["Ghi chú biểu đồ"] = notes
     view.index = range(1, len(view) + 1)
     return view
 
@@ -445,8 +463,19 @@ def main() -> None:
                 f"(cột chữ hoặc cột số toàn trống) và {active_info['duplicate_rows']} dòng trùng."
             )
 
-        st.caption(f"Bảng dữ liệu đang xem: **{len(filtered_df)} / {len(active_df)}** dòng.")
-        st.dataframe(_with_one_based_index(filtered_df))
+        n_y_valid = int(filtered_df[y_col].notna().sum())
+        scatter_note = (
+            f" · Đủ vẽ Scatter: **{int(filtered_df[[x_col, y_col]].dropna().shape[0])}** cặp"
+            if x_col is not None
+            else ""
+        )
+        st.caption(
+            f"Bảng dữ liệu đang xem: **{len(filtered_df)} / {len(active_df)}** dòng "
+            f"· Đủ dữ liệu chính: **{n_y_valid}** dòng{scatter_note}."
+        )
+        st.dataframe(
+            _with_one_based_index(filtered_df, y_col=y_col, x_col=x_col, group_col=group_col)
+        )
 
         with st.expander("Kiểm tra chi tiết từng cột (Kiểu dữ liệu, tỷ lệ thiếu, giá trị duy nhất)"):
             st.dataframe(column_profile(active_df), hide_index=True)
