@@ -1,7 +1,9 @@
 # DataForge Mini
 
 **Đề tài:** Xây dựng ứng dụng xử lý, phân tích và trực quan hóa dữ liệu bằng Python.  
-**Chủ đề học phần:** Chương 5.5 — Phân tích dữ liệu cơ bản với NumPy, Pandas và Matplotlib.
+**Chủ đề học phần:** Chương 5.5 — Phân tích dữ liệu cơ bản với NumPy, Pandas và Matplotlib.  
+**Sinh viên thực hiện:** Nguyễn Đức Hải (`B26DCTN046` — Lớp `T26CQHT01-B`).  
+**Giảng viên hướng dẫn:** Nguyễn Quang Huy.
 
 ## 1. Giới thiệu & Chức năng chính
 
