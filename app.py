@@ -544,8 +544,16 @@ def main() -> None:
             else:
                 try:
                     st.pyplot(scatter(filtered_df, x_col, y_col))
+                    valid_pairs = filtered_df[[x_col, y_col]].dropna()
+                    n_pairs = len(valid_pairs)
+                    n_overlap = n_pairs - len(valid_pairs.drop_duplicates())
+                    overlap_note = (
+                        f" (có {n_overlap} cặp trùng tọa độ chồng khít lên nhau)"
+                        if n_overlap > 0
+                        else ""
+                    )
                     st.caption(
-                        f"**Mối liên hệ cặp số (Scatter):** Mỗi chấm biểu diễn một cặp (`{x_col}`, `{y_col}`); "
+                        f"**Mối liên hệ cặp số (Scatter):** Đang vẽ **{n_pairs} cặp** (`{x_col}`, `{y_col}`){overlap_note}; "
                         "hệ số `r` thể hiện xu hướng tuyến tính, không kết luận nhân quả."
                     )
                 except ValueError as exc:
@@ -554,10 +562,13 @@ def main() -> None:
         with c4:
             try:
                 st.pyplot(boxplot(filtered_df, y_col, group_col))
-                st.caption(
-                    f"**Phân bố & Ngoại lai (Boxplot):** Hộp xanh chứa 50% dữ liệu ở giữa `{y_col}` (từ Q1 đến Q3), "
-                    "vạch cam là trung vị, chấm tròn ngoài râu (nếu có) là điểm bất thường."
-                )
+                if stats["count"]:
+                    st.caption(
+                        f"**Cách đọc đơn giản (`{y_col}`):** Phần lớn dữ liệu tập trung trong hộp xanh "
+                        f"(từ **{_format_num(stats['q1'])}** đến **{_format_num(stats['q3'])}**), "
+                        f"vạch cam là trung vị (**{_format_num(stats['median'])}**), hộp càng gọn dữ liệu càng đều; "
+                        f"hiện có **{stats['outliers']}** điểm bất thường (nếu có sẽ hiện chấm đỏ ngoài hai đầu râu)."
+                    )
             except ValueError as exc:
                 st.info(str(exc))
 

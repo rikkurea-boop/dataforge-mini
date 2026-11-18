@@ -3,6 +3,16 @@
 import numpy as np
 import pandas as pd
 from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+
+
+def _format_compact(value: float) -> str:
+    """Làm tròn tối đa 2 chữ số thập phân và bỏ đuôi .0/.00 để nhãn gọn gàng."""
+    rounded = round(float(value), 2)
+    if rounded == 0:
+        rounded = 0.0
+    return f"{rounded:.2f}".rstrip("0").rstrip(".")
 
 
 def _prepare_numeric_frame(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
@@ -70,10 +80,7 @@ def group_bar(means: pd.Series) -> Figure:
     ax.spines["right"].set_visible(False)
 
     # Hiển thị giá trị cụ thể trên đỉnh mỗi cột để dễ so sánh khi các cột gần bằng nhau
-    bar_labels = [
-        f"{(0.0 if round(float(h), 2) == 0 else round(float(h), 2)):.2f}".rstrip("0").rstrip(".")
-        for h in heights
-    ]
+    bar_labels = [_format_compact(h) for h in heights]
     ax.bar_label(bars, labels=bar_labels, padding=4, fontsize=10, fontweight="bold", color="#1E293B")
 
     ax.set_title("Giá trị trung bình theo nhóm")
@@ -135,13 +142,52 @@ def boxplot(df: pd.DataFrame, column: str, group_column: str | None = None) -> F
 
     fig = Figure(figsize=(6, 4))
     ax = fig.subplots()
-    bp = ax.boxplot(groups_data, tick_labels=labels, patch_artist=True)
+    bp = ax.boxplot(
+        groups_data,
+        tick_labels=labels,
+        widths=0.36,
+        patch_artist=True,
+        flierprops={"marker": "o", "markerfacecolor": "#E15759", "markeredgecolor": "#7F1D1D", "markersize": 6.5},
+    )
     for box in bp["boxes"]:
         box.set(facecolor="#9ECAE1", edgecolor="#1E3A5F", linewidth=1.2)
     for median in bp["medians"]:
-        median.set(color="#D95F02", linewidth=1.8)
+        median.set(color="#D95F02", linewidth=2.2)
 
-    ax.set_title(f"Phân phối & Ngoại lai (Boxplot): {column}")
+    ax.set_axisbelow(True)
+    ax.grid(axis="y", linestyle="--", alpha=0.4)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # Ghi nhãn Trung vị cạnh từng hộp khi số nhóm gọn (<= 4) và nới trục X/Y để không đè chữ
+    if len(groups_data) <= 4:
+        ax.set_xlim(0.5, len(groups_data) + 0.65)
+        for idx, vals in enumerate(groups_data, start=1):
+            med_val = float(np.median(vals))
+            ax.text(
+                idx + 0.22,
+                med_val,
+                f"TB vị: {_format_compact(med_val)}",
+                va="center",
+                ha="left",
+                fontsize=8.5,
+                fontweight="bold",
+                color="#9A3412",
+                bbox={"boxstyle": "round,pad=0.2", "facecolor": "white", "edgecolor": "#FDBA74", "alpha": 0.92},
+            )
+
+    y_min, y_max = ax.get_ylim()
+    y_span = max(y_max - y_min, 1e-6)
+    ax.set_ylim(y_min - 0.04 * y_span, y_max + 0.18 * y_span)
+
+    legend_handles = [
+        Patch(facecolor="#9ECAE1", edgecolor="#1E3A5F", label="50% giữa (Q1–Q3)"),
+        Line2D([0], [0], color="#D95F02", linewidth=2.2, label="Trung vị"),
+        Line2D([0], [0], marker="o", color="none", markerfacecolor="#E15759", markeredgecolor="#7F1D1D", markersize=6.5, label="Ngoại lai"),
+    ]
+    ax.legend(handles=legend_handles, loc="upper center", ncol=3, frameon=False, fontsize=8.3)
+
+    ax.set_title(f"Phân phối & Ngoại lai (Boxplot): {column}", pad=10)
     ax.set_xlabel(group_column if (group_column and group_column in df.columns) else "Cột số")
     ax.set_ylabel(column)
     fig.tight_layout()
