@@ -492,3 +492,15 @@ def test_auto_update_git_and_zip(tmp_path: Path):
         updated_again, msg_again = app._check_and_update(zip_dir)
         assert updated_again is False
         assert "9999999" in msg_again
+
+    # 4. Báo lỗi rõ ràng khi repo Private trả HTTP 404
+    err_404 = app.urllib.error.HTTPError(
+        url="https://api.github.com/repos/x/y/commits/main",
+        code=404,
+        msg="Not Found",
+        hdrs=None,
+        fp=None,
+    )
+    with patch("app.urllib.request.urlopen", side_effect=err_404):
+        with pytest.raises(RuntimeError, match="Private"):
+            app._check_and_update(zip_dir)

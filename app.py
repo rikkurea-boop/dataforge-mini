@@ -163,6 +163,13 @@ def _check_and_update(app_dir: Path | None = None) -> tuple[bool, str]:
 
         marker.write_text(remote_sha, encoding="utf-8")
         return True, f"Đã tải và cập nhật bản mới nhất (`{remote_sha[:7]}`)."
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            raise RuntimeError(
+                "Không tìm thấy dữ liệu cập nhật trên GitHub (lỗi 404). "
+                "Repository hiện có thể đang để Private — hãy chuyển repo sang Public hoặc dùng bản git clone."
+            ) from exc
+        raise RuntimeError(f"Không thể cập nhật tự động (HTTP {exc.code}): {exc.reason}") from exc
     except (
         subprocess.CalledProcessError,
         subprocess.TimeoutExpired,
