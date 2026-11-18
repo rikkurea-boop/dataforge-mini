@@ -517,6 +517,10 @@ def main() -> None:
         with c1:
             try:
                 st.pyplot(histogram(filtered_df, y_col))
+                st.caption(
+                    f"**Phân phối tần suất (Histogram):** Chia `{y_col}` thành 5 khoảng; "
+                    "cột càng cao nghĩa là có càng nhiều dữ liệu rơi vào khoảng đó."
+                )
             except ValueError as exc:
                 st.info(str(exc))
 
@@ -526,6 +530,10 @@ def main() -> None:
             else:
                 try:
                     st.pyplot(group_bar(group_means))
+                    st.caption(
+                        f"**So sánh nhóm (Biểu đồ cột):** Hiển thị trung bình `{y_col}` theo từng nhóm `{group_col}`; "
+                        "trục dọc bắt đầu từ 0 để so sánh chính xác."
+                    )
                 except ValueError as exc:
                     st.info(str(exc))
 
@@ -536,13 +544,20 @@ def main() -> None:
             else:
                 try:
                     st.pyplot(scatter(filtered_df, x_col, y_col))
-                    st.caption("Lưu ý: biểu đồ phân tán & hệ số r thể hiện mối liên hệ tuyến tính, không kết luận nhân quả.")
+                    st.caption(
+                        f"**Mối liên hệ cặp số (Scatter):** Mỗi chấm biểu diễn một cặp (`{x_col}`, `{y_col}`); "
+                        "hệ số `r` thể hiện xu hướng tuyến tính, không kết luận nhân quả."
+                    )
                 except ValueError as exc:
                     st.info(str(exc))
 
         with c4:
             try:
                 st.pyplot(boxplot(filtered_df, y_col, group_col))
+                st.caption(
+                    f"**Phân bố & Ngoại lai (Boxplot):** Hộp xanh chứa 50% dữ liệu ở giữa `{y_col}` (từ Q1 đến Q3), "
+                    "vạch cam là trung vị, chấm tròn ngoài râu (nếu có) là điểm bất thường."
+                )
             except ValueError as exc:
                 st.info(str(exc))
 
