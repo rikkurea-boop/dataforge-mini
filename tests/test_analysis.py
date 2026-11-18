@@ -374,6 +374,7 @@ def test_streamlit_ui_flows():
         assert summary_rows[1]["Số dòng"] == 10
         assert summary_rows[1]["Ô thiếu"] == 0
         assert summary_rows[1]["Dòng trùng"] == 0
+        assert list(at.dataframe[1].value.index) == list(range(1, 11))
 
         assert at.metric[0].value == "10"
         assert at.metric[2].value == "7.8"

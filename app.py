@@ -42,6 +42,13 @@ def _default_index(options: list[str], preferred: str) -> int:
     return options.index(preferred) if preferred in options else 0
 
 
+def _with_one_based_index(df: pd.DataFrame) -> pd.DataFrame:
+    """Tạo bản hiển thị với số thứ tự dòng bắt đầu từ 1 thay vì 0."""
+    view = df.copy()
+    view.index = range(1, len(view) + 1)
+    return view
+
+
 def _load_input_dataframe(uploaded_file) -> tuple[pd.DataFrame, str]:
     """Đọc dữ liệu từ file CSV người dùng đã tải lên."""
     if uploaded_file is None:
@@ -326,7 +333,7 @@ def main() -> None:
     group_cols = list(active_df.select_dtypes(include=["object", "string", "category"]).columns)
 
     if not num_cols:
-        st.dataframe(active_df)
+        st.dataframe(_with_one_based_index(active_df))
         st.warning(
             "Bảng dữ liệu hiện không có cột số hợp lệ (các cột chứa chữ như '8a' được giữ nguyên dạng chữ). "
             "Không thể tính thống kê và vẽ biểu đồ."
@@ -439,7 +446,7 @@ def main() -> None:
             )
 
         st.caption(f"Bảng dữ liệu đang xem: **{len(filtered_df)} / {len(active_df)}** dòng.")
-        st.dataframe(filtered_df)
+        st.dataframe(_with_one_based_index(filtered_df))
 
         with st.expander("Kiểm tra chi tiết từng cột (Kiểu dữ liệu, tỷ lệ thiếu, giá trị duy nhất)"):
             st.dataframe(column_profile(active_df), hide_index=True)
