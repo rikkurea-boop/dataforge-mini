@@ -19,7 +19,7 @@
   3. **Biểu đồ phân tán (Scatter)** ghép cặp cùng hàng kèm hệ số tương quan Pearson `r`.
   4. **Biểu đồ hộp (Boxplot)** quan sát phân vị và điểm ngoại lai theo nhóm.
   5. **Heatmap ma trận tương quan** Pearson giữa các cột số.
-- **Xuất dữ liệu, giao diện nửa màn hình & Tự động cập nhật:** Bố cục thẻ `3×4` và lưới biểu đồ 2 cột hiển thị rõ trên cửa sổ nửa màn hình; tải về file CSV (UTF-8-SIG, `index=False`) và tệp báo cáo `.txt`; nút **↻ Cập nhật** ở góc trên bên phải cạnh **Deploy** tự kiểm tra và cập nhật bản mới từ GitHub.
+- **Giao diện 3 tab gọn nhẹ, dùng thử 1 chạm & tự động cập nhật:** Bố cục chia 3 tab tách biệt (`1. Dữ liệu & Làm sạch`, `2. Thống kê mô tả`, `3. Biểu đồ trực quan`), bộ lọc thu gọn trong khung gấp, nút dùng thử nhanh `sample_data.csv` ngay khi mở app; tải về file CSV (UTF-8-SIG, `index=False`) và báo cáo `.txt`; nút **↻ Cập nhật** ở góc trên bên phải cạnh **Deploy** tự kiểm tra và cập nhật bản mới từ GitHub.
 
 ## 2. Cấu trúc dự án
 

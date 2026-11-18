@@ -242,8 +242,8 @@ def main() -> None:
                 st.info(msg)
 
     st.caption(
-        "Ứng dụng minh họa Chương 5.5 (Pandas, NumPy, Matplotlib). "
-        "Chỉ hỗ trợ file CSV UTF-8 phân cách bằng dấu phẩy (≤ 2 MiB)."
+        "Ứng dụng minh họa Chương 5.5 (Pandas, NumPy, Matplotlib) — "
+        "Chỉ hỗ trợ file CSV UTF-8 dấu phẩy (≤ 2 MiB)."
     )
 
     uploaded = st.file_uploader(
@@ -251,37 +251,63 @@ def main() -> None:
         type=["csv"],
     )
 
-    if uploaded is None:
+    if uploaded is not None:
+        st.session_state.pop("use_sample", None)
+    elif not st.session_state.get("use_sample"):
         st.session_state.pop("confirmed_key", None)
+        if st.button("Dùng thử nhanh với dữ liệu mẫu (sample_data.csv)", type="primary"):
+            st.session_state["use_sample"] = True
+            st.session_state["confirmed_key"] = ("sample_data.csv", False, "keep")
+            st.rerun()
         st.info(
-            "Vui lòng tải lên một file CSV (ví dụ: `sample_data.csv` hoặc các file trong `samples/`) "
-            "để mở tùy chọn làm sạch, bộ lọc, thống kê và biểu đồ."
+            "Vui lòng tải lên một file CSV hoặc bấm nút dùng thử mẫu ở trên để mở 3 tab "
+            "Làm sạch, Thống kê và Biểu đồ."
         )
         return
 
-    c_clean1, c_clean2 = st.columns(2)
-    with c_clean1:
-        remove_dups = st.checkbox("Xóa dòng trùng lặp toàn phần (keep first)", value=False)
-    with c_clean2:
-        missing_label = st.selectbox(
-            "Chiến lược xử lý ô số bị thiếu",
-            options=list(MISSING_OPTIONS.keys()),
-            index=0,
+    if uploaded is None:
+        s_col1, s_col2 = st.columns([4, 1.3], vertical_alignment="center")
+        with s_col1:
+            st.info("Đang dùng thử bộ dữ liệu mẫu có sẵn: `sample_data.csv` (12 dòng × 4 cột).")
+        with s_col2:
+            if st.button("Đóng dữ liệu mẫu", width="stretch"):
+                st.session_state.pop("use_sample", None)
+                st.session_state.pop("confirmed_key", None)
+                st.rerun()
+
+    with st.container(border=True):
+        c_clean1, c_clean2 = st.columns(2)
+        with c_clean1:
+            remove_dups = st.checkbox("Xóa dòng trùng lặp toàn phần (keep first)", value=False)
+        with c_clean2:
+            missing_label = st.selectbox(
+                "Chiến lược xử lý ô số bị thiếu",
+                options=list(MISSING_OPTIONS.keys()),
+                index=0,
+            )
+        missing_strategy = MISSING_OPTIONS[missing_label]
+
+        file_token = (
+            getattr(uploaded, "file_id", f"{uploaded.name}:{uploaded.size}")
+            if uploaded is not None
+            else "sample_data.csv"
         )
-    missing_strategy = MISSING_OPTIONS[missing_label]
+        current_key = (file_token, remove_dups, missing_strategy)
 
-    file_token = getattr(uploaded, "file_id", f"{uploaded.name}:{uploaded.size}")
-    current_key = (file_token, remove_dups, missing_strategy)
-
-    if st.button("Xác nhận xử lý dữ liệu", type="primary"):
-        st.session_state["confirmed_key"] = current_key
+        if st.button("Xác nhận xử lý dữ liệu", type="primary"):
+            st.session_state["confirmed_key"] = current_key
 
     if st.session_state.get("confirmed_key") != current_key:
         st.info("Nhấn nút **Xác nhận xử lý dữ liệu** để bắt đầu đọc file, tính thống kê và vẽ biểu đồ.")
         return
 
     try:
-        raw_df, source_label = _load_input_dataframe(uploaded)
+        if uploaded is not None:
+            raw_df, source_label = _load_input_dataframe(uploaded)
+        else:
+            sample_path = Path(__file__).resolve().parent / "sample_data.csv"
+            raw_df = load_csv(sample_path)
+            source_label = "Dữ liệu mẫu có sẵn: `sample_data.csv`"
         active_df = clean_data(
             raw_df,
             remove_duplicates=remove_dups,
@@ -291,32 +317,12 @@ def main() -> None:
         st.error(f"Không thể xử lý dữ liệu CSV: {exc}")
         st.stop()
 
-    st.success(f"Đã xử lý xong — {source_label}")
-
     raw_info = inspect_data(raw_df)
     active_info = inspect_data(active_df)
-
-    st.subheader("1. Tổng quan & Kiểm tra chất lượng dữ liệu")
-    summary_table = pd.DataFrame(
-        [
-            {"Trạng thái": "Dữ liệu gốc (Raw)", **raw_info},
-            {"Trạng thái": "Sau xử lý (Active)", **active_info},
-        ]
-    )
-    summary_table.columns = ["Trạng thái", "Số dòng", "Số cột", "Ô thiếu", "Dòng trùng"]
-    st.dataframe(summary_table, hide_index=True)
-
     is_cleaning_active = remove_dups or missing_strategy != "keep"
-    if is_cleaning_active and (active_info["missing_cells"] > 0 or active_info["duplicate_rows"] > 0):
-        st.warning(
-            f"Lưu ý sau xử lý vẫn còn {active_info['missing_cells']} ô thiếu "
-            f"(cột chữ hoặc cột số toàn trống) và {active_info['duplicate_rows']} dòng trùng."
-        )
 
-    with st.expander("Kiểm tra chi tiết từng cột (Kiểu dữ liệu, tỷ lệ thiếu, giá trị duy nhất)"):
-        st.dataframe(column_profile(active_df), hide_index=True)
+    st.success(f"Đã xử lý xong — {source_label} ({active_info['rows']} dòng × {active_info['columns']} cột)")
 
-    st.subheader("2. Chọn cột, Lọc dữ liệu & Khám phá bảng")
     num_cols = list(active_df.select_dtypes(include="number").columns)
     group_cols = list(active_df.select_dtypes(include=["object", "string", "category"]).columns)
 
@@ -357,41 +363,42 @@ def main() -> None:
         else:
             st.info("Cần ít nhất 2 cột số khác nhau để vẽ biểu đồ phân tán.")
 
-    # Bộ lọc tương tác & Sắp xếp
-    f_col1, f_col2, f_col3 = st.columns(3)
+    # Gom bộ lọc nâng cao & sắp xếp vào mục gấp gọn để tránh rối mắt khi mới mở app
     selected_groups_filter: list[str] | None = None
-    with f_col1:
-        if group_col is not None:
-            all_groups = sorted(active_df[group_col].dropna().astype(str).unique().tolist())
-            chosen_groups = st.multiselect(
-                f"Lọc theo {group_col}",
-                options=all_groups,
-                default=all_groups,
-            )
-            if len(chosen_groups) < len(all_groups):
-                selected_groups_filter = chosen_groups
-
     val_range_filter: tuple[float, float] | None = None
-    with f_col2:
-        valid_y = active_df[y_col].dropna()
-        if not valid_y.empty:
-            min_v, max_v = float(valid_y.min()), float(valid_y.max())
-            if min_v < max_v:
-                chosen_range = st.slider(
-                    f"Lọc khoảng giá trị {y_col}",
-                    min_value=min_v,
-                    max_value=max_v,
-                    value=(min_v, max_v),
+    with st.expander("Tùy chọn lọc dữ liệu & sắp xếp (áp dụng cho cả 3 tab)", expanded=False):
+        f_col1, f_col2, f_col3 = st.columns(3)
+        with f_col1:
+            if group_col is not None:
+                all_groups = sorted(active_df[group_col].dropna().astype(str).unique().tolist())
+                chosen_groups = st.multiselect(
+                    f"Lọc theo {group_col}",
+                    options=all_groups,
+                    default=all_groups,
                 )
-                if chosen_range != (min_v, max_v):
-                    val_range_filter = chosen_range
+                if len(chosen_groups) < len(all_groups):
+                    selected_groups_filter = chosen_groups
 
-    with f_col3:
-        sort_mode = st.selectbox(
-            f"Sắp xếp theo {y_col}",
-            options=["Thứ tự gốc", "Giảm dần", "Tăng dần"],
-            index=0,
-        )
+        with f_col2:
+            valid_y = active_df[y_col].dropna()
+            if not valid_y.empty:
+                min_v, max_v = float(valid_y.min()), float(valid_y.max())
+                if min_v < max_v:
+                    chosen_range = st.slider(
+                        f"Lọc khoảng giá trị {y_col}",
+                        min_value=min_v,
+                        max_value=max_v,
+                        value=(min_v, max_v),
+                    )
+                    if chosen_range != (min_v, max_v):
+                        val_range_filter = chosen_range
+
+        with f_col3:
+            sort_mode = st.selectbox(
+                f"Sắp xếp theo {y_col}",
+                options=["Thứ tự gốc", "Giảm dần", "Tăng dần"],
+                index=0,
+            )
 
     filtered_df = filter_data(
         active_df,
@@ -409,57 +416,46 @@ def main() -> None:
         st.warning("Không có dòng dữ liệu nào khớp bộ lọc hiện tại. Hãy nới rộng điều kiện lọc.")
         return
 
-    st.caption(f"Đang hiển thị **{len(filtered_df)} / {len(active_df)}** dòng sau khi lọc.")
-    st.dataframe(filtered_df)
-
-    valid_for_top = filtered_df.dropna(subset=[y_col])
-    if not valid_for_top.empty:
-        with st.expander(f"Xem Top 5 giá trị cao nhất & thấp nhất theo {y_col}"):
-            top_c1, top_c2 = st.columns(2)
-            with top_c1:
-                st.write("Top 5 cao nhất:")
-                st.dataframe(valid_for_top.nlargest(5, y_col), hide_index=True)
-            with top_c2:
-                st.write("Top 5 thấp nhất:")
-                st.dataframe(valid_for_top.nsmallest(5, y_col), hide_index=True)
-
-    st.subheader("3. Thống kê mô tả nâng cao (NumPy) & Trung bình nhóm (Pandas)")
     stats = numeric_stats(filtered_df, y_col)
-    if stats["count"] == 0:
-        st.info(f"Cột '{y_col}' chưa có giá trị số hợp lệ (toàn ô trống).")
-    else:
-        r1 = st.columns(4)
-        r1[0].metric("Số quan sát", stats["count"], border=True)
-        r1[1].metric("Nhỏ nhất", _format_num(stats["min"]), border=True)
-        r1[2].metric("Trung bình", _format_num(stats["mean"]), border=True)
-        r1[3].metric("Trung vị", _format_num(stats["median"]), border=True)
+    group_means = mean_by_group(filtered_df, group_col, y_col) if group_col is not None else None
 
-        r2 = st.columns(4)
-        r2[0].metric("Lớn nhất", _format_num(stats["max"]), border=True)
-        r2[1].metric("Độ lệch chuẩn (ddof=0)", _format_num(stats["std"]), border=True)
-        r2[2].metric("Q1 (25%)", _format_num(stats["q1"]), border=True)
-        r2[3].metric("Q3 (75%)", _format_num(stats["q3"]), border=True)
+    tab_data, tab_stats, tab_charts = st.tabs(
+        ["1. Dữ liệu & Làm sạch", "2. Thống kê mô tả", "3. Biểu đồ trực quan"]
+    )
 
-        r3 = st.columns(4)
-        r3[0].metric("Khoảng tứ phân vị (IQR)", _format_num(stats["iqr"]), border=True)
-        r3[1].metric("Số ngoại lai (Outliers)", stats["outliers"], border=True)
+    with tab_data:
+        summary_table = pd.DataFrame(
+            [
+                {"Trạng thái": "Dữ liệu gốc (Raw)", **raw_info},
+                {"Trạng thái": "Sau xử lý (Active)", **active_info},
+            ]
+        )
+        summary_table.columns = ["Trạng thái", "Số dòng", "Số cột", "Ô thiếu", "Dòng trùng"]
+        st.dataframe(summary_table, hide_index=True)
 
-    group_means: pd.Series | None = None
-    if group_col is not None:
-        group_means = mean_by_group(filtered_df, group_col, y_col)
-        valid_means = group_means.dropna()
-        if valid_means.empty:
-            st.info(f"Không có nhóm hợp lệ trong '{group_col}' có giá trị số ở '{y_col}'.")
-        else:
-            st.write(f"Trung bình `{y_col}` theo `{group_col}`:")
-            st.dataframe(
-                valid_means.map(_format_num).rename("Trung bình").reset_index(),
-                hide_index=True,
+        if is_cleaning_active and (active_info["missing_cells"] > 0 or active_info["duplicate_rows"] > 0):
+            st.warning(
+                f"Lưu ý sau xử lý vẫn còn {active_info['missing_cells']} ô thiếu "
+                f"(cột chữ hoặc cột số toàn trống) và {active_info['duplicate_rows']} dòng trùng."
             )
 
-    # Hai nút tải về (CSV đang xem & Báo cáo tóm tắt TXT)
-    dl1, dl2 = st.columns(2)
-    with dl1:
+        st.caption(f"Bảng dữ liệu đang xem: **{len(filtered_df)} / {len(active_df)}** dòng.")
+        st.dataframe(filtered_df)
+
+        with st.expander("Kiểm tra chi tiết từng cột (Kiểu dữ liệu, tỷ lệ thiếu, giá trị duy nhất)"):
+            st.dataframe(column_profile(active_df), hide_index=True)
+
+        valid_for_top = filtered_df.dropna(subset=[y_col])
+        if not valid_for_top.empty:
+            with st.expander(f"Xem Top 5 giá trị cao nhất & thấp nhất theo {y_col}"):
+                top_c1, top_c2 = st.columns(2)
+                with top_c1:
+                    st.write("Top 5 cao nhất:")
+                    st.dataframe(valid_for_top.nlargest(5, y_col), hide_index=True)
+                with top_c2:
+                    st.write("Top 5 thấp nhất:")
+                    st.dataframe(valid_for_top.nsmallest(5, y_col), hide_index=True)
+
         csv_bytes = filtered_df.to_csv(index=False).encode("utf-8-sig")
         export_name = "dataforge_cleaned.csv" if is_cleaning_active else "dataforge_raw.csv"
         st.download_button(
@@ -468,7 +464,38 @@ def main() -> None:
             file_name=export_name,
             mime="text/csv",
         )
-    with dl2:
+
+    with tab_stats:
+        if stats["count"] == 0:
+            st.info(f"Cột '{y_col}' chưa có giá trị số hợp lệ (toàn ô trống).")
+        else:
+            r1 = st.columns(4)
+            r1[0].metric("Số quan sát", stats["count"], border=True)
+            r1[1].metric("Nhỏ nhất", _format_num(stats["min"]), border=True)
+            r1[2].metric("Trung bình", _format_num(stats["mean"]), border=True)
+            r1[3].metric("Trung vị", _format_num(stats["median"]), border=True)
+
+            r2 = st.columns(4)
+            r2[0].metric("Lớn nhất", _format_num(stats["max"]), border=True)
+            r2[1].metric("Độ lệch chuẩn (ddof=0)", _format_num(stats["std"]), border=True)
+            r2[2].metric("Q1 (25%)", _format_num(stats["q1"]), border=True)
+            r2[3].metric("Q3 (75%)", _format_num(stats["q3"]), border=True)
+
+            r3 = st.columns(4)
+            r3[0].metric("Khoảng tứ phân vị (IQR)", _format_num(stats["iqr"]), border=True)
+            r3[1].metric("Số ngoại lai (Outliers)", stats["outliers"], border=True)
+
+        if group_col is not None and group_means is not None:
+            valid_means = group_means.dropna()
+            if valid_means.empty:
+                st.info(f"Không có nhóm hợp lệ trong '{group_col}' có giá trị số ở '{y_col}'.")
+            else:
+                st.write(f"Trung bình `{y_col}` theo `{group_col}`:")
+                st.dataframe(
+                    valid_means.map(_format_num).rename("Trung bình").reset_index(),
+                    hide_index=True,
+                )
+
         summary_bytes = _build_summary_text(
             source_label,
             raw_info,
@@ -485,51 +512,51 @@ def main() -> None:
             mime="text/plain",
         )
 
-    st.subheader("4. Trực quan hóa dữ liệu (Matplotlib)")
-    c1, c2 = st.columns(2)
+    with tab_charts:
+        c1, c2 = st.columns(2)
 
-    with c1:
-        try:
-            st.pyplot(histogram(filtered_df, y_col))
-        except ValueError as exc:
-            st.info(str(exc))
-
-    with c2:
-        if group_means is None:
-            st.info("Ẩn biểu đồ cột vì chưa có cột phân nhóm.")
-        else:
+        with c1:
             try:
-                st.pyplot(group_bar(group_means))
+                st.pyplot(histogram(filtered_df, y_col))
             except ValueError as exc:
                 st.info(str(exc))
 
-    c3, c4 = st.columns(2)
-    with c3:
-        if x_col is None:
-            st.info("Ẩn biểu đồ phân tán vì cần tối thiểu 2 cột số.")
-        else:
+        with c2:
+            if group_means is None:
+                st.info("Ẩn biểu đồ cột vì chưa có cột phân nhóm.")
+            else:
+                try:
+                    st.pyplot(group_bar(group_means))
+                except ValueError as exc:
+                    st.info(str(exc))
+
+        c3, c4 = st.columns(2)
+        with c3:
+            if x_col is None:
+                st.info("Ẩn biểu đồ phân tán vì cần tối thiểu 2 cột số.")
+            else:
+                try:
+                    st.pyplot(scatter(filtered_df, x_col, y_col))
+                    st.caption("Lưu ý: biểu đồ phân tán & hệ số r thể hiện mối liên hệ tuyến tính, không kết luận nhân quả.")
+                except ValueError as exc:
+                    st.info(str(exc))
+
+        with c4:
             try:
-                st.pyplot(scatter(filtered_df, x_col, y_col))
-                st.caption("Lưu ý: biểu đồ phân tán & hệ số r thể hiện mối liên hệ tuyến tính, không kết luận nhân quả.")
+                st.pyplot(boxplot(filtered_df, y_col, group_col))
             except ValueError as exc:
                 st.info(str(exc))
 
-    with c4:
-        try:
-            st.pyplot(boxplot(filtered_df, y_col, group_col))
-        except ValueError as exc:
-            st.info(str(exc))
-
-    c5, _ = st.columns(2)
-    with c5:
-        corr_df = correlation_matrix(filtered_df)
-        if corr_df.empty:
-            st.info("Cần ít nhất 2 cột số để vẽ ma trận tương quan (Heatmap).")
-        else:
-            try:
-                st.pyplot(correlation_heatmap(corr_df))
-            except ValueError as exc:
-                st.info(str(exc))
+        c5, _ = st.columns(2)
+        with c5:
+            corr_df = correlation_matrix(filtered_df)
+            if corr_df.empty:
+                st.info("Cần ít nhất 2 cột số để vẽ ma trận tương quan (Heatmap).")
+            else:
+                try:
+                    st.pyplot(correlation_heatmap(corr_df))
+                except ValueError as exc:
+                    st.info(str(exc))
 
 
 if __name__ == "__main__":

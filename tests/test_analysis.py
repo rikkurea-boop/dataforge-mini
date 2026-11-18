@@ -335,15 +335,23 @@ def test_streamlit_ui_flows():
     """Kiểm thử toàn bộ luồng giao diện mới: ẩn ban đầu, làm sạch, xác nhận, lọc & xuất báo cáo."""
     app_path = Path(__file__).resolve().parent.parent / "app.py"
 
-    # 1. Chưa tải file: ẩn hoàn toàn bảng, checkbox, selectbox, chỉ hiện nút cập nhật + thông báo
+    # 1. Chưa tải file: ẩn hoàn toàn bảng, checkbox, selectbox; chỉ hiện nút cập nhật, nút dùng thử mẫu + thông báo
     at_empty = AppTest.from_file(str(app_path)).run()
     assert not at_empty.exception
     assert len(at_empty.checkbox) == 0
-    assert len(at_empty.button) == 1
+    assert len(at_empty.button) == 2
     assert at_empty.button[0].label == "↻ Cập nhật"
+    assert "Dùng thử nhanh" in at_empty.button[1].label
     assert len(at_empty.dataframe) == 0
     assert len(at_empty.metric) == 0
     assert len(at_empty.info) == 1
+
+    # 1b. Bấm nút dùng thử nhanh -> tự mở ngay 3 tab với sample_data.csv
+    at_sample = at_empty.button[1].click().run()
+    assert not at_sample.exception
+    assert len(at_sample.tabs) == 3
+    assert at_sample.metric[0].value == "11"
+    assert at_sample.metric[2].value == "7.73"
 
     # 2. Đã tải sample_data.csv lên nhưng chưa bấm xác nhận
     sample_bytes = SAMPLE_CSV_PATH.read_bytes()
