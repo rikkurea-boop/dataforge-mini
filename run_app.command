@@ -20,7 +20,7 @@ fi
 if [ ! -x ".venv/bin/python" ]; then
     echo "Đang tạo môi trường ảo (.venv) và cài đặt thư viện lần đầu..."
     "$PYTHON_BIN" -m venv .venv
-    .venv/bin/python -m pip install -r requirements.txt
+    .venv/bin/python -m pip install numpy pandas matplotlib streamlit
 fi
 
 echo "Đang mở ứng dụng trên trình duyệt (http://localhost:8501)..."

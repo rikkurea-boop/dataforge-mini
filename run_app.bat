@@ -21,9 +21,9 @@ pause
 exit /b 1
 
 :install_deps
-".venv\Scripts\python.exe" -m pip install -r requirements.txt
+".venv\Scripts\python.exe" -m pip install numpy pandas matplotlib streamlit
 if errorlevel 1 (
-    echo Failed to install dependencies from requirements.txt.
+    echo Failed to install dependencies.
     pause
     exit /b 1
 )
