@@ -125,10 +125,10 @@ def main() -> None:
         elif mode == "Tải file CSV":
             source = st.file_uploader("Chọn file CSV (UTF-8, dấu phẩy)", type=["csv"])
         st.header("2. Làm sạch")
-        drop_dup = st.checkbox("Xóa dòng trùng (keep first)", value=True)
+        drop_dup = st.checkbox("Xóa dòng trùng lặp", value=True)
         missing = st.selectbox("Ô số thiếu", ["median", "mean", "drop", "keep"], format_func={
             "median": "Điền trung vị (Median)", "mean": "Điền trung bình (Mean)",
-            "drop": "Xóa dòng thiếu (dropna)", "keep": "Giữ nguyên (Raw)"}.get)
+            "drop": "Xóa dòng thiếu", "keep": "Giữ nguyên dữ liệu gốc"}.get)
 
     if source is None:
         st.info("Vui lòng chọn hoặc tải lên một file CSV ở thanh bên trái."); return
@@ -183,9 +183,15 @@ def main() -> None:
     st.subheader("3. Biểu đồ trực quan")
     g1, g2 = st.columns(2)
     g1.pyplot(chart_hist(view_df, y_col), width="stretch")
-    g2.pyplot(chart_bar(means, group_col, y_col), width="stretch") if (group_col and not means.empty) else g2.info("Chọn cột phân nhóm để vẽ biểu đồ cột.")
+    if group_col and not means.empty:
+        g2.pyplot(chart_bar(means, group_col, y_col), width="stretch")
+    else:
+        g2.info("Chọn cột phân nhóm để vẽ biểu đồ cột.")
     g3, g4 = st.columns(2)
-    g3.pyplot(chart_scatter(view_df, x_col, y_col), width="stretch") if (x_col and not view_df[[x_col, y_col]].dropna().empty) else g3.info("Cần 2 cột số hợp lệ để vẽ Scatter.")
+    if x_col and not view_df[[x_col, y_col]].dropna().empty:
+        g3.pyplot(chart_scatter(view_df, x_col, y_col), width="stretch")
+    else:
+        g3.info("Cần 2 cột số hợp lệ để vẽ Scatter.")
     g4.pyplot(chart_box(view_df, y_col, group_col), width="stretch")
 
 if __name__ == "__main__":
